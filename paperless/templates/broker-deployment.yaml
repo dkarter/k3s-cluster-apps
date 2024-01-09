@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: broker
+  name: broker
+  namespace: paperless
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: broker
+
+  template:
+    metadata:
+      labels:
+        app: broker
+
+    spec:
+      containers:
+        - image: docker.io/library/redis:7
+          name: broker
+          volumeMounts:
+            - name: redisdata
+              mountPath: /data
+
+      restartPolicy: Always
+
+      volumes:
+        - name: redisdata
+          persistentVolumeClaim:
+            claimName: redisdata

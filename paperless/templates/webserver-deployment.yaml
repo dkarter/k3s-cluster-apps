@@ -1,0 +1,136 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webserver
+  namespace: paperless
+  labels:
+    app: webserver
+
+spec:
+  selector:
+    matchLabels:
+      app: webserver
+
+  replicas: 1
+
+  template:
+    metadata:
+      labels:
+        app: webserver
+
+    spec:
+      containers:
+        - env:
+            - name: PAPERLESS_OCR_LANGUAGE
+              value: eng
+
+            - name: PAPERLESS_OCR_LANGUAGES
+              value: heb
+
+            - name: PAPERLESS_REDIS
+              value: redis://broker.paperless.svc.cluster.local:6379
+              
+            - name: PAPERLESS_SECRET_KEY
+              valueFrom:
+                secretKeyRef: 
+                  name: paperless-secret
+                  key: PAPERLESS_SECRET_KEY
+
+            - name: PAPERLESS_TIME_ZONE
+              value: "America/Chicago"
+
+            - name: PAPERLESS_URL
+              value: https://paperless.k3s.pro
+
+            - name: PAPERLESS_DBNAME
+              value: app
+
+            - name: PAPERLESS_DBUSER
+              valueFrom:
+                secretKeyRef: 
+                  name: db-app
+                  key: username
+
+            - name: PAPERLESS_DBPASS
+              valueFrom:
+                secretKeyRef: 
+                  name: db-app
+                  key: password
+
+            - name: PAPERLESS_DBHOST
+              value: 'db-rw.paperless.svc.cluster.local'
+
+            - name: PAPERLESS_DBPORT
+              value: '5432'
+
+            - name: USERMAP_GID
+              value: '1000'
+
+            - name: USERMAP_UID
+              value: '1000'
+
+            - name: PAPERLESS_ADMIN_USER
+              valueFrom:
+                secretKeyRef: 
+                  name: paperless-secret
+                  key: PAPERLESS_ADMIN_USER
+
+            - name: PAPERLESS_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef: 
+                  name: paperless-secret
+                  key: PAPERLESS_ADMIN_PASSWORD
+
+          image: ghcr.io/paperless-ngx/paperless-ngx:latest
+
+          livenessProbe:
+            exec:
+              command:
+                - curl
+                - -fs
+                - -S
+                - --max-time
+                - "2"
+                - http://localhost:8000
+            failureThreshold: 5
+            periodSeconds: 30
+            timeoutSeconds: 10
+
+          name: webserver
+
+          ports:
+            - containerPort: 8000
+              hostPort: 8000
+              protocol: TCP
+
+          volumeMounts:
+            - name: webserver-data
+              mountPath: /usr/src/paperless/data
+              
+            - name: webserver-media
+              mountPath: /usr/src/paperless/media
+
+            - name: webserver-export
+              mountPath: /usr/src/paperless/export
+
+            - name: webserver-consume
+              mountPath: /usr/src/paperless/consume
+
+      restartPolicy: Always
+
+      volumes:
+        - name: webserver-data
+          persistentVolumeClaim:
+            claimName: webserver-data
+
+        - name: webserver-media
+          persistentVolumeClaim:
+            claimName: webserver-media
+
+        - name: webserver-export
+          persistentVolumeClaim:
+            claimName: webserver-export
+
+        - name: webserver-consume
+          persistentVolumeClaim:
+            claimName: webserver-consume
