@@ -1,0 +1,25 @@
+# https://kubernetes.io/docs/concepts/services-networking/ingress/
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: uptime-kuma
+  namespace: uptime
+  annotations:
+    kubernetes.io/ingress.class: 'traefik'
+    cert-manager.io/cluster-issuer: 'letsencrypt'
+spec:
+  rules:
+    - host: uptime.k3s.pro
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: uptime-kuma
+                port:
+                  number: 3001
+  tls:
+    - hosts:
+        - uptime.k3s.pro
+      secretName: uptime-kuma-ingress-cert

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  labels:
+    io.kompose.service: uptime-kuma
+  name: uptime-kuma
+  namespace: uptime
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: uptime-kuma
+
+  template:
+    metadata:
+      labels:
+        io.kompose.network/uptime-kuma-default: "true"
+        io.kompose.service: uptime-kuma
+
+    spec:
+      containers:
+        - image: louislam/uptime-kuma:1
+          name: uptime-kuma
+          ports:
+            - containerPort: 3001
+              hostPort: 3001
+              protocol: TCP
+
+          volumeMounts:
+            - mountPath: /app/data
+              name: uptime-kuma
+
+      restartPolicy: Always
+
+      volumes:
+        - name: uptime-kuma
+          persistentVolumeClaim:
+            claimName: uptime-kuma
