@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: Apps
+  name: apps
 spec:
   destination:
     name: ''
