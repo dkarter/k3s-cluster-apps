@@ -14,6 +14,9 @@ spec:
     matchLabels:
       io.kompose.service: uptime-kuma
 
+  strategy:
+    type: Recreate
+
   template:
     metadata:
       labels:
