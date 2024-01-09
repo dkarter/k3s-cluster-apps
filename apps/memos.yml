@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: Memos
+spec:
+  destination:
+    name: ''
+    namespace: memos
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: memos
+    repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+    targetRevision: HEAD
+  sources: []
+  project: default
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

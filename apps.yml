@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: Apps
+spec:
+  destination:
+    name: ''
+    namespace: argocd
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: apps
+    repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+    targetRevision: HEAD
+  sources: []
+  project: default
