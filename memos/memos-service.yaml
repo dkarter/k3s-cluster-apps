@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -n memos
+    kompose.version: 1.30.0 (HEAD)
+  labels:
+    io.kompose.service: memos
+  name: memos-service
+  namespace: memos
+spec:
+  ports:
+    - name: '5230'
+      port: 5230
+      targetPort: 5230
+  selector:
+    io.kompose.service: memos

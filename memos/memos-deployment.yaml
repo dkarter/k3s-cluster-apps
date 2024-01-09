@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -n memos
+    kompose.version: 1.30.0 (HEAD)
+  labels:
+    io.kompose.service: memos
+  name: memos
+  namespace: memos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: memos
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -n memos
+        kompose.version: 1.30.0 (HEAD)
+      labels:
+        io.kompose.network/memos-default: 'true'
+        io.kompose.service: memos
+    spec:
+      containers:
+        - image: neosmemo/memos:0.18.1
+          name: memos
+          ports:
+            - containerPort: 5230
+              hostPort: 5230
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/opt/memos
+              name: memos-claim0
+      restartPolicy: Always
+      volumes:
+        - name: memos-claim0
+          persistentVolumeClaim:
+            claimName: memos-claim0
