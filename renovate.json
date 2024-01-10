@@ -3,5 +3,8 @@
   "extends": ["config:recommended"],
   "kubernetes": {
     "fileMatch": ["\\.yml$", "\\.yaml$"]
+  },
+  "argocd": {
+    "fileMatch": ["apps/.+\\.yml$"]
   }
 }
