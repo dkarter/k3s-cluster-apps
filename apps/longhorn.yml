@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=https://deedee-ops.github.io/schemas/argoproj.io/application_v1alpha1.json
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: longhorn
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: longhorn-system
+
+  sources:
+    - chart: longhorn
+      repoURL: https://charts.longhorn.io
+      targetRevision: 1.5.3
+      helm:
+        releaseName: longhorn
+
+    - path: longhorn
+      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+
+  project: default
+
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
