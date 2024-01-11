@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=https://kubernetes-schemas.raspbernetes.com/cert-manager.io/clusterissuer_v1.json
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-2
+  namespace: cert-manager
+spec:
+  acme:
+    email: '<<WILL_BE_REPLACED_BY_KUSTOMIZE>>'
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-issuer-account-key
+    solvers:
+      - dns01:
+          digitalocean:
+            tokenSecretRef:
+              name: digitalocean-dns
+              key: access-token
