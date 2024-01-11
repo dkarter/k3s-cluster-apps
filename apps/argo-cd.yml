@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=https://deedee-ops.github.io/schemas/argoproj.io/application_v1alpha1.json
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-cd
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: argo-cd
+
+  sources:
+    - chart: argo-cd
+      repoURL: https://argoproj.github.io/argo-helm
+      targetRevision: 2.4.2
+      helm:
+        releaseName: argo-cd
+        valuesObject:
+          ## Globally shared configuration
+          global:
+            # Default logging options used by all components
+            logging:
+              # -- Set the global logging format. Either: `text` or `json`
+              format: json
+              # -- Set the global logging level. One of: `debug`, `info`, `warn` or `error`
+              level: info
+
+            # -- Add Prometheus scrape annotations to all metrics services. This can be used as an alternative to the ServiceMonitors.
+            addPrometheusAnnotations: true
+
+          redis-ha:
+            enabled: true
+
+          controller:
+            replicas: 1
+
+          repoServer:
+            replicas: 2
+
+          applicationSet:
+            replicas: 2
+
+          ## Server
+          server:
+            replicas: 2
+
+            ingress:
+              enabled: true
+              ingressClassName: traefik
+              annotations:
+                kubernetes.io/ingress.class: 'traefik'
+                cert-manager.io/cluster-issuer: 'letsencrypt'
+
+              hosts:
+                - 'argocd.k3s.pro'
+
+              tls:
+                - hosts:
+                    - 'argocd.k3s.pro'
+                  secretName: argocd-ingress-cert
+
+            config:
+              url: 'https://argocd.k3s.pro'
+
+          configs:
+            params:
+              server.insecure: true
+
+  project: default
+
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
