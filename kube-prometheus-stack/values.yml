@@ -1,0 +1,33 @@
+alertmanager:
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+    hosts:
+      - 'alertmanager.k3s.pro'
+    paths:
+      - /
+    pathType: Prefix
+    tls:
+      - secretName: alertmanager-ingress-cert
+        hosts:
+          - 'alertmanager.k3s.pro'
+
+grafana:
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+    hosts:
+      - 'grafana.k3s.pro'
+    paths:
+      - /
+    pathType: Prefix
+    tls:
+      - secretName: grafana-ingress-cert
+        hosts:
+          - 'grafana.k3s.pro'
