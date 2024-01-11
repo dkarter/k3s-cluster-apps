@@ -11,11 +11,43 @@ spec:
   sources:
     - chart: kube-prometheus-stack
       repoURL: https://prometheus-community.github.io/helm-charts
-      targetRevision: 55.7.0
+      targetRevision: 55.5.1
       helm:
         releaseName: monitoring
-        valueFiles:
-          - 'kube-prometheus-stack/values.yml'
+        valuesObject:
+          alertmanager:
+            ingress:
+              enabled: true
+              ingressClassName: traefik
+              annotations:
+                kubernetes.io/ingress.class: 'traefik'
+                cert-manager.io/cluster-issuer: 'letsencrypt'
+              hosts:
+                - 'alertmanager.k3s.pro'
+              paths:
+                - /
+              pathType: Prefix
+              tls:
+                - secretName: alertmanager-ingress-cert
+                  hosts:
+                    - 'alertmanager.k3s.pro'
+
+          grafana:
+            ingress:
+              enabled: true
+              ingressClassName: traefik
+              annotations:
+                kubernetes.io/ingress.class: 'traefik'
+                cert-manager.io/cluster-issuer: 'letsencrypt'
+              hosts:
+                - 'grafana.k3s.pro'
+              paths:
+                - /
+              pathType: Prefix
+              tls:
+                - secretName: grafana-ingress-cert
+                  hosts:
+                    - 'grafana.k3s.pro'
 
   project: default
 
@@ -25,3 +57,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
