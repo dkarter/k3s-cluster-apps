@@ -62,12 +62,15 @@ spec:
             widgets:
               - resources:
                   # change backend to 'kubernetes' to use Kubernetes integration. Requires RBAC.
-                  backend: resources
+                  backend: kubernetes
                   expanded: true
                   cpu: true
                   memory: true
+
               - search:
-                  provider: duckduckgo
+                  provider: custom
+                  focus: true
+                  url: https://kagi.com/search?q=
                   target: _blank
 
               - kubernetes:
