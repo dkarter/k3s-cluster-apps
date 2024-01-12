@@ -60,13 +60,6 @@ spec:
                       href: http://localhost/
                       description: Homepage is 😎
             widgets:
-              - resources:
-                  # change backend to 'kubernetes' to use Kubernetes integration. Requires RBAC.
-                  backend: kubernetes
-                  expanded: true
-                  cpu: true
-                  memory: true
-
               - search:
                   provider: custom
                   focus: true
