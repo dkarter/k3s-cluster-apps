@@ -96,6 +96,11 @@ spec:
                   # Show the nodes
                   nodes: true
 
+            settings:
+              providers:
+                longhorn:
+                  url: https://longhorn.k3s.pro
+
             kubernetes:
               mode: cluster
 
