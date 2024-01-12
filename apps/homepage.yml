@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=https://deedee-ops.github.io/schemas/argoproj.io/application_v1alpha1.json
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: homepage
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: homepage
+
+  sources:
+    - chart: homepage
+      repoURL: https://jameswynn.github.io/helm-charts
+      targetRevision: 1.2.3
+      helm:
+        releaseName: homepage
+        valuesObject:
+          ingress:
+            main:
+              enabled: true
+              labels:
+                # This label will enable discover of this deployment in Homepage
+                gethomepage.dev/enabled: 'true'
+              annotations:
+                # These annotations will configure how this deployment is shown in Homepage
+                gethomepage.dev/name: 'Homepage'
+                gethomepage.dev/description: 'A modern, secure, highly customizable application dashboard.'
+                gethomepage.dev/group: 'A New Group'
+                gethomepage.dev/icon: 'homepage.png'
+                # cert-manager
+                cert-manager.io/cluster-issuer: 'letsencrypt'
+              ingressClassName: 'traefik'
+              hosts:
+                - host: &host 'home.k3s.pro'
+                  paths:
+                    - path: /
+                      pathType: Prefix
+              tls:
+                - hosts:
+                    - *host
+
+  project: default
+
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
