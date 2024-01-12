@@ -15,6 +15,15 @@ spec:
       helm:
         releaseName: homepage
         valuesObject:
+          # Enable RBAC. RBAC is necessary to use Kubernetes integration
+          enableRbac: true
+
+          serviceAccount:
+            # Specify a different service account name
+            name: homepage
+            # Create service account. Needed when RBAC is enabled.
+            create: true
+
           ingress:
             main:
               enabled: true
