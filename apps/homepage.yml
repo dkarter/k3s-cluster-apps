@@ -33,10 +33,18 @@ spec:
                       - abbr: GH
                         href: https://github.com/
             services:
-              - My First Group:
-                  - My First Service:
-                      href: http://localhost/
-                      description: Homepage is awesome
+              - Portainer Servers:
+                  - Heimdall:
+                      href: https://srv.console.lol
+                      description: Heimdall
+
+                  - Monitor:
+                      href: https://monitor.console.lol
+                      description: Grafana dashboard monitoring internet speed, pi-srv, pi-srv2
+
+                  - Adguard:
+                      href: https://adguard2.console.lol
+                      description: DNS Ad Blocker
 
               - My Second Group:
                   - My Second Service:
