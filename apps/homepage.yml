@@ -47,6 +47,7 @@ spec:
               tls:
                 - hosts:
                     - *host
+                  secretName: homepage-ingress-cert
 
   project: default
 
