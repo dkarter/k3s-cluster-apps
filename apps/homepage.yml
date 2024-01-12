@@ -15,6 +15,10 @@ spec:
       helm:
         releaseName: homepage
         valuesObject:
+          image:
+            repository: ghcr.io/gethomepage/homepage
+            tag: v0.7.2
+
           # Enable RBAC. RBAC is necessary to use Kubernetes integration
           enableRbac: true
 
@@ -78,6 +82,9 @@ spec:
                     cpu: true
                     memory: true
                     showLabel: true
+
+            kubernetes:
+              mode: cluster
 
           ingress:
             main:
