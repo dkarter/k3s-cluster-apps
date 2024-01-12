@@ -83,6 +83,16 @@ spec:
                     memory: true
                     showLabel: true
 
+              - longhorn:
+                # Show the expanded view
+                expanded: true
+                # Shows a node representing the aggregate values
+                total: true
+                # Shows the node names as labels
+                labels: true
+                # Show the nodes
+                nodes: true
+
             kubernetes:
               mode: cluster
 
