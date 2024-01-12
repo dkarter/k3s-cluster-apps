@@ -15,6 +15,18 @@ spec:
       helm:
         releaseName: monitoring
         valuesObject:
+          additionalServiceMonitors:
+            - name: external-secrets
+              namespace: vault
+              selector:
+                matchLabels:
+                  app.kubernetes.io/name: external-secrets
+              namespaceSelector:
+                matchNames:
+                  - vault
+              endpoints:
+                - port: prometheus
+
           alertmanager:
             ingress:
               enabled: true
