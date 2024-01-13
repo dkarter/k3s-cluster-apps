@@ -63,7 +63,12 @@ spec:
 
           configs:
             params:
+              # required for ingress
               server.insecure: true
+
+            cm:
+              # enable web based terminal for shelling into pods
+              exec.enabled: true
 
   project: default
 
