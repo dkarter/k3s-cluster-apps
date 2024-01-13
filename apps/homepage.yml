@@ -39,17 +39,17 @@ spec:
             services:
               - Portainer Servers:
                   - Grafana:
-                      icon: si-#F46800
+                      icon: grafana.svg
                       href: https://monitor.console.lol
                       description: PiSrv Grafana (includes Internet Speed)
 
                   - Adguard:
-                      icon: si-#68BC71
+                      icon: adguard-home.svg
                       href: https://adguard2.console.lol
                       description: DNS Ad Blocker
 
                   - Portainer:
-                      icon: si-#13BEF9
+                      icon: portainer.svg
                       href: https://portainer.console.lol
                       description: Manage docker container based apps
 
