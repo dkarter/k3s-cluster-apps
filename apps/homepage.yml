@@ -38,27 +38,32 @@ spec:
                         href: https://github.com/
             services:
               - Portainer Servers:
-                  - Heimdall:
-                      href: https://srv.console.lol
-                      description: Heimdall
-
-                  - Monitor:
+                  - Grafana:
+                      icon: si-#F46800
                       href: https://monitor.console.lol
-                      description: Grafana dashboard monitoring internet speed, pi-srv, pi-srv2
+                      description: PiSrv Grafana (includes Internet Speed)
 
                   - Adguard:
+                      icon: si-#68BC71
                       href: https://adguard2.console.lol
                       description: DNS Ad Blocker
 
-              - My Second Group:
-                  - My Second Service:
-                      href: http://localhost/
-                      description: Homepage is the best
+                  - Portainer:
+                      icon: si-#13BEF9
+                      href: https://portainer.console.lol
+                      description: Manage docker container based apps
 
-              - My Third Group:
-                  - My Third Service:
-                      href: http://localhost/
-                      description: Homepage is 😎
+              - K3s.Pro Infra:
+                  - Longhorn:
+                      icon: longhorn.svg
+                      href: https://longhorn.k3s.pro
+                      description: Manage Longhorn Distributed Storage
+
+                  - Uptime Kuma:
+                      icon: uptime-kuma.svg
+                      href: https://uptime.k3s.pro
+                      description: Monitor Uptime
+
             widgets:
               - search:
                   provider: custom
