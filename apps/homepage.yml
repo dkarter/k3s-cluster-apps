@@ -70,12 +70,6 @@ spec:
                       description: Monitor Uptime
 
             widgets:
-              - search:
-                  provider: custom
-                  focus: true
-                  url: https://kagi.com/search?q=
-                  target: _blank
-
               - kubernetes:
                   cluster:
                     show: true
