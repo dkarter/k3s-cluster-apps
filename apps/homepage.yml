@@ -12,6 +12,7 @@ spec:
     - path: homepage
       repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
       targetRevision: HEAD
+      ref: repo
 
     - chart: homepage
       repoURL: https://jameswynn.github.io/helm-charts
