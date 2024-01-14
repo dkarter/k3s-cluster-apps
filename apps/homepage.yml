@@ -40,11 +40,6 @@ spec:
                   - Github:
                       - abbr: GH
                         href: https://github.com/
-
-                  - HackerNews:
-                      - abbr: HN
-                        href: https://news.ycombinator.com/
-
             services:
               - Portainer Servers:
                   - Grafana:
@@ -62,10 +57,10 @@ spec:
                       href: https://portainer.console.lol
                       description: Manage docker container based apps
 
-                  # - Libreddit:
-                  #     icon: libreddit.svg
-                  #     href: https://reddit.console.lol
-                  #     description: A private Reddit client
+                  - Libreddit:
+                      icon: libreddit.svg
+                      href: https://reddit.console.lol
+                      description: A private Reddit client
 
               - K3s.Pro Infra:
                   - Longhorn:
