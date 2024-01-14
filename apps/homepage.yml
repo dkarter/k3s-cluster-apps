@@ -19,7 +19,7 @@ spec:
       helm:
         releaseName: homepage
         valueFiles:
-          - ../homepage/values.yml
+          - ./homepage/values.yml
 
   project: default
 
