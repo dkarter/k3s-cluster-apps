@@ -51,6 +51,16 @@ spec:
               annotations:
                 kubernetes.io/ingress.class: 'traefik'
                 cert-manager.io/cluster-issuer: 'letsencrypt'
+                gethomepage.dev/enabled: 'true'
+                gethomepage.dev/description: Dashboards and alerts
+                gethomepage.dev/group: System
+                gethomepage.dev/icon: grafana.png
+                gethomepage.dev/name: Grafana
+                gethomepage.dev/ping: 'https://grafana.k3s.pro/api/health'
+                gethomepage.dev/widget.type: 'grafana'
+                gethomepage.dev/widget.url: 'https://grafana.k3s.pro'
+                gethomepage.dev/widget.username: 'admin'
+                gethomepage.dev/widget.password: '{{`{{HOMEPAGE_VAR_GRAFANA_PASSWORD}}`}}'
               hosts:
                 - 'grafana.k3s.pro'
               paths:
