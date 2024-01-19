@@ -9,14 +9,13 @@ spec:
     namespace: homepage
 
   sources:
-    - path: homepage
-      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+    - repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
       targetRevision: HEAD
       ref: repo
 
     - chart: homepage
-      repoURL: https://jameswynn.github.io/helm-charts
-      targetRevision: 1.2.3
+      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      path: homepage
       helm:
         releaseName: homepage
         valueFiles:
