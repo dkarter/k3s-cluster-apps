@@ -11,6 +11,12 @@ serviceAccount:
   # Create service account. Needed when RBAC is enabled.
   create: true
 
+service:
+  main:
+    ports:
+      http:
+        port: 3000
+
 config:
   # To use an existing ConfigMap uncomment this line and specify the name
   # useExistingConfigMap: homepage-cm
