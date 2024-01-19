@@ -13,6 +13,7 @@ global:
 {{- $_ := mergeOverwrite .Values (include "app-template.hardcodedValues" . | fromYaml) -}}
 
 {{/* Append the configMap volume to the volumes */}}
+{{/*
 {{- define "homepage.configVolume" -}}
 enabled: "true"
 type: "custom"
@@ -21,6 +22,14 @@ volumeSpec:
     name: {{ (default (include "bjw-s.common.lib.chart.names.fullname" .) .Values.config.useExistingConfigMap) }}
 {{- end -}}
 {{- $_ := set .Values.persistence "homepage-config" (include "homepage.configVolume" . | fromYaml) -}}
+*/}}
+
+persistence:
+  config:
+    type: configMap
+    name: homepage
+    globalMounts:
+      - path: /app/config
 
 {{ if .Values.enableRbac }}
 {{- $_ := set .Values.serviceAccount "create" "true" -}}
