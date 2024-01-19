@@ -16,7 +16,7 @@ spec:
     - chart: homepage
       repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
       path: homepage
-      targetRevision: HEAD
+      targetRevision: 1.2.3
       helm:
         releaseName: homepage
         valueFiles:
