@@ -8,19 +8,14 @@ spec:
     server: 'https://kubernetes.default.svc'
     namespace: homepage
 
-  sources:
-    - repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
-      targetRevision: HEAD
-      ref: repo
-
-    - chart: homepage
-      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
-      path: homepage
-      targetRevision: 1.2.3
-      helm:
-        releaseName: homepage
-        valueFiles:
-          - $repo/homepage/values.yml
+  source:
+    path: homepage
+    repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+    targetRevision: HEAD
+    helm:
+      releaseName: homepage
+      valueFiles:
+        - values.yml
 
   project: default
 
