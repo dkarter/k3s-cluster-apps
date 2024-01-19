@@ -86,8 +86,11 @@ config:
       longhorn:
         url: https://longhorn.k3s.pro
 
-  # kubernetes:
-  #   mode: cluster
+  kubernetes:
+    mode: cluster
+
+controller:
+  strategy: Recreate
 
 ingress:
   main:
