@@ -1,28 +1,16 @@
-{{- include "bjw-s.common.loader.init" . }}
-{{ if .Values.enableRbac }}
-{{- $serviceAccountName := include "bjw-s.common.lib.chart.names.serviceAccountName" . -}}
 ---
 apiVersion: v1
 kind: Secret
 type: kubernetes.io/service-account-token
 metadata:
-  name: {{ $serviceAccountName }}
-  {{- with (merge (.Values.labels | default dict) (include "bjw-s.common.lib.metadata.allLabels" $ | fromYaml)) }}
-  labels: {{- toYaml . | nindent 4 }}
-  {{- end }}
+  name: homepage
   annotations:
-    kubernetes.io/service-account.name: {{ $serviceAccountName }}
+    kubernetes.io/service-account.name: homepage
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ $serviceAccountName }}
-  {{- with (merge (.Values.labels | default dict) (include "bjw-s.common.lib.metadata.allLabels" $ | fromYaml)) }}
-  labels: {{- toYaml . | nindent 4 }}
-  {{- end }}
-  {{- with (merge (.Values.annotations | default dict) (include "bjw-s.common.lib.metadata.globalAnnotations" $ | fromYaml)) }}
-  annotations: {{- toYaml . | nindent 4 }}
-  {{- end }}
+  name: homepage
 rules:
   - apiGroups:
       - ""
@@ -67,19 +55,12 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ $serviceAccountName }}
-  {{- with (merge (.Values.labels | default dict) (include "bjw-s.common.lib.metadata.allLabels" $ | fromYaml)) }}
-  labels: {{- toYaml . | nindent 4 }}
-  {{- end }}
-  {{- with (merge (.Values.annotations | default dict) (include "bjw-s.common.lib.metadata.globalAnnotations" $ | fromYaml)) }}
-  annotations: {{- toYaml . | nindent 4 }}
-  {{- end }}
+  name: homepage
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ $serviceAccountName }}
+  name: homepage
 subjects:
   - kind: ServiceAccount
-    name: {{ $serviceAccountName }}
+    name: homepage
     namespace: {{ .Release.Namespace }}
-{{ end }}

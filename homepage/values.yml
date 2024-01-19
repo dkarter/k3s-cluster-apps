@@ -1,10 +1,3 @@
-image:
-  repository: ghcr.io/gethomepage/homepage
-  tag: v0.8.4
-
-# Enable RBAC. RBAC is necessary to use Kubernetes integration
-enableRbac: true
-
 serviceAccount:
   # Specify a different service account name
   name: homepage
@@ -96,7 +89,13 @@ config:
     mode: cluster
 
 controller:
-  strategy: Recreate
+  main:
+    strategy: Recreate
+    containers:
+      main:
+        image:
+          repository: ghcr.io/gethomepage/homepage
+          tag: v0.8.4
 
 ingress:
   main:
@@ -112,7 +111,7 @@ ingress:
       gethomepage.dev/icon: 'homepage.png'
       # cert-manager
       cert-manager.io/cluster-issuer: 'letsencrypt'
-    ingressClassName: 'traefik'
+    className: 'traefik'
     hosts:
       - host: &host 'home.k3s.pro'
         paths:
@@ -122,6 +121,13 @@ ingress:
       - hosts:
           - *host
         secretName: homepage-ingress-cert
+
+persistence:
+  config:
+    type: configMap
+    name: homepage
+    globalMounts:
+      - path: /app/config
 
 envFrom:
   - secretRef:
