@@ -20,7 +20,7 @@ config:
             - abbr: GH
               href: https://github.com/
   services:
-    - Portainer Servers:
+    - Console:
         - Grafana:
             icon: grafana.svg
             href: https://monitor.console.lol
@@ -46,7 +46,7 @@ config:
             href: https://reddit.console.lol
             description: A private Reddit client
 
-    - K3s.Pro Infra:
+    - K3s:
         - Longhorn:
             icon: longhorn.svg
             href: https://longhorn.k3s.pro
