@@ -1,81 +1,81 @@
 ---
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: homepage
-data:
-  bookmarks.yaml: |
-    - Developer:
-        - Github:
-            - abbr: GH
-              href: https://github.com/
-
-  kubernetes.yaml: |
-    mode: cluster
-
-  services.yaml: |
-    - Console:
-        - Grafana:
-            icon: grafana.svg
-            href: https://monitor.console.lol
-            description: PiSrv Grafana (includes Internet Speed)
-
-        - Adguard:
-            icon: adguard-home.svg
-            href: https://adguard2.console.lol
-            description: DNS Ad Blocker
-            widget:
-              type: adguard
-              url: https://adguard2.console.lol
-              username: admin
-              password: '{{HOMEPAGE_VAR_AGH_PASSWORD}}'
-
-        - Portainer:
-            icon: portainer.svg
-            href: https://portainer.console.lol
-            description: Manage docker container based apps
-
-        - Libreddit:
-            icon: libreddit.svg
-            href: https://reddit.console.lol
-            description: A private Reddit client
-
-    - K3s:
-        - Longhorn:
-            icon: longhorn.svg
-            href: https://longhorn.k3s.pro
-            description: Manage Longhorn Distributed Storage
-
-        - Uptime Kuma:
-            icon: uptime-kuma.svg
-            href: https://uptime.k3s.pro
-            description: Monitor Uptime
-  settings.yaml: |
-    providers:
-      longhorn:
-        url: https://longhorn.k3s.pro
-
-  widgets.yaml: |
-    - kubernetes:
-        cluster:
-          show: true
-          cpu: true
-          memory: true
-          showLabel: true
-          label: 'cluster'
-        nodes:
-          show: true
-          cpu: true
-          memory: true
-          showLabel: true
-
-    - longhorn:
-        # Show the expanded view
-        expanded: true
-        # Shows a node representing the aggregate values
-        total: true
-        # Shows the node names as labels
-        labels: true
-        # Show the nodes
-        nodes: true
-
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: homepage
+# data:
+#   bookmarks.yaml: |
+#     - Developer:
+#         - Github:
+#             - abbr: GH
+#               href: https://github.com/
+#
+#   kubernetes.yaml: |
+#     mode: cluster
+#
+#   services.yaml: |
+#     - Console:
+#         - Grafana:
+#             icon: grafana.svg
+#             href: https://monitor.console.lol
+#             description: PiSrv Grafana (includes Internet Speed)
+#
+#         - Adguard:
+#             icon: adguard-home.svg
+#             href: https://adguard2.console.lol
+#             description: DNS Ad Blocker
+#             widget:
+#               type: adguard
+#               url: https://adguard2.console.lol
+#               username: admin
+#               password: '{{HOMEPAGE_VAR_AGH_PASSWORD}}'
+#
+#         - Portainer:
+#             icon: portainer.svg
+#             href: https://portainer.console.lol
+#             description: Manage docker container based apps
+#
+#         - Libreddit:
+#             icon: libreddit.svg
+#             href: https://reddit.console.lol
+#             description: A private Reddit client
+#
+#     - K3s:
+#         - Longhorn:
+#             icon: longhorn.svg
+#             href: https://longhorn.k3s.pro
+#             description: Manage Longhorn Distributed Storage
+#
+#         - Uptime Kuma:
+#             icon: uptime-kuma.svg
+#             href: https://uptime.k3s.pro
+#             description: Monitor Uptime
+#   settings.yaml: |
+#     providers:
+#       longhorn:
+#         url: https://longhorn.k3s.pro
+#
+#   widgets.yaml: |
+#     - kubernetes:
+#         cluster:
+#           show: true
+#           cpu: true
+#           memory: true
+#           showLabel: true
+#           label: 'cluster'
+#         nodes:
+#           show: true
+#           cpu: true
+#           memory: true
+#           showLabel: true
+#
+#     - longhorn:
+#         # Show the expanded view
+#         expanded: true
+#         # Shows a node representing the aggregate values
+#         total: true
+#         # Shows the node names as labels
+#         labels: true
+#         # Show the nodes
+#         nodes: true
+#
