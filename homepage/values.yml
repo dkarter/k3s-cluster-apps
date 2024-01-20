@@ -162,43 +162,12 @@ configMaps:
               href: https://grafana.khuedoan.com
               description: Observability dashboards
               icon: grafana.svg
-        - Utilities:
-          - Excalidraw:
-              href: https://draw.khuedoan.com
-              description: Virtual whiteboard
-              icon: excalidraw.svg
-          - Speedtest:
-              href: https://speedtest.khuedoan.com
-              description: Internal network speed test
-              icon: openspeedtest.png
       bookmarks.yaml: |
         - Homelab:
-          - Documentation:
-            - href: https://homelab.khuedoan.com
-              icon: google-docs.svg
-          - Public homelab repository:
-            - href: https://github.com/khuedoan/homelab
+          - Apps Repo:
+            - href: https://github.com/dkarter/k3s-cluster-apps
               icon: github.svg
         - Managed services:
-          - Cloudflare:
-            - href: https://dash.cloudflare.com
-              icon: cloudflare.svg
-          - Terraform Cloud:
-            - href: https://app.terraform.io
-              icon: terraform.svg
-          - Zerotier:
-            - href: https://my.zerotier.com
-              icon: zerotier.svg
-        - Infrastructure:
-          - Router:
-            - href: https://192.168.1.1
-              icon: router.svg
-          - Proxmox:
-            - href: https://proxmox:8006
-              icon: proxmox.svg
-          - Google Cloud:
-            - href: https://console.cloud.google.com
-              icon: google-cloud-platform.svg
-          - Oracle Cloud:
-            - href: https://cloud.oracle.com
-              icon: oracle-cloud.svg
+          - DigitalOcean:
+            - href: https://cloud.digitalocean.com
+              icon: digitalocean.svg
