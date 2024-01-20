@@ -108,71 +108,51 @@ configMaps:
             # Show the nodes
             nodes: true
       services.yaml: |
-        - Popular:
-          - Matrix:
-              href: https://chat.khuedoan.com
-              description: Chat client
-              icon: element.svg
-          - Jellyfin:
-              href: https://jellyfin.khuedoan.com
-              description: Media system (movies, music, etc.)
-              icon: jellyfin.svg
-          - Jellyseerr:
-              href: https://jellyseerr.khuedoan.com
-              description: Request media
-              icon: jellyseerr.svg
-          - Paperless:
-              href: https://paperless.khuedoan.com
-              description: Document management system
-              icon: paperless.svg
-        - Management:
-          - Transmission:
-              href: https://transmission.khuedoan.com
-              description: Bittorrent client
-              icon: transmission.svg
-          - Prowlarr:
-              href: https://prowlarr.khuedoan.com
-              description: Indexer manager
-              icon: prowlarr.svg
-          - Radarr:
-              href: https://radarr.khuedoan.com
-              description: Movie manager
-              icon: radarr.svg
-          - Sonarr:
-              href: https://sonarr.khuedoan.com
-              description: TV show manager
-              icon: sonarr.svg
-          - Kanidm:
-              href: https://auth.khuedoan.com
-              description: Identity management
-              icon: https://auth.khuedoan.com/pkg/img/logo-square.svg
-        - Development:
-          - Gitea:
-              href: https://git.khuedoan.com
-              description: Git forge
-              icon: gitea.svg
-          - Woodpecker:
-              href: https://ci.khuedoan.com
-              description: Continuous integration
-              icon: woodpecker-ci.svg
-          - ArgoCD:
-              href: https://argocd.khuedoan.com
-              description: Continuous deployment
-              icon: argocd.svg
-          - Registry:
-              href: https://registry.khuedoan.com
-              description: Container registry
-              icon: docker.svg
-          - Grafana:
-              href: https://grafana.khuedoan.com
-              description: Observability dashboards
-              icon: grafana.svg
+        - Console:
+            - Grafana:
+                icon: grafana.svg
+                href: https://monitor.console.lol
+                description: PiSrv Grafana (includes Internet Speed)
+
+            - Adguard:
+                icon: adguard-home.svg
+                href: https://adguard2.console.lol
+                description: DNS Ad Blocker
+                widget:
+                  type: adguard
+                  url: https://adguard2.console.lol
+                  username: admin
+                  password: '{{HOMEPAGE_VAR_AGH_PASSWORD}}'
+
+            - Portainer:
+                icon: portainer.svg
+                href: https://portainer.console.lol
+                description: Manage docker container based apps
+
+            - Libreddit:
+                icon: libreddit.svg
+                href: https://reddit.console.lol
+                description: A private Reddit client
+
+        - K3s:
+            - Longhorn:
+                icon: longhorn.svg
+                href: https://longhorn.k3s.pro
+                description: Manage Longhorn Distributed Storage
+
+            - Uptime Kuma:
+                icon: uptime-kuma.svg
+                href: https://uptime.k3s.pro
+                description: Monitor Uptime
       bookmarks.yaml: |
         - Homelab:
           - Apps Repo:
             - href: https://github.com/dkarter/k3s-cluster-apps
               icon: github.svg
+          - Bootstrap Ansible Repo:
+            - href: https://github.com/dkarter/k3s-cluster
+              icon: github.svg
         - Managed services:
           - DigitalOcean:
             - href: https://cloud.digitalocean.com
-              icon: digitalocean.svg
+              icon: digital-ocean.svg
