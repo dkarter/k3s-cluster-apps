@@ -79,6 +79,11 @@ configMaps:
         theme: dark
         headerStyle: boxed
         hideVersion: true
+        providers:
+          longhorn:
+            url: https://longhorn.k3s.pro
+      kubernetes.yaml: |
+        mode: cluster
       widgets.yaml: |
         - kubernetes:
             cluster:
