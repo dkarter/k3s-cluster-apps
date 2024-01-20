@@ -156,3 +156,7 @@ configMaps:
           - DigitalOcean:
             - href: https://cloud.digitalocean.com
               icon: digital-ocean.svg
+        - Utilities
+          - Dashboard Icons:
+            - href: https://github.com/walkxcode/dashboard-icons
+              icon: github.svg
