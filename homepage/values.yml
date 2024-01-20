@@ -112,42 +112,34 @@ configMaps:
             # Show the nodes
             nodes: true
       services.yaml: |
-        - Console:
-            - Grafana:
-                icon: grafana.svg
-                href: https://monitor.console.lol
-                description: 'PiSrv Grafana (includes Internet Speed)'
+        - Apps:
+            - Libreddit:
+                icon: libreddit.svg
+                href: https://reddit.console.lol
+                description: A private Reddit client
 
-            - Adguard:
-                icon: adguard-home.svg
-                href: &adguard https://adguard2.console.lol
-                description: DNS Ad Blocker
-                widget:
-                  type: adguard
-                  url: *adguard
-                  username: admin
-                  password: '{{`{{HOMEPAGE_VAR_AGH_PASSWORD}}`}}'
+        - System:
+            - Longhorn:
+                icon: longhorn.svg
+                href: https://longhorn.k3s.pro
+                description: Manage Longhorn Distributed Storage
 
             - Portainer:
                 icon: portainer.svg
                 href: https://portainer.console.lol
                 description: Manage docker container based apps
 
-            - Libreddit:
-                icon: libreddit.svg
-                href: https://reddit.console.lol
-                description: A private Reddit client
+        - Network:
+            - Speed Monitor:
+                icon: grafana.svg
+                href: https://monitor.console.lol/d/-fs18ztMz/speedtest-dashboard?orgId=1&refresh=5m
+                description: 'Check for internet speed changes over time'
 
-        - K3s:
-            - Longhorn:
-                icon: longhorn.svg
-                href: https://longhorn.k3s.pro
-                description: Manage Longhorn Distributed Storage
+            - Adguard:
+                icon: adguard-home.svg
+                href: &adguard https://adguard2.console.lol
+                description: DNS Ad Blocker
 
-            - Uptime Kuma:
-                icon: uptime-kuma.svg
-                href: https://uptime.k3s.pro
-                description: Monitor Uptime
       bookmarks.yaml: |
         - Homelab:
             - Apps Repo:

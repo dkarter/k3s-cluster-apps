@@ -7,9 +7,16 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: 'traefik'
     cert-manager.io/cluster-issuer: 'letsencrypt'
+
+    gethomepage.dev/enabled: 'true'
+    gethomepage.dev/description: Uptime Kuma on K3s
+    gethomepage.dev/group: System
+    gethomepage.dev/icon: uptime-kuma.svg
+    gethomepage.dev/name: Uptime Kuma K3s
+    gethomepage.dev/ping: 'https://uptime.k3s.pro'
 spec:
   rules:
-    - host: uptime.k3s.pro
+    - host: &host uptime.k3s.pro
       http:
         paths:
           - path: /
@@ -21,5 +28,5 @@ spec:
                   number: 3001
   tls:
     - hosts:
-        - uptime.k3s.pro
+        - *host
       secretName: uptime-kuma-ingress-cert

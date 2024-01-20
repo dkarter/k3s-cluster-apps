@@ -19,7 +19,7 @@ metadata:
     gethomepage.dev/widget.token: '{{`{{HOMEPAGE_VAR_PAPERLESS_TOKEN}}`}}'
 spec:
   rules:
-    - host: paperless.k3s.pro
+    - host: &host paperless.k3s.pro
       http:
         paths:
           - path: /
@@ -31,5 +31,5 @@ spec:
                   number: 8000
   tls:
     - hosts:
-        - paperless.k3s.pro
+        - *host
       secretName: paperless-ingress-cert
