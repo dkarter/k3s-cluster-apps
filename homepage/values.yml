@@ -122,7 +122,7 @@ configMaps:
                 type: adguard
                 url: https://adguard2.console.lol
                 username: admin
-                password: '{{HOMEPAGE_VAR_AGH_PASSWORD}}'
+                password: '{{`{{HOMEPAGE_VAR_AGH_PASSWORD}}`}}'
 
           - Portainer:
               icon: portainer.svg
