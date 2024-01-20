@@ -80,9 +80,28 @@ configMaps:
         headerStyle: boxed
         hideVersion: true
       widgets.yaml: |
-        - search:
-            provider: google
-            target: _blank
+        - kubernetes:
+            cluster:
+              show: true
+              cpu: true
+              memory: true
+              showLabel: true
+              label: 'cluster'
+            nodes:
+              show: true
+              cpu: true
+              memory: true
+              showLabel: true
+
+        - longhorn:
+            # Show the expanded view
+            expanded: true
+            # Shows a node representing the aggregate values
+            total: true
+            # Shows the node names as labels
+            labels: true
+            # Show the nodes
+            nodes: true
       services.yaml: |
         - Popular:
           - Matrix:
