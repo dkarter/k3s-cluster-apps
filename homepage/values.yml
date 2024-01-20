@@ -1,6 +1,3 @@
-defaultPodOptions:
-  automountServiceAccountToken: false
-
 controllers:
   main:
     strategy: Recreate
@@ -12,14 +9,14 @@ controllers:
           tag: v0.8.4
           pullPolicy: IfNotPresent
 
+        env:
+          TZ: America/Chicago
+
         envFrom:
           - secretRef:
               name: homepage-env
 
 serviceAccount:
-  # Specify a different service account name
-  name: homepage
-  # Create service account. Needed when RBAC is enabled.
   create: true
 
 service:
