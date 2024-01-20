@@ -7,6 +7,16 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: 'traefik'
     cert-manager.io/cluster-issuer: 'letsencrypt'
+
+    gethomepage.dev/enabled: 'true'
+    gethomepage.dev/description: Document Management System
+    gethomepage.dev/group: Apps
+    gethomepage.dev/icon: paperless.svg
+    gethomepage.dev/name: Paperless
+    gethomepage.dev/ping: 'https://paperless.k3s.pro'
+    gethomepage.dev/widget.type: 'paperlessngx'
+    gethomepage.dev/widget.url: 'https://paperless.k3s.pro'
+    gethomepage.dev/widget.token: '{{`{{HOMEPAGE_VAR_PAPERLESS_TOKEN}}`}}'
 spec:
   rules:
     - host: paperless.k3s.pro
