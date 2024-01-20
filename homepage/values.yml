@@ -112,7 +112,7 @@ configMaps:
             - Grafana:
                 icon: grafana.svg
                 href: https://monitor.console.lol
-                description: PiSrv Grafana (includes Internet Speed)
+                description: 'PiSrv Grafana (includes Internet Speed)'
 
             - Adguard:
                 icon: adguard-home.svg
