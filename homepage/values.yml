@@ -120,11 +120,11 @@ configMaps:
 
             - Adguard:
                 icon: adguard-home.svg
-                href: https://adguard2.console.lol
+                href: &adguard https://adguard2.console.lol
                 description: DNS Ad Blocker
                 widget:
                   type: adguard
-                  url: https://adguard2.console.lol
+                  url: *adguard
                   username: admin
                   password: '{{`{{HOMEPAGE_VAR_AGH_PASSWORD}}`}}'
 
