@@ -149,19 +149,19 @@ configMaps:
       bookmarks.yaml: |
         - Homelab:
             - Apps Repo:
-              - href: https://github.com/dkarter/k3s-cluster-apps
-                icon: github.svg
+                - href: https://github.com/dkarter/k3s-cluster-apps
+                  icon: github.svg
 
             - Bootstrap Ansible Repo:
-              - href: https://github.com/dkarter/k3s-cluster
-                icon: github.svg
+                - href: https://github.com/dkarter/k3s-cluster
+                  icon: github.svg
 
         - Managed services:
             - DigitalOcean:
-              - href: https://cloud.digitalocean.com
-                icon: digital-ocean.svg
+                - href: https://cloud.digitalocean.com
+                  icon: digital-ocean.svg
 
-        - Utilities
+        - Utilities:
             - Dashboard Icons:
-              - href: https://github.com/walkxcode/dashboard-icons
-                icon: github.svg
+                - href: https://github.com/walkxcode/dashboard-icons
+                  icon: github.svg
