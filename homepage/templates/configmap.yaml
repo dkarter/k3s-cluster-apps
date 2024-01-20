@@ -10,30 +10,6 @@ data:
             - abbr: GH
               href: https://github.com/
 
-  docker.yaml: |
-    - kubernetes:
-        cluster:
-          show: true
-          cpu: true
-          memory: true
-          showLabel: true
-          label: 'cluster'
-        nodes:
-          show: true
-          cpu: true
-          memory: true
-          showLabel: true
-
-    - longhorn:
-        # Show the expanded view
-        expanded: true
-        # Shows a node representing the aggregate values
-        total: true
-        # Shows the node names as labels
-        labels: true
-        # Show the nodes
-        nodes: true
-
   kubernetes.yaml: |
     mode: cluster
 
@@ -74,8 +50,32 @@ data:
             icon: uptime-kuma.svg
             href: https://uptime.k3s.pro
             description: Monitor Uptime
-
   settings.yaml: |
     providers:
       longhorn:
         url: https://longhorn.k3s.pro
+
+  widgets.yaml: |
+    - kubernetes:
+        cluster:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+          label: 'cluster'
+        nodes:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+
+    - longhorn:
+        # Show the expanded view
+        expanded: true
+        # Shows a node representing the aggregate values
+        total: true
+        # Shows the node names as labels
+        labels: true
+        # Show the nodes
+        nodes: true
+
