@@ -7,6 +7,13 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: 'traefik'
     cert-manager.io/cluster-issuer: 'letsencrypt'
+
+    gethomepage.dev/enabled: 'true'
+    gethomepage.dev/description: Private lightweight note-taking service
+    gethomepage.dev/group: Apps
+    gethomepage.dev/icon: memos.png
+    gethomepage.dev/name: Memos
+    gethomepage.dev/ping: 'https://memos.k3s.pro'
 spec:
   rules:
     - host: memos.k3s.pro
