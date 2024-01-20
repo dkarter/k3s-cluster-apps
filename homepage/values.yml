@@ -119,11 +119,6 @@ configMaps:
                 description: A private Reddit client
 
         - System:
-            - Longhorn:
-                icon: longhorn.svg
-                href: https://longhorn.k3s.pro
-                description: Manage Longhorn Distributed Storage
-
             - Portainer:
                 icon: portainer.svg
                 href: https://portainer.console.lol

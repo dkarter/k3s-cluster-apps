@@ -6,6 +6,13 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: 'traefik'
     cert-manager.io/cluster-issuer: 'letsencrypt'
+
+    gethomepage.dev/enabled: 'true'
+    gethomepage.dev/description: Manage Longhorn Distributed Storage
+    gethomepage.dev/group: System
+    gethomepage.dev/icon: longhorn.svg
+    gethomepage.dev/name: Longhorn
+    gethomepage.dev/ping: 'https://longhorn.k3s.pro'
 spec:
   rules:
     - host: 'longhorn.k3s.pro'
