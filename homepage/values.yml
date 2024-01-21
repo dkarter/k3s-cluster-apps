@@ -128,11 +128,50 @@ configMaps:
                   username: '{{`{{HOMEPAGE_VAR_FRESHRSS_USERNAME}}`}}'
                   password: '{{`{{HOMEPAGE_VAR_FRESHRSS_PASSWORD}}`}}'
 
+            - Linkding:
+                icon: linkding.svg
+                href: https://links.console.lol/
+                description: Bookmark Manager
+
+            - ChangeDetection:
+                icon: changedetection-io.png
+                href: https://change.console.lol
+                description: Detect changes in websites
+                widget:
+                  type: changedetectionio
+                  url: https://change.console.lol
+                  key: '{{`{{HOMEPAGE_VAR_CHANGEDETECTION_KEY}}`}}'
+
+            - Homebox:
+                icon: homebox.svg
+                href: https://homebox.console.lol
+                description: Home inventory management
+
+            - Livebook:
+                icon: https://livebook.dev/_astro/logo.d45aaa96_Z5fOtv.svg
+                href: https://livebook.console.lol
+                description: Elixir code and data notebooks
+
+            - Monica:
+                icon: monica.svg
+                href: https://monica.console.lol
+                description: Personal CRM
+
         - System:
             - Portainer:
                 icon: portainer.svg
                 href: https://portainer.console.lol
                 description: Manage docker container based apps
+
+            - PiSrv I Grafana:
+                icon: grafana.svg
+                href: https://monitor.console.lol/d/Ss3q6hSZkw/docker-and-os-metrics-for-raspberry-pi-15120?orgId=1&refresh=5m
+                description: Monitor Pi-Srv Server
+
+            - PiSrv II Grafana:
+                icon: grafana.svg
+                href: https://monitor.console.lol/d/Ss3q6hSZkw-pi-srv2/pi-srv2-docker-and-os-metrics-for-raspberry-pi-15120?orgId=1&refresh=10s
+                description: Monitor Pi-Srv2 Server
 
         - Network:
             - Speed Monitor:
@@ -145,15 +184,25 @@ configMaps:
                 href: &adguard https://adguard2.console.lol
                 description: DNS Ad Blocker
 
+            - Wireguard:
+                icon: wireguard.svg
+                href: https://wg.console.lol
+                description: Wireguard VPN
+
+            - Pi.Alert:
+                icon: pi-alert.png
+                href: https://alert.console.lol/
+                description: 'WIFI / LAN intruder detection'
+
       bookmarks.yaml: |
         - Homelab:
             - Apps Repo:
                 - href: https://github.com/dkarter/k3s-cluster-apps
-                  icon: github.svg
+                  icon: si-github
 
             - Bootstrap Ansible Repo:
                 - href: https://github.com/dkarter/k3s-cluster
-                  icon: github.svg
+                  icon: si-github
 
         - Managed services:
             - DigitalOcean:
@@ -163,4 +212,8 @@ configMaps:
         - Utilities:
             - Dashboard Icons:
                 - href: https://github.com/walkxcode/dashboard-icons
-                  icon: github.svg
+                  icon: si-github
+
+            - Homepage Docs:
+                - href: https://gethomepage.dev/latest/
+                  icon: homepage.png
