@@ -3,12 +3,18 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: argo-cd
+  annotations:
+    notifications.argoproj.io/subscribe.on-sync-succeeded.telegram: xUptimexKumaxBot
 spec:
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: argo-cd
 
   sources:
+    - path: argo-cd
+      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+
     - chart: argo-cd
       repoURL: https://argoproj.github.io/argo-helm
       targetRevision: 5.53.4
@@ -75,6 +81,13 @@ spec:
             cm:
               # enable web based terminal for shelling into pods
               exec.enabled: true
+
+          notifications:
+            enabled: true
+            secret:
+              create: false
+            cm:
+              create: false
 
   project: default
 
