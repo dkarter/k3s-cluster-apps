@@ -50,6 +50,12 @@ spec:
                 kubernetes.io/ingress.class: 'traefik'
                 cert-manager.io/cluster-issuer: 'letsencrypt'
 
+                gethomepage.dev/enabled: 'true'
+                gethomepage.dev/description: Continuous Delivery
+                gethomepage.dev/group: System
+                gethomepage.dev/icon: argocd.svg
+                gethomepage.dev/name: ArgoCD
+                gethomepage.dev/ping: 'https://argocd.k3s.pro'
               hosts:
                 - 'argocd.k3s.pro'
 
