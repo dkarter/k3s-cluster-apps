@@ -4,4 +4,4 @@ metadata:
   name: argocd-notifications-cm
 data:
   service.telegram: |
-    token: $telegram-token
+    token: $telegram_token
