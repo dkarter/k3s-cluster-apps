@@ -118,6 +118,16 @@ configMaps:
                 href: https://reddit.console.lol
                 description: A private Reddit client
 
+            - FreshRSS:
+              icon: freshrss.svg
+              href: https://rss.console.lol
+              description: RSS Feed Aggregator
+              widget:
+                type: freshrss
+                url: https://rss.console.lol
+                username: '{{`{{HOMEPAGE_VAR_FRESHRSS_USERNAME}}`}}'
+                password: '{{`{{HOMEPAGE_VAR_FRESHRSS_PASSWORD}}`}}'
+
         - System:
             - Portainer:
                 icon: portainer.svg
