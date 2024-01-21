@@ -120,11 +120,11 @@ configMaps:
 
             - FreshRSS:
                 icon: freshrss.svg
-                href: https://rss.console.lol
+                href: &freshrss https://rss.console.lol
                 description: RSS Feed Aggregator
                 widget:
                   type: freshrss
-                  url: https://rss.console.lol
+                  url: *freshrss
                   username: '{{`{{HOMEPAGE_VAR_FRESHRSS_USERNAME}}`}}'
                   password: '{{`{{HOMEPAGE_VAR_FRESHRSS_PASSWORD}}`}}'
 
@@ -135,11 +135,11 @@ configMaps:
 
             - ChangeDetection:
                 icon: changedetection-io.png
-                href: https://change.console.lol
+                href: &changedetection https://change.console.lol
                 description: Detect changes in websites
                 widget:
                   type: changedetectionio
-                  url: https://change.console.lol
+                  url: *changedetection
                   key: '{{`{{HOMEPAGE_VAR_CHANGEDETECTION_KEY}}`}}'
 
             - Homebox:
@@ -191,8 +191,11 @@ configMaps:
 
             - Pi.Alert:
                 icon: pi-alert.png
-                href: https://alert.console.lol/
+                href: &pialert https://alert.console.lol/
                 description: 'WIFI / LAN intruder detection'
+                widget:
+                  type: pialert
+                  url: *pialert
 
             - Nginx Proxy Manager:
                 icon: nginx-proxy-manager.svg
