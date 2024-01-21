@@ -142,6 +142,11 @@ configMaps:
                   url: *changedetection
                   key: '{{`{{HOMEPAGE_VAR_CHANGEDETECTION_KEY}}`}}'
 
+            - OctoPrint:
+                icon: octoprint.png
+                href: https://octoprint.console.lol/
+                description: Manage 3D prints
+
             - Homebox:
                 icon: homebox.svg
                 href: https://homebox.console.lol
