@@ -194,6 +194,11 @@ configMaps:
                 href: https://alert.console.lol/
                 description: 'WIFI / LAN intruder detection'
 
+            - Nginx Proxy Manager:
+                icon: nginx-proxy-manager.svg
+                href: https://npm.console.lol/
+                description: 'Reverse Proxy Manager for Docker Apps'
+
       bookmarks.yaml: |
         - Homelab:
             - Apps Repo:
