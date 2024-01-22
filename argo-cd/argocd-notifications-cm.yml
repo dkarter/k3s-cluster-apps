@@ -5,3 +5,7 @@ metadata:
 data:
   service.telegram: |
     token: $telegram_token
+
+  # Context holds list of variables that can be referenced in templates
+  context: |
+    argocdUrl: https://argocd.k3s.pro/

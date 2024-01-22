@@ -4,7 +4,7 @@ kind: Application
 metadata:
   name: argo-cd
   annotations:
-    notifications.argoproj.io/subscribe.on-sync-succeeded.telegram: xUptimexKumaxBot
+    notifications.argoproj.io/subscribe.on-sync-succeeded.telegram: '-5943776539'
 spec:
   destination:
     server: 'https://kubernetes.default.svc'
