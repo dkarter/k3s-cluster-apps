@@ -3,8 +3,6 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: homepage
-  annotations:
-    notifications.argoproj.io/subscribe.on-sync-succeeded.telegram: '-5943776539'
 spec:
   destination:
     server: 'https://kubernetes.default.svc'
