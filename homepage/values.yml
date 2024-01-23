@@ -162,6 +162,11 @@ configMaps:
                 href: https://monica.console.lol
                 description: Personal CRM
 
+            - Ntfy:
+                icon: ntfy.svg
+                href: https://ntfy.console.lol
+                description: Push notifications
+
         - System:
             - Portainer:
                 icon: portainer.svg
