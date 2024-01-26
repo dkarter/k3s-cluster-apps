@@ -1,12 +1,12 @@
 additionalServiceMonitors:
   - name: external-secrets
-    namespace: vault
+    namespace: external-secrets
     selector:
       matchLabels:
         app.kubernetes.io/name: external-secrets
     namespaceSelector:
       matchNames:
-        - vault
+        - external-secrets
     endpoints:
       - port: prometheus
 
