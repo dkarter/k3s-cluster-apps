@@ -1,0 +1,60 @@
+additionalServiceMonitors:
+  - name: external-secrets
+    namespace: vault
+    selector:
+      matchLabels:
+        app.kubernetes.io/name: external-secrets
+    namespaceSelector:
+      matchNames:
+        - vault
+    endpoints:
+      - port: prometheus
+
+alertmanager:
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+    hosts:
+      - 'alertmanager.k3s.pro'
+    paths:
+      - /
+    pathType: Prefix
+    tls:
+      - secretName: alertmanager-ingress-cert
+        hosts:
+          - 'alertmanager.k3s.pro'
+
+grafana:
+  admin:
+    existingSecret: 'grafana-admin'
+    userKey: grafana_username
+    passwordKey: grafana_password
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/description: Dashboards and alerts
+      gethomepage.dev/group: System
+      gethomepage.dev/icon: grafana.svg
+      gethomepage.dev/name: Grafana
+      gethomepage.dev/ping: 'https://grafana.k3s.pro/api/health'
+      gethomepage.dev/widget.type: 'grafana'
+      gethomepage.dev/widget.url: 'https://grafana.k3s.pro'
+      gethomepage.dev/widget.username: 'admin'
+      gethomepage.dev/widget.password: '{{`{{HOMEPAGE_VAR_GRAFANA_PASSWORD}}`}}'
+    hosts:
+      - 'grafana.k3s.pro'
+    paths:
+      - /
+    pathType: Prefix
+    tls:
+      - secretName: grafana-ingress-cert
+        hosts:
+          - 'grafana.k3s.pro'
