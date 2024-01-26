@@ -33,19 +33,33 @@ spec:
 
           redis-ha:
             enabled: true
+            haproxy:
+              metrics:
+                enabled: true
 
           controller:
             replicas: 1
+            metrics:
+              enabled: true
 
           repoServer:
             replicas: 2
 
+            metrics:
+              enabled: true
+
           applicationSet:
             replicas: 2
+
+            metrics:
+              enabled: true
 
           ## Server
           server:
             replicas: 2
+
+            metrics:
+              enabled: true
 
             ingress:
               enabled: true
@@ -84,6 +98,9 @@ spec:
             enabled: true
             secret:
               create: false
+
+            metrics:
+              enabled: true
 
             argocdUrl: https://argocd.k3s.pro/
 

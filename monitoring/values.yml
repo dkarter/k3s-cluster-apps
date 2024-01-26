@@ -10,6 +10,17 @@ additionalServiceMonitors:
     endpoints:
       - port: prometheus
 
+  - name: argocd-metrics
+    namespace: argo-cd
+    selector:
+      matchLabels:
+        app.kubernetes.io/name: argocd-metrics
+    namespaceSelector:
+      matchNames:
+        - argo-cd
+    endpoints:
+      - port: metrics
+
 alertmanager:
   ingress:
     enabled: true
