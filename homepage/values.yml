@@ -170,8 +170,13 @@ configMaps:
         - System:
             - Portainer:
                 icon: portainer.svg
-                href: https://portainer.console.lol
+                href: &portainer https://portainer.console.lol
                 description: Manage docker container based apps
+                widget:
+                  type: portainer
+                  url: *portainer
+                  env: 2
+                  key: '{{`{{HOMEPAGE_VAR_PORTAINER_TOKEN }}`}}'
 
             - PiSrv I Grafana:
                 icon: grafana.svg
