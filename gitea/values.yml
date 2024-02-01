@@ -19,17 +19,16 @@ replicaCount: 2
 persistence:
   enabled: true
   size: 3Gi
-  accessModes:
-    - ReadWriteMany
-  storageClass: longhorn
   subPath: gitea
 
-postgresql:
-  persistence:
-    size: 3Gi
-    storageClass: longhorn
-    accessModes:
-      - ReadWriteMany
+postgresql-ha:
+  enabled: true
+  service:
+    ports:
+      postgresql: 5432
+  primary:
+    persistence:
+      size: 10Gi
 
 gitea:
   admin:
