@@ -5,14 +5,14 @@ ingress:
     kubernetes.io/ingress.class: 'traefik'
     cert-manager.io/cluster-issuer: 'letsencrypt'
   hosts:
-    - host: gitea.k3s.pro
+    - host: git.k3s.pro
       paths:
         - path: /
           pathType: Prefix
   tls:
-    - secretName: alertmanager-ingress-cert
+    - secretName: gitea-ingress-cert
       hosts:
-        - 'alertmanager.k3s.pro'
+        - 'git.k3s.pro'
 
 replicaCount: 2
 
