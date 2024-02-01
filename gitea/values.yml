@@ -34,3 +34,7 @@ postgresql:
 gitea:
   admin:
     existingSecret: gitea-admin
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
