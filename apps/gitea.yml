@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=https://deedee-ops.github.io/schemas/argoproj.io/application_v1alpha1.json
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitea
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gitea
+
+  project: default
+
+  sources:
+    - path: gitea
+      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+
+    - repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+      ref: values
+
+    - chart: gitea
+      repoURL: https://dl.gitea.io/charts/
+      targetRevision: '6.0.3'
+      helm:
+        releaseName: gitea
+        valueFiles:
+          - $values/homepage/values.yml
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

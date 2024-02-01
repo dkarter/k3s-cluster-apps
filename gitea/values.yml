@@ -1,0 +1,36 @@
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: 'traefik'
+    cert-manager.io/cluster-issuer: 'letsencrypt'
+  hosts:
+    - host: gitea.k3s.pro
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: alertmanager-ingress-cert
+      hosts:
+        - 'alertmanager.k3s.pro'
+
+replicaCount: 2
+
+persistence:
+  enabled: true
+  size: 3Gi
+  accessModes:
+    - ReadWriteMany
+  storageClass: longhorn
+  subPath: gitea
+
+postgresql:
+  persistence:
+    size: 3Gi
+    storageClass: longhorn
+    accessModes:
+      - ReadWriteMany
+
+gitea:
+  admin:
+    existingSecret: gitea-admin
