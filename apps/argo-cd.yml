@@ -75,6 +75,7 @@ spec:
                 gethomepage.dev/icon: argocd.svg
                 gethomepage.dev/name: ArgoCD
                 gethomepage.dev/ping: 'https://argocd.k3s.pro'
+              tls: true
 
           configs:
             params:
