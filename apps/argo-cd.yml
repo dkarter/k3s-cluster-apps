@@ -15,7 +15,7 @@ spec:
 
     - chart: argo-cd
       repoURL: https://argoproj.github.io/argo-helm
-      targetRevision: 5.55.0
+      targetRevision: 6.0.14
       helm:
         releaseName: argo-cd
         valuesObject:
@@ -64,6 +64,7 @@ spec:
             ingress:
               enabled: true
               ingressClassName: traefik
+              hostname: argocd.k3s.pro
               annotations:
                 kubernetes.io/ingress.class: 'traefik'
                 cert-manager.io/cluster-issuer: 'letsencrypt'
@@ -74,16 +75,6 @@ spec:
                 gethomepage.dev/icon: argocd.svg
                 gethomepage.dev/name: ArgoCD
                 gethomepage.dev/ping: 'https://argocd.k3s.pro'
-              hosts:
-                - 'argocd.k3s.pro'
-
-              tls:
-                - hosts:
-                    - 'argocd.k3s.pro'
-                  secretName: argocd-ingress-cert
-
-            config:
-              url: 'https://argocd.k3s.pro'
 
           configs:
             params:
@@ -93,6 +84,7 @@ spec:
             cm:
               # enable web based terminal for shelling into pods
               exec.enabled: true
+              url: 'https://argocd.k3s.pro'
 
           notifications:
             enabled: true
