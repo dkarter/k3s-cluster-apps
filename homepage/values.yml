@@ -6,7 +6,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/gethomepage/homepage
-          tag: v0.8.8
+          tag: v0.8.9
           pullPolicy: IfNotPresent
 
         env:
