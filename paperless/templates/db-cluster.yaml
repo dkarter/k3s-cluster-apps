@@ -9,4 +9,4 @@ spec:
   storage:
     # https://cloudnative-pg.io/documentation/current/storage/#block-storage-considerations-ceph-longhorn
     storageClass: local-path
-    size: 1Gi
+    size: 5Gi
