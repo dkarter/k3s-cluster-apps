@@ -15,7 +15,7 @@ spec:
 
     - chart: argo-cd
       repoURL: https://argoproj.github.io/argo-helm
-      targetRevision: 6.7.13
+      targetRevision: 6.7.18
       helm:
         releaseName: argo-cd
         valuesObject:
