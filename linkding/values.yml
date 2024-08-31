@@ -12,6 +12,12 @@ controllers:
 
         env:
           TZ: America/Chicago
+          # see docs in https://github.com/sissbruecker/linkding/blob/master/docs/Options.md#list-of-options
+          LD_FAVICON_PROVIDER: https://icons.duckduckgo.com/ip3/{domain}.ico
+
+        envFrom:
+          - secretRef:
+              name: linkding-env
 
 persistence:
   data:
