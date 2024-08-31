@@ -17,9 +17,9 @@ spec:
         valuesObject:
           installCRDs: true
 
-    # - path: cert-manager
-    #   repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
-    #   targetRevision: HEAD
+    - path: cert-manager
+      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
 
   project: default
 
