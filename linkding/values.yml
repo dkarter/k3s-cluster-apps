@@ -33,6 +33,16 @@ ingress:
   main:
     enabled: true
     annotations:
+      # These annotations will configure how this deployment is shown in Homepage
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: Linkding
+      gethomepage.dev/description: Bookmark manager
+      gethomepage.dev/group: Apps
+      gethomepage.dev/icon: linkding.svg
+      gethomepage.dev/ping: 'https://linkding.k3s.pro'
+
+      # cert-manager
+      kubernetes.io/ingress.class: 'traefik'
       cert-manager.io/cluster-issuer: 'letsencrypt'
     className: 'traefik'
     hosts:
