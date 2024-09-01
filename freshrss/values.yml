@@ -17,7 +17,7 @@ controllers:
           # And https://github.com/FreshRSS/FreshRSS/blob/edge/Docker/freshrss/example.env
           TZ: America/Chicago
           BASE_URL: https://rss.k3s.pro
-          PUBLISHED_PORT: 8080
+          # PUBLISHED_PORT: 8080
 
         envFrom:
           - secretRef:
