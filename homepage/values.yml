@@ -201,14 +201,6 @@ configMaps:
                 href: https://wg.console.lol
                 description: Wireguard VPN
 
-            - Pi.Alert:
-                icon: pi-alert.png
-                href: &pialert https://alert.console.lol/
-                description: 'WIFI / LAN intruder detection'
-                widget:
-                  type: pialert
-                  url: *pialert
-
             - Nginx Proxy Manager:
                 icon: nginx-proxy-manager.svg
                 href: https://npm.console.lol/
