@@ -22,19 +22,19 @@ controllers:
           - secretRef:
               name: freshrss-env
 
-        probes:
-          liveness: &probes
-            enabled: true
-            custom: true
-            spec:
-              httpGet:
-                path: /
-                port: 80
-              initialDelaySeconds: 120
-              periodSeconds: 10
-              timeoutSeconds: 1
-              failureThreshold: 3
-          readiness: *probes
+        # probes:
+        #   liveness: &probes
+        #     enabled: true
+        #     custom: true
+        #     spec:
+        #       httpGet:
+        #         path: /
+        #         port: 80
+        #       initialDelaySeconds: 120
+        #       periodSeconds: 10
+        #       timeoutSeconds: 1
+        #       failureThreshold: 3
+        #   readiness: *probes
 
 persistence:
   data:
