@@ -74,7 +74,7 @@ spec:
                 gethomepage.dev/group: System
                 gethomepage.dev/icon: argocd.svg
                 gethomepage.dev/name: ArgoCD
-                gethomepage.dev/ping: 'https://argocd.k3s.pro'
+                gethomepage.dev/siteMonitor: 'https://argocd.k3s.pro'
               tls: true
 
           configs:

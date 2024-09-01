@@ -55,7 +55,7 @@ grafana:
       gethomepage.dev/group: System
       gethomepage.dev/icon: grafana.svg
       gethomepage.dev/name: Grafana
-      gethomepage.dev/ping: 'https://grafana.k3s.pro/api/health'
+      gethomepage.dev/siteMonitor: 'https://grafana.k3s.pro/api/health'
       gethomepage.dev/widget.type: 'grafana'
       gethomepage.dev/widget.url: 'https://grafana.k3s.pro'
       gethomepage.dev/widget.username: 'admin'

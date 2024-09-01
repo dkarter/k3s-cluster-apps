@@ -13,7 +13,7 @@ metadata:
     gethomepage.dev/group: Apps
     gethomepage.dev/icon: paperless-ngx.svg
     gethomepage.dev/name: Paperless
-    gethomepage.dev/ping: 'https://paperless.k3s.pro'
+    gethomepage.dev/siteMonitor: 'https://paperless.k3s.pro'
     gethomepage.dev/widget.type: 'paperlessngx'
     gethomepage.dev/widget.url: 'https://paperless.k3s.pro'
     gethomepage.dev/widget.token: '{{`{{HOMEPAGE_VAR_PAPERLESS_TOKEN}}`}}'

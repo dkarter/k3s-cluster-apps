@@ -13,7 +13,7 @@ metadata:
     gethomepage.dev/group: Apps
     gethomepage.dev/icon: memos.png
     gethomepage.dev/name: Memos
-    gethomepage.dev/ping: 'https://memos.k3s.pro'
+    gethomepage.dev/siteMonitor: 'https://memos.k3s.pro'
 spec:
   rules:
     - host: memos.k3s.pro

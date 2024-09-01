@@ -70,7 +70,7 @@ ingress:
       gethomepage.dev/description: RSS Feed Aggregator
       gethomepage.dev/group: Apps
       gethomepage.dev/icon: freshrss.svg
-      gethomepage.dev/ping: 'https://rss.k3s.pro'
+      gethomepage.dev/siteMonitor: 'https://rss.k3s.pro'
 
       # cert-manager
       kubernetes.io/ingress.class: 'traefik'
