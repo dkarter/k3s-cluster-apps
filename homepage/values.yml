@@ -130,21 +130,6 @@ configMaps:
                 href: https://reddit.console.lol
                 description: A private Reddit client
 
-            - FreshRSS:
-                icon: freshrss.svg
-                href: &freshrss https://rss.console.lol
-                description: RSS Feed Aggregator
-                widget:
-                  type: freshrss
-                  url: *freshrss
-                  username: '{{`{{HOMEPAGE_VAR_FRESHRSS_USERNAME}}`}}'
-                  password: '{{`{{HOMEPAGE_VAR_FRESHRSS_PASSWORD}}`}}'
-
-            - Linkding:
-                icon: linkding.svg
-                href: https://links.console.lol/
-                description: Bookmark Manager
-
             - ChangeDetection:
                 icon: changedetection-io.png
                 href: &changedetection https://change.console.lol
