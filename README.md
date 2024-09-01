@@ -27,3 +27,5 @@ Repository for managing apps on my Raspberry Pi K3s bare metal cluster
 ## Maybe
 
 - Add MinIO operator https://github.com/minio/operator
+- automate UptimeKuma service discovery
+- automate prometheus service discovery
