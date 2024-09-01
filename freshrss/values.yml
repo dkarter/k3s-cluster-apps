@@ -17,25 +17,24 @@ controllers:
           # And https://github.com/FreshRSS/FreshRSS/blob/edge/Docker/freshrss/example.env
           TZ: America/Chicago
           BASE_URL: https://rss.k3s.pro
-          # PUBLISHED_PORT: 8080
 
         envFrom:
           - secretRef:
               name: freshrss-env
 
-        # probes:
-        #   liveness: &probes
-        #     enabled: true
-        #     custom: true
-        #     spec:
-        #       httpGet:
-        #         path: /
-        #         port: *port
-        #       initialDelaySeconds: 120
-        #       periodSeconds: 10
-        #       timeoutSeconds: 1
-        #       failureThreshold: 3
-        #   readiness: *probes
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: 80
+              initialDelaySeconds: 120
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+          readiness: *probes
 
 persistence:
   data:
@@ -59,7 +58,7 @@ service:
     controller: main
     ports:
       http:
-        port: 8080
+        port: 80
 
 ingress:
   main:
