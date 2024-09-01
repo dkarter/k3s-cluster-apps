@@ -6,7 +6,7 @@ Repository for managing apps on my Raspberry Pi K3s bare metal cluster
 
 - [ ] move onepassword-connect to be managed by ArgoCD
 - [ ] Setup more apps:
-  - [ ] FreshRSS
+  - [x] FreshRSS
   - [ ] LiveBook
   - [ ] LibReddit
   - [ ] PiAlert
