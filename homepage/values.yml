@@ -193,7 +193,7 @@ configMaps:
 
             - Adguard:
                 icon: adguard-home.svg
-                href: &adguard https://adguard2.console.lol
+                href: &adguard https://adguard.console.lol
                 description: DNS Ad Blocker
 
             - Wireguard:
