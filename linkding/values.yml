@@ -19,6 +19,20 @@ controllers:
           - secretRef:
               name: linkding-env
 
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: &port 9090
+              initialDelaySeconds: 60
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+          readiness: *probes
+
 persistence:
   data:
     enabled: true
@@ -33,7 +47,7 @@ service:
     controller: main
     ports:
       http:
-        port: 9090
+        port: *port
 
 ingress:
   main:
