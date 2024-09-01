@@ -24,11 +24,18 @@ controllers:
               name: freshrss-env
 
         probes:
-          readiness:
+          liveness: &probes
             enabled: true
-
-          liveness:
-            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: *port
+              initialDelaySeconds: 120
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+          readiness: *probes
 
 persistence:
   data:
