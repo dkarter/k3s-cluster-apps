@@ -3,6 +3,7 @@ host: &host 'wg.k3s.pro'
 url: &url 'https://wg.k3s.pro'
 http_port: &http_port 51821
 wireguard_port: &wireguard_port 51820
+wireguard_external_port: &wireguard_external_port 31111
 
 controllers:
   main:
@@ -69,7 +70,7 @@ service:
         port: *wireguard_port
         protocol: UDP
         targetPort: *wireguard_port
-        nodePort: *wireguard_port
+        nodePort: *wireguard_external_port
 
 ingress:
   main:
