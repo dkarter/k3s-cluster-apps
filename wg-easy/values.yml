@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.4.0/charts/library/common/values.schema.json
+host: &host 'wg.k3s.pro'
+url: &url 'https://wg.k3s.pro'
+http_port: &http_port 51821
+wireguard_port: &wireguard_port 51820
+
+controllers:
+  main:
+    strategy: Recreate
+
+    containers:
+      app:
+        image:
+          repository: ghcr.io/wg-easy/wg-easy
+          tag: '14'
+          pullPolicy: IfNotPresent
+
+        env:
+          WG_HOST: *host
+          ENABLE_PROMETHEUS_METRICS: 'true'
+
+        envFrom:
+          - secretRef:
+              name: wg-easy-env
+
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: *http_port
+              initialDelaySeconds: 60
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+          readiness: *probes
+
+persistence:
+  data:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    globalMounts:
+      - path: /etc/wireguard
+
+service:
+  app:
+    controller: main
+    ports:
+      http:
+        port: *http_port
+      wireguard:
+        enabled: true
+        port: *wireguard_port
+        protocol: UDP
+        targetPort: *wireguard_port
+        nodePort: *wireguard_port
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      # These annotations will configure how this deployment is shown in Homepage
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: WireGuard
+      gethomepage.dev/description: WireGuard VPN
+      gethomepage.dev/group: Network
+      gethomepage.dev/icon: wireguard.svg
+      gethomepage.dev/siteMonitor: *url
+
+      # cert-manager
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+    className: 'traefik'
+    hosts:
+      - host: *host
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - *host
+        secretName: wg-easy-ingress-cert
