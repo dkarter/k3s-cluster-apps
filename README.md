@@ -7,7 +7,7 @@ Repository for managing apps on my Raspberry Pi K3s bare metal cluster
 - [ ] move onepassword-connect to be managed by ArgoCD
 - [ ] Setup more apps:
   - [x] FreshRSS
-  - [ ] LiveBook
+  - [x] LiveBook
   - [ ] LibReddit
   - [ ] PiAlert
   - [ ] WG Easy
@@ -16,10 +16,11 @@ Repository for managing apps on my Raspberry Pi K3s bare metal cluster
   - [ ] NTFY
   - [ ] SpeedTestExporter
   - [ ] \*arr suite?
-  - [ ] GlueTun
-    - [ ] Route FreshRSS + Arr
   - [ ] Sshwifty
   - [ ] ChangeDetection
+  - [ ] GlueTun
+    - [ ] look into this https://github.com/thavlik/vpn-operator
+    - [ ] Route FreshRSS + Arr
 - [ ] add readiness and liveness probes to deployments
 - [ ] Set up a backup from longhorn using a NAS + [MinIO](https://min.io/)
   - find out if possible to automate this in the pvc provisioning
