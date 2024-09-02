@@ -1,13 +1,9 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.3.2/charts/library/common/values.schema.json
 host: &host 'livebook.k3s.pro'
-url: &url 'https://livebook.k3s.pro'
 http_port: &http_port 8080
-# not sure if I need this port per https://github.com/livebook-dev/livebook#environment-variables
-iframe_port: &iframe_port 8081
 
 controllers:
   main:
-    # does this really need to be Recreate for livebook?
     strategy: Recreate
 
     containers:
@@ -27,7 +23,7 @@ controllers:
             custom: true
             spec:
               httpGet:
-                path: /
+                path: /public/health
                 port: *http_port
               initialDelaySeconds: 60
               periodSeconds: 10
@@ -51,9 +47,6 @@ service:
       http:
         port: *http_port
 
-      asset:
-        port: *iframe_port
-
 ingress:
   main:
     enabled: true
@@ -63,8 +56,8 @@ ingress:
       gethomepage.dev/name: Livebook
       gethomepage.dev/description: Interactive Elixir Notebooks
       gethomepage.dev/group: Apps
-      gethomepage.dev/icon: livebook.svg
-      gethomepage.dev/siteMonitor: *url
+      gethomepage.dev/icon: https://avatars.githubusercontent.com/u/87464290?s=48&v=4
+      gethomepage.dev/siteMonitor: 'https://livebook.k3s.pro/public/health'
 
       # cert-manager
       kubernetes.io/ingress.class: 'traefik'

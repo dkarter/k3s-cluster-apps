@@ -149,11 +149,6 @@ configMaps:
                 href: https://homebox.console.lol
                 description: Home inventory management
 
-            - Livebook:
-                icon: https://livebook.dev/_astro/logo.d45aaa96_Z5fOtv.svg
-                href: https://livebook.console.lol
-                description: Elixir code and data notebooks
-
             - Monica:
                 icon: monica.svg
                 href: https://monica.console.lol
