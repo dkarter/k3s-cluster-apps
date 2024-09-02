@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.3.2/charts/library/common/values.schema.json
 host: &host 'livebook.k3s.pro'
+url: &url 'https://livebook.k3s.pro'
 http_port: &http_port 8080
 # not sure if I need this port per https://github.com/livebook-dev/livebook#environment-variables
 iframe_port: &iframe_port 8081
@@ -57,6 +58,16 @@ ingress:
   main:
     enabled: true
     annotations:
+      # These annotations will configure how this deployment is shown in Homepage
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: Livebook
+      gethomepage.dev/description: Interactive Elixir Notebooks
+      gethomepage.dev/group: Apps
+      gethomepage.dev/icon: livebook.svg
+      gethomepage.dev/siteMonitor: *url
+
+      # cert-manager
+      kubernetes.io/ingress.class: 'traefik'
       cert-manager.io/cluster-issuer: 'letsencrypt'
     className: 'traefik'
     hosts:
