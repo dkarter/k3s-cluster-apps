@@ -28,12 +28,24 @@ spec:
         - image: neosmemo/memos:0.22.4
           name: memos
           ports:
-            - containerPort: 5230
-              hostPort: 5230
+            - containerPort: &port 5230
+              hostPort: *port
               protocol: TCP
           volumeMounts:
             - mountPath: /var/opt/memos
               name: memos-claim0
+
+          livenessProbe: &probes
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 1
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: *port
+
+          readinessProbe: *probes
+
       restartPolicy: Always
       volumes:
         - name: memos-claim0
