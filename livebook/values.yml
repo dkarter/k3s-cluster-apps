@@ -13,7 +13,7 @@ controllers:
     containers:
       app:
         image:
-          repository: ghcr.io/livebook/livebook
+          repository: ghcr.io/livebook-dev/livebook
           tag: 0.14.0
           pullPolicy: IfNotPresent
 
