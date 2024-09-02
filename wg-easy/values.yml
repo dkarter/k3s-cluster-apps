@@ -59,6 +59,11 @@ service:
     ports:
       http:
         port: *http_port
+
+  wireguard:
+    type: NodePort
+    controller: main
+    ports:
       wireguard:
         enabled: true
         port: *wireguard_port
