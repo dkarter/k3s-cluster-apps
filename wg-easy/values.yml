@@ -1,9 +1,10 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.4.0/charts/library/common/values.schema.json
+external_host: &external_host 'home.console.lol'
 host: &host 'wg.k3s.pro'
 url: &url 'https://wg.k3s.pro'
 http_port: &http_port 51821
 wireguard_port: &wireguard_port 51820
-wireguard_external_port: &wireguard_external_port 31111
+wireguard_external_port: &wireguard_external_port 31820
 
 controllers:
   main:
@@ -24,7 +25,11 @@ controllers:
           privileged: true
 
         env:
-          WG_HOST: *host
+          WEBUI_HOST: *host
+          WG_HOST: *external_host
+          # does not change the internal port in the container, likely just used
+          # for client config file generation
+          WG_PORT: *wireguard_external_port
           ENABLE_PROMETHEUS_METRICS: 'true'
 
         envFrom:
