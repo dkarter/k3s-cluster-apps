@@ -25,7 +25,7 @@ controllers:
           privileged: true
 
         env:
-          WEBUI_HOST: *host
+          # WEBUI_HOST: *host
           WG_HOST: *external_host
           # does not change the internal port in the container, likely just used
           # for client config file generation
