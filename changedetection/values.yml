@@ -19,6 +19,20 @@ controllers:
           BASE_URL: *url
           PLAYWRIGHT_DRIVER_URL: 'ws://playwright-chrome:3000/?stealth=1&--disable-web-security=true'
 
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: *app_port
+              initialDelaySeconds: 60
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+          readiness: *probes
+
       playwright-chrome:
         image:
           repository: browserless/chrome
