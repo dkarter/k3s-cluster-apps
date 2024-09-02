@@ -66,12 +66,16 @@ service:
       http:
         port: *http_port
 
+      wireguard_internal:
+        port: *wireguard_port
+        protocol: UDP
+        targetPort: *wireguard_port
+
   wireguard:
     type: NodePort
     controller: main
     ports:
       wireguard:
-        enabled: true
         port: *wireguard_port
         protocol: UDP
         targetPort: *wireguard_port
