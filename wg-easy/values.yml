@@ -15,6 +15,13 @@ controllers:
           tag: '14'
           pullPolicy: IfNotPresent
 
+        securityContext:
+          capabilities:
+            add:
+              - NET_ADMIN
+              - SYS_MODULE
+          privileged: true
+
         env:
           WG_HOST: *host
           ENABLE_PROMETHEUS_METRICS: 'true'
