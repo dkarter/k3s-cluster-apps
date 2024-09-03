@@ -15,6 +15,7 @@ redis-ha:
 
 controller:
   replicas: 1
+
   metrics:
     enabled: true
     applicationLabels:
@@ -27,12 +28,20 @@ repoServer:
 
   metrics:
     enabled: true
+    applicationLabels:
+      enabled: true
+    serviceMonitor:
+      enabled: true
 
 applicationSet:
   replicas: 2
 
   metrics:
     enabled: true
+    applicationLabels:
+      enabled: true
+    serviceMonitor:
+      enabled: true
 
 ## Server
 server:
@@ -40,6 +49,10 @@ server:
 
   metrics:
     enabled: true
+    applicationLabels:
+      enabled: true
+    serviceMonitor:
+      enabled: true
 
   ingress:
     enabled: true
@@ -74,6 +87,10 @@ notifications:
 
   metrics:
     enabled: true
+    applicationLabels:
+      enabled: true
+    serviceMonitor:
+      enabled: true
 
   argocdUrl: https://argocd.k3s.pro/
 
