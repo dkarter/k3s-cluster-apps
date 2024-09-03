@@ -20,6 +20,8 @@ controller:
   replicas: 1
   metrics:
     enabled: true
+    serviceMonitor:
+      enabled: true
 
 repoServer:
   replicas: 2
