@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.4.0/charts/library/common/values.schema.json
-host: &host 'changedetection.k3s.pro'
-url: &url 'https://changedetection.k3s.pro'
+app_host: &app_host 'change.k3s.pro'
+playwright_host: &playwright_host 'playwright.k3s.pro'
+app_url: &app_url 'https://change.k3s.pro'
 app_port: &app_port 5000
 playwright_port: &playwright_port 3000
 
@@ -16,8 +17,8 @@ controllers:
           pullPolicy: IfNotPresent
 
         env:
-          BASE_URL: *url
-          PLAYWRIGHT_DRIVER_URL: 'ws://playwright-chrome:3000/?stealth=1&--disable-web-security=true'
+          BASE_URL: *app_url
+          PLAYWRIGHT_DRIVER_URL: 'ws://playwright.k3s.pro/?stealth=1&--disable-web-security=true'
 
         probes:
           liveness: &probes
@@ -33,11 +34,29 @@ controllers:
               failureThreshold: 3
           readiness: *probes
 
+  playwright-chrome:
+    strategy: Recreate
+
+    containers:
       playwright-chrome:
         image:
           repository: browserless/chrome
           tag: latest
           pullPolicy: IfNotPresent
+
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: *playwright_port
+              initialDelaySeconds: 60
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+          readiness: *probes
 
 persistence:
   data:
@@ -56,7 +75,7 @@ service:
         port: *app_port
 
   playwright-chrome:
-    controller: main
+    controller: playwright-chrome
     ports:
       http:
         port: *playwright_port
@@ -71,14 +90,14 @@ ingress:
       gethomepage.dev/description: Detect changes in websites
       gethomepage.dev/group: Apps
       gethomepage.dev/icon: changedetection-io.png
-      gethomepage.dev/siteMonitor: 'https://changedetection.k3s.pro'
+      gethomepage.dev/siteMonitor: *app_url
 
       # cert-manager
       kubernetes.io/ingress.class: 'traefik'
       cert-manager.io/cluster-issuer: 'letsencrypt'
     className: 'traefik'
     hosts:
-      - host: *host
+      - host: *app_host
         paths:
           - path: /
             pathType: Prefix
@@ -87,5 +106,25 @@ ingress:
               port: http
     tls:
       - hosts:
-          - *host
+          - *app_host
         secretName: changedetection-ingress-cert
+
+  playwright-chrome:
+    enabled: true
+    annotations:
+      # cert-manager
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+    className: 'traefik'
+    hosts:
+      - host: *playwright_host
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: playwright-chrome
+              port: http
+    tls:
+      - hosts:
+          - *playwright_host
+        secretName: changedetection-playwright-chrome-ingress-cert
