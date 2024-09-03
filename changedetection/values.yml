@@ -18,7 +18,7 @@ controllers:
 
         env:
           BASE_URL: *app_url
-          PLAYWRIGHT_DRIVER_URL: 'ws://playwright.k3s.pro/?stealth=1&--disable-web-security=true'
+          PLAYWRIGHT_DRIVER_URL: 'wss://playwright.k3s.pro/?stealth=1&--disable-web-security=true'
 
         probes:
           liveness: &probes
