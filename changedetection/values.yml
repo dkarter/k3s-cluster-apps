@@ -64,8 +64,10 @@ persistence:
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
     size: 1Gi
-    globalMounts:
-      - path: /datastore
+    advancedMounts:
+      main:
+        app:
+          - path: /datastore
 
 service:
   app:
