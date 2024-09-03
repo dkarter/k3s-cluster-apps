@@ -14,7 +14,8 @@ additionalServiceMonitors:
     namespace: argo-cd
     selector:
       matchLabels:
-        app.kubernetes.io/name: argocd-metrics
+        app.kubernetes.io/name: argocd-server
+        # app.kubernetes.io/name: argocd-metrics
     namespaceSelector:
       matchNames:
         - argo-cd
