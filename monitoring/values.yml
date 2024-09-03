@@ -19,7 +19,7 @@ additionalServiceMonitors:
       matchNames:
         - argo-cd
     endpoints:
-      - port: metrics
+      - port: 8083
 
 alertmanager:
   ingress:
