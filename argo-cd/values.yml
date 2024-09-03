@@ -7,9 +7,6 @@ global:
     # -- Set the global logging level. One of: `debug`, `info`, `warn` or `error`
     level: info
 
-  # -- Add Prometheus scrape annotations to all metrics services. This can be used as an alternative to the ServiceMonitors.
-  addPrometheusAnnotations: true
-
 redis-ha:
   enabled: true
   haproxy:
