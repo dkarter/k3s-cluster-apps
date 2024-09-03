@@ -1,0 +1,148 @@
+## Globally shared configuration
+global:
+  # Default logging options used by all components
+  logging:
+    # -- Set the global logging format. Either: `text` or `json`
+    format: json
+    # -- Set the global logging level. One of: `debug`, `info`, `warn` or `error`
+    level: info
+
+  # -- Add Prometheus scrape annotations to all metrics services. This can be used as an alternative to the ServiceMonitors.
+  addPrometheusAnnotations: true
+
+redis-ha:
+  enabled: true
+  haproxy:
+    metrics:
+      enabled: true
+
+controller:
+  replicas: 1
+  metrics:
+    enabled: true
+
+repoServer:
+  replicas: 2
+
+  metrics:
+    enabled: true
+
+applicationSet:
+  replicas: 2
+
+  metrics:
+    enabled: true
+
+## Server
+server:
+  replicas: 2
+
+  metrics:
+    enabled: true
+
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hostname: argocd.k3s.pro
+    annotations:
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/description: Continuous Delivery
+      gethomepage.dev/group: System
+      gethomepage.dev/icon: argocd.svg
+      gethomepage.dev/name: ArgoCD
+      gethomepage.dev/siteMonitor: 'https://argocd.k3s.pro'
+    tls: true
+
+configs:
+  params:
+    # required for ingress
+    server.insecure: true
+
+  cm:
+    # enable web based terminal for shelling into pods
+    exec.enabled: true
+    url: 'https://argocd.k3s.pro'
+
+notifications:
+  enabled: true
+  secret:
+    create: false
+
+  metrics:
+    enabled: true
+
+  argocdUrl: https://argocd.k3s.pro/
+
+  notifiers:
+    service.telegram: |
+      token: $telegram_token
+  subscriptions:
+    - recipients:
+        - telegram:-1002081859949
+      triggers:
+        - on-deployed
+        - on-health-degraded
+        - on-sync-failed
+
+  templates:
+    template.app-deployed: |
+      message: |
+        *🚀{{.app.metadata.name}}*
+        _Application {{.app.metadata.name}} is now running new version of deployments manifests_
+
+    template.app-health-degraded: |
+      message: |
+        *💔{{.app.metadata.name}}*
+        _Application {{.app.metadata.name}} has degraded._
+        [Application details]({{.context.argocdUrl}}/applications/{{.app.metadata.name}})
+    template.app-sync-failed: |
+      message: |
+        *❌{{.app.metadata.name}}*
+        _The sync operation of application {{.app.metadata.name}} has failed at {{.app.status.operationState.finishedAt}} with the following error: {{.app.status.operationState.message}}_
+        [Sync operation details]({{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true)
+    template.app-sync-running: |
+      message: |
+        The sync operation of application {{.app.metadata.name}} has started at {{.app.status.operationState.startedAt}}.
+        Sync operation details are available at: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true .
+
+  triggers:
+    trigger.on-deployed: |
+      - description: Application is synced and healthy. Triggered once per commit.
+        oncePer: app.status.sync.revision
+        send:
+        - app-deployed
+        when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+    trigger.on-health-degraded: |
+      - description: Application has degraded
+        send:
+        - app-health-degraded
+        when: app.status.health.status == 'Degraded' and app.metadata.name != 'root'
+    trigger.on-sync-failed: |
+      - description: Application syncing has failed
+        send:
+        - app-sync-failed
+        when: app.status.operationState.phase in ['Error', 'Failed']
+    trigger.on-sync-running: |
+      - description: Application is being synced
+        send:
+        - app-sync-running
+        when: app.status.operationState.phase in ['Running']
+    trigger.on-sync-status-unknown: |
+      - description: Application status is 'Unknown'
+        send:
+        - app-sync-status-unknown
+        when: app.status.sync.status == 'Unknown'
+    trigger.on-sync-succeeded: |
+      - description: Application syncing has succeeded
+        send:
+        - app-sync-succeeded
+        when: app.status.operationState.phase in ['Succeeded']
+  #
+  # For more information: https://argocd-notifications.readthedocs.io/en/stable/triggers/#default-triggers
+  defaultTriggers: |
+    - on-deployed
+    - on-health-degraded
+    - on-sync-failed
