@@ -70,3 +70,29 @@ grafana:
       - secretName: grafana-ingress-cert
         hosts:
           - 'grafana.k3s.pro'
+
+prometheus:
+  # ref: https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
+  prometheusSpec:
+    # ref: https://github.com/prometheus-operator/prometheus-operator/blob/release-0.44/pkg/prometheus/promcfg.go#L180-L183
+    scrapeInterval: 15s
+
+    retention: 7d
+
+    # Watch all PrometheusRules in the cluster.
+    ruleNamespaceSelector:
+      matchLabels: {}
+    ruleSelector:
+      matchLabels: {}
+
+    # Watch all ServiceMonitors in the cluster.
+    serviceMonitorNamespaceSelector:
+      matchLabels: {}
+    serviceMonitorSelector:
+      matchLabels: {}
+
+    # Watch all PodMonitors in the cluster.
+    podMonitorSelector:
+      matchLabels: {}
+    podMonitorNamespaceSelector:
+      matchLabels: {}
