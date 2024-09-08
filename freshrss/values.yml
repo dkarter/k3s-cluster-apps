@@ -17,6 +17,7 @@ controllers:
           # And https://github.com/FreshRSS/FreshRSS/blob/edge/Docker/freshrss/example.env
           TZ: America/Chicago
           BASE_URL: https://rss.k3s.pro
+          CRON_MIN: '13,43'
 
         envFrom:
           - secretRef:
