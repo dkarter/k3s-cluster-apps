@@ -11,12 +11,12 @@ controllers:
           repository: lscr.io/linuxserver/sonarr
           tag: latest
           pullPolicy: IfNotPresent
-        
+
         env:
-          PUID: "1000"
-          PGID: "1000"
-          TZ: "America/Chicago"
-        
+          PUID: '1000'
+          PGID: '1000'
+          TZ: 'America/Chicago'
+
         probes:
           liveness: &probes
             enabled: true
@@ -41,7 +41,7 @@ persistence:
     enabled: true
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
-    size: 1Gi
+    size: 200Mi
     globalMounts:
       - path: /config
   tv:
@@ -50,14 +50,14 @@ persistence:
     existingClaim: downloads-pvc
     globalMounts:
       - path: /tv
-    subPath: complete/tv
+        subPath: complete/tv
   downloads:
     enabled: true
     type: persistentVolumeClaim
     existingClaim: downloads-pvc
     globalMounts:
       - path: /downloads
-    subPath: complete
+        subPath: complete
 
 service:
   app:
@@ -90,4 +90,5 @@ ingress:
     tls:
       - hosts:
           - *app_host
-        secretName: sonarr-ingress-cert 
+        secretName: sonarr-ingress-cert
+
