@@ -1,0 +1,129 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.4.0/charts/library/common/values.schema.json
+app_host: &app_host 'plex.k3s.pro'
+app_port: &app_port 32400
+
+controllers:
+  main:
+    strategy: Recreate
+    containers:
+      app:
+        image:
+          repository: plexinc/pms-docker
+          tag: latest
+          pullPolicy: IfNotPresent
+
+        env:
+          PUID: '1000'
+          PGID: '1000'
+          TZ: 'America/Chicago'
+
+        envFrom:
+          - secretRef:
+              name: plex-env
+
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /identity
+                port: *app_port
+              initialDelaySeconds: 60
+              periodSeconds: 10
+          readiness: *probes
+        resources:
+          requests:
+            cpu: 200m
+            memory: 512Mi
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+
+persistence:
+  config:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 20Gi
+    globalMounts:
+      - path: /config
+  transcode:
+    enabled: true
+    type: emptyDir
+    globalMounts:
+      - path: /transcode
+  movies:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: downloads-pvc
+    globalMounts:
+      - path: /data/movies
+        subPath: complete/movies
+  tv:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: downloads-pvc
+    globalMounts:
+      - path: /data/tv
+        subPath: complete/tv
+  youtube:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: downloads-pvc
+    globalMounts:
+      - path: /data/youtube
+        subPath: youtube
+
+service:
+  app:
+    controller: main
+    ports:
+      http:
+        port: *app_port
+      # Additional Plex ports
+      dlna-tcp:
+        port: 32469
+        protocol: TCP
+      gdm1:
+        port: 32410
+        protocol: UDP
+      gdm2:
+        port: 32412
+        protocol: UDP
+      gdm3:
+        port: 32413
+        protocol: UDP
+      gdm4:
+        port: 32414
+        protocol: UDP
+      bonjour:
+        port: 5353
+        protocol: UDP
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: Plex
+      gethomepage.dev/description: Media streaming server
+      gethomepage.dev/group: Media
+      gethomepage.dev/icon: plex.png
+      gethomepage.dev/siteMonitor: 'https://plex.k3s.pro'
+    className: 'traefik'
+    hosts:
+      - host: *app_host
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - *app_host
+        secretName: plex-ingress-cert
+

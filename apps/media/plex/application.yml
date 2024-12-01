@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: plex
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: media
+
+  sources:
+    - path: media/plex/templates
+      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+
+    - repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+      ref: values
+
+    - repoURL: 'https://bjw-s.github.io/helm-charts/'
+      targetRevision: 1.5.1
+      chart: app-template
+      helm:
+        releaseName: plex
+        valueFiles:
+          - $values/apps/media/plex/values.yml
+
+  project: default
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
