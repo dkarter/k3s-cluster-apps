@@ -66,6 +66,11 @@ persistence:
     existingClaim: downloads-pvc
     globalMounts:
       - path: /downloads
+  tmp:
+    enabled: true
+    type: emptyDir
+    globalMounts:
+      - path: /tmp
 
 defaultPodOptions:
   securityContext:
