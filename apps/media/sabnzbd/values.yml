@@ -17,12 +17,12 @@ controllers:
           PGID: '1000'
           TZ: 'America/Chicago'
           SABNZBD__HOST_WHITELIST_ENTRIES: >-
-                sabnzbd,
-                sabnzbd.default,
-                sabnzbd.default.svc,
-                sabnzbd.default.svc.cluster,
-                sabnzbd.default.svc.cluster.local,
-                sabnzbd.k3s.pro
+            sabnzbd,
+            sabnzbd.default,
+            sabnzbd.default.svc,
+            sabnzbd.default.svc.cluster,
+            sabnzbd.default.svc.cluster.local,
+            sabnzbd.k3s.pro
 
         probes:
           liveness: &probes
@@ -30,11 +30,14 @@ controllers:
             custom: true
             spec:
               httpGet:
-                path: /
+                path: /api?mode=version
                 port: *app_port
-              initialDelaySeconds: 60
+              initialDelaySeconds: 0
               periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
           readiness: *probes
+
         resources:
           requests:
             cpu: 100m
@@ -42,6 +45,11 @@ controllers:
           limits:
             cpu: 1000m
             memory: 1Gi
+
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: { drop: ['ALL'] }
 
 persistence:
   config:
@@ -51,12 +59,22 @@ persistence:
     size: 1Gi
     globalMounts:
       - path: /config
+
   downloads:
     enabled: true
     type: persistentVolumeClaim
     existingClaim: downloads-pvc
     globalMounts:
       - path: /downloads
+
+defaultPodOptions:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 568
+    runAsGroup: 568
+    fsGroup: 568
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile: { type: RuntimeDefault }
 
 service:
   app:
@@ -90,4 +108,3 @@ ingress:
       - hosts:
           - *app_host
         secretName: sabnzbd-ingress-cert
-
