@@ -9,5 +9,5 @@ spec:
   resources:
     requests:
       storage: 200Gi
-  storageClassName: longhorn-media
+  storageClassName: longhorn-media-storage
 
