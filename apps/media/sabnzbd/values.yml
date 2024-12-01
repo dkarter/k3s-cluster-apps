@@ -8,14 +8,21 @@ controllers:
     containers:
       app:
         image:
-          repository: lscr.io/linuxserver/sabnzbd
-          tag: latest
+          repository: ghcr.io/onedr0p/sabnzbd
+          tag: 4.3.3
           pullPolicy: IfNotPresent
 
         env:
           PUID: '1000'
           PGID: '1000'
           TZ: 'America/Chicago'
+          SABNZBD__HOST_WHITELIST_ENTRIES: >-
+                sabnzbd,
+                sabnzbd.default,
+                sabnzbd.default.svc,
+                sabnzbd.default.svc.cluster,
+                sabnzbd.default.svc.cluster.local,
+                sabnzbd.k3s.pro
 
         probes:
           liveness: &probes
