@@ -8,7 +8,7 @@ spec:
     namespace: media
 
   sources:
-    - path: media/plex/templates
+    - path: apps/media/plex/templates
       repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
       targetRevision: HEAD
 
