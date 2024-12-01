@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.4.0/charts/library/common/values.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.5.1/charts/library/common/values.schema.json
 app_host: &app_host 'sonarr.k3s.pro'
 app_port: &app_port 8989
 

@@ -16,9 +16,9 @@ spec:
       targetRevision: HEAD
       ref: values
 
-    - repoURL: 'https://bjw-s.github.io/helm-charts/'
-      targetRevision: 1.5.1
-      chart: app-template
+    - chart: app-template
+      repoURL: https://bjw-s.github.io/helm-charts
+      targetRevision: 3.5.1
       helm:
         releaseName: plex
         valueFiles:
