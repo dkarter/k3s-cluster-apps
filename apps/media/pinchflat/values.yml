@@ -41,16 +41,19 @@ persistence:
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
     size: 1Gi
-    mountPath: /config
+    globalMounts:
+      - path: /config
   downloads:
     enabled: true
     type: persistentVolumeClaim
     existingClaim: downloads-pvc
-    mountPath: /downloads
+    globalMounts:
+      - path: /downloads
     subPath: youtube
 
 service:
-  main:
+  app:
+    controller: main
     ports:
       http:
         port: *app_port
@@ -73,6 +76,9 @@ ingress:
         paths:
           - path: /
             pathType: Prefix
+            service:
+              identifier: app
+              port: http
     tls:
       - hosts:
           - *app_host

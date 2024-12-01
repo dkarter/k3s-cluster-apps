@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.4.0/charts/library/common/values.schema.json
 app_host: &app_host 'sabnzbd.k3s.pro'
 app_port: &app_port 8080
 
@@ -10,12 +11,12 @@ controllers:
           repository: lscr.io/linuxserver/sabnzbd
           tag: latest
           pullPolicy: IfNotPresent
-        
+
         env:
-          PUID: "1000"
-          PGID: "1000"
-          TZ: "America/Chicago"
-        
+          PUID: '1000'
+          PGID: '1000'
+          TZ: 'America/Chicago'
+
         probes:
           liveness: &probes
             enabled: true
@@ -41,16 +42,18 @@ persistence:
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
     size: 1Gi
-    mountPath: /config
+    globalMounts:
+      - path: /config
   downloads:
     enabled: true
     type: persistentVolumeClaim
     existingClaim: downloads-pvc
-    mountPath: /config/Downloads
-    subPath: downloads
+    globalMounts:
+      - path: /downloads
 
 service:
-  main:
+  app:
+    controller: main
     ports:
       http:
         port: *app_port
@@ -73,7 +76,11 @@ ingress:
         paths:
           - path: /
             pathType: Prefix
+            service:
+              identifier: app
+              port: http
     tls:
       - hosts:
           - *app_host
-        secretName: sabnzbd-ingress-cert 
+        secretName: sabnzbd-ingress-cert
+
