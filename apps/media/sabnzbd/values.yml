@@ -80,6 +80,15 @@ defaultPodOptions:
     fsGroup: 568
     fsGroupChangePolicy: OnRootMismatch
     seccompProfile: { type: RuntimeDefault }
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: media
+                operator: In
+                values:
+                  - 'true'
 
 service:
   app:

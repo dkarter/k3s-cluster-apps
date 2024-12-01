@@ -92,3 +92,14 @@ ingress:
           - *app_host
         secretName: sonarr-ingress-cert
 
+defaultPodOptions:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: media
+                operator: In
+                values:
+                  - 'true'
+
