@@ -25,7 +25,7 @@ controllers:
               httpGet:
                 path: /health
                 port: *app_port
-              initialDelaySeconds: 60
+              initialDelaySeconds: 300
               periodSeconds: 10
           readiness: *probes
         resources:
