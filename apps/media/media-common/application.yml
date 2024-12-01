@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://deedee-ops.github.io/schemas/argoproj.io/application_v1alpha1.json
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -10,7 +11,7 @@ spec:
   sources:
     - repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
       targetRevision: HEAD
-      path: apps/media/media-common
+      path: apps/media/media-common/templates
 
   project: default
 
@@ -19,4 +20,5 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true 
+      - CreateNamespace=true
+
