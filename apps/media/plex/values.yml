@@ -21,24 +21,25 @@ controllers:
           - secretRef:
               name: plex-env
 
-        probes:
-          liveness: &probes
-            enabled: true
-            custom: true
-            spec:
-              httpGet:
-                path: /identity
-                port: *app_port
-              initialDelaySeconds: 300
-              periodSeconds: 10
-          readiness: *probes
-        resources:
-          requests:
-            cpu: 200m
-            memory: 512Mi
-          limits:
-            cpu: 2000m
-            memory: 2Gi
+        # temp disable these
+        # probes:
+        #   liveness: &probes
+        #     enabled: true
+        #     custom: true
+        #     spec:
+        #       httpGet:
+        #         path: /identity
+        #         port: *app_port
+        #       initialDelaySeconds: 300
+        #       periodSeconds: 10
+        #   readiness: *probes
+        # resources:
+        #   requests:
+        #     cpu: 200m
+        #     memory: 512Mi
+        #   limits:
+        #     cpu: 2000m
+        #     memory: 2Gi
 
 persistence:
   config:
@@ -83,28 +84,80 @@ persistence:
 service:
   app:
     controller: main
+    primary: true
     ports:
       http:
         port: *app_port
-      # Additional Plex ports
-      dlna-tcp:
+  # Plex DLNA Server
+  # https://support.plex.tv/articles/200350536-dlna/
+  dnla-tcp:
+    enabled: true
+    controller: main
+    type: NodePort
+    ports:
+      dnla-tcp:
+        enabled: true
         port: 32469
         protocol: TCP
-      gdm1:
+        targetPort: 32469
+    externalTrafficPolicy: Local
+  dnla-udp:
+    enabled: true
+    controller: main
+    type: NodePort
+    ports:
+      dnla-udp:
+        enabled: true
+        port: 1900
+        protocol: UDP
+        targetPort: 1900
+    externalTrafficPolicy: Local
+  # GDM Network discovery
+  # https://support.plex.tv/articles/200430283-network/
+  gdm-1-udp:
+    enabled: true
+    controller: main
+    type: NodePort
+    ports:
+      gdm-1-udp:
+        enabled: true
         port: 32410
         protocol: UDP
-      gdm2:
+        targetPort: 32410
+    externalTrafficPolicy: Local
+  gdm-2-udp:
+    enabled: true
+    controller: main
+    type: NodePort
+    ports:
+      gdm-2-udp:
+        enabled: true
         port: 32412
         protocol: UDP
-      gdm3:
+        targetPort: 32412
+    externalTrafficPolicy: Local
+  gdm-3-udp:
+    enabled: true
+    controller: main
+    type: NodePort
+    ports:
+      gdm-3-udp:
+        enabled: true
         port: 32413
         protocol: UDP
-      gdm4:
+        targetPort: 32413
+    externalTrafficPolicy: Local
+  gdm-4-udp:
+    enabled: true
+    controller: main
+    type: NodePort
+    ports:
+      gdm-4-udp:
+        enabled: true
         port: 32414
         protocol: UDP
-      bonjour:
-        port: 5353
-        protocol: UDP
+        targetPort: 32414
+    externalTrafficPolicy: Local
 
 ingress:
   main:
