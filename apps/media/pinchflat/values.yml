@@ -10,12 +10,12 @@ controllers:
           repository: ghcr.io/kieraneglin/pinchflat
           tag: latest
           pullPolicy: IfNotPresent
-        
+
         env:
-          PUID: "1000"
-          PGID: "1000"
-          TZ: "America/Chicago"
-        
+          PUID: '1000'
+          PGID: '1000'
+          TZ: 'America/Chicago'
+
         probes:
           liveness: &probes
             enabled: true
@@ -40,7 +40,7 @@ persistence:
     enabled: true
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
-    size: 1Gi
+    size: 200Mi
     globalMounts:
       - path: /config
   downloads:
@@ -49,7 +49,7 @@ persistence:
     existingClaim: downloads-pvc
     globalMounts:
       - path: /downloads
-    subPath: youtube
+        subPath: youtube
 
 service:
   app:
@@ -82,4 +82,5 @@ ingress:
     tls:
       - hosts:
           - *app_host
-        secretName: pinchflat-ingress-cert 
+        secretName: pinchflat-ingress-cert
+
