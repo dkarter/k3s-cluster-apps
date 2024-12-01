@@ -45,14 +45,17 @@ persistence:
     enabled: true
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
-    size: 20Gi
+    size: 200Mi
     globalMounts:
       - path: /config
+
   transcode:
     enabled: true
     type: emptyDir
+    sizeLimit: 10Gi
     globalMounts:
       - path: /transcode
+
   movies:
     enabled: true
     type: persistentVolumeClaim
@@ -60,6 +63,7 @@ persistence:
     globalMounts:
       - path: /data/movies
         subPath: complete/movies
+
   tv:
     enabled: true
     type: persistentVolumeClaim
@@ -67,6 +71,7 @@ persistence:
     globalMounts:
       - path: /data/tv
         subPath: complete/tv
+
   youtube:
     enabled: true
     type: persistentVolumeClaim
