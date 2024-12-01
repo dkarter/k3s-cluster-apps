@@ -11,6 +11,10 @@ spec:
     path: apps
     repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
     targetRevision: HEAD
+  source:
+    path: apps/media
+    repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+    targetRevision: HEAD
   sources: []
   project: default
 syncPolicy:
