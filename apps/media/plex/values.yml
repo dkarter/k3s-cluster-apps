@@ -29,7 +29,7 @@ controllers:
               httpGet:
                 path: /identity
                 port: *app_port
-              initialDelaySeconds: 60
+              initialDelaySeconds: 300
               periodSeconds: 10
           readiness: *probes
         resources:
