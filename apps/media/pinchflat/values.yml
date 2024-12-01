@@ -46,7 +46,7 @@ persistence:
   downloads:
     enabled: true
     type: persistentVolumeClaim
-    existingClaim: downloads-pvc
+    existingClaim: downloads-storage
     globalMounts:
       - path: /downloads
         subPath: youtube

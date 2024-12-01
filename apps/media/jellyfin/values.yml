@@ -40,21 +40,21 @@ persistence:
   movies:
     enabled: true
     type: persistentVolumeClaim
-    existingClaim: downloads-pvc
+    existingClaim: downloads-storage
     globalMounts:
       - path: /data/movies
         subPath: complete/movies
   tvshows:
     enabled: true
     type: persistentVolumeClaim
-    existingClaim: downloads-pvc
+    existingClaim: downloads-storage
     globalMounts:
       - path: /data/tvshows
         subPath: complete/tv
   youtube:
     enabled: true
     type: persistentVolumeClaim
-    existingClaim: downloads-pvc
+    existingClaim: downloads-storage
     globalMounts:
       - path: /data/youtube
         subPath: youtube

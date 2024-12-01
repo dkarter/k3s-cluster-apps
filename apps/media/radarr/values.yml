@@ -47,14 +47,14 @@ persistence:
   movies:
     enabled: true
     type: persistentVolumeClaim
-    existingClaim: downloads-pvc
+    existingClaim: downloads-storage
     globalMounts:
       - path: /movies
         subPath: complete/movies
   downloads:
     enabled: true
     type: persistentVolumeClaim
-    existingClaim: downloads-pvc
+    existingClaim: downloads-storage
     globalMounts:
       - path: /downloads
         subPath: complete
