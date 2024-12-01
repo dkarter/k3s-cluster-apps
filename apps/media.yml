@@ -11,6 +11,8 @@ spec:
     path: apps/media
     repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
     targetRevision: HEAD
+    directory:
+      recurse: true
   project: default
   syncPolicy:
     automated:
