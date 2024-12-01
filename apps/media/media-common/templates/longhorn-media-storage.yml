@@ -7,4 +7,3 @@ allowVolumeExpansion: true
 parameters:
   numberOfReplicas: '1'
   nodeSelector: 'media'
-
