@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: downloads-pvc
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteMany  # Allows multiple pods to read/write
+  resources:
+    requests:
+      storage: 200Gi  # Adjust size as needed (physical limit for each node is 500Gi - not accounting for the k8s overhead)
+  storageClassName: longhorn

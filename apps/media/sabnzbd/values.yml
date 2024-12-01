@@ -1,0 +1,79 @@
+app_host: &app_host 'sabnzbd.k3s.pro'
+app_port: &app_port 8080
+
+controllers:
+  main:
+    strategy: Recreate
+    containers:
+      app:
+        image:
+          repository: lscr.io/linuxserver/sabnzbd
+          tag: latest
+          pullPolicy: IfNotPresent
+        
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          TZ: "America/Chicago"
+        
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: *app_port
+              initialDelaySeconds: 60
+              periodSeconds: 10
+          readiness: *probes
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+
+persistence:
+  config:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    mountPath: /config
+  downloads:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: downloads-pvc
+    mountPath: /config/Downloads
+    subPath: downloads
+
+service:
+  main:
+    ports:
+      http:
+        port: *app_port
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: SABnzbd
+      gethomepage.dev/description: Usenet download client
+      gethomepage.dev/group: Media
+      gethomepage.dev/icon: sabnzbd.png
+      gethomepage.dev/siteMonitor: 'https://sabnzbd.k3s.pro'
+    className: 'traefik'
+    hosts:
+      - host: *app_host
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - *app_host
+        secretName: sabnzbd-ingress-cert 

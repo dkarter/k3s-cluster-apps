@@ -1,0 +1,85 @@
+app_host: &app_host 'jellyfin.k3s.pro'
+app_port: &app_port 8096
+
+controllers:
+  main:
+    strategy: Recreate
+    containers:
+      app:
+        image:
+          repository: lscr.io/linuxserver/jellyfin
+          tag: latest
+          pullPolicy: IfNotPresent
+        
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          TZ: "America/Chicago"
+        
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: *app_port
+              initialDelaySeconds: 60
+              periodSeconds: 10
+          readiness: *probes
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+
+persistence:
+  config:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    mountPath: /config
+  tvshows:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: downloads-pvc  # Share with other apps
+    mountPath: /data/tvshows
+    subPath: complete/tv
+  youtube:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: downloads-pvc  # Share with other apps
+    mountPath: /data/youtube
+    subPath: youtube
+
+service:
+  main:
+    ports:
+      http:
+        port: *app_port
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: Jellyfin
+      gethomepage.dev/description: Media streaming server
+      gethomepage.dev/group: Media
+      gethomepage.dev/icon: jellyfin.png
+      gethomepage.dev/siteMonitor: 'https://jellyfin.k3s.pro'
+    className: 'traefik'
+    hosts:
+      - host: *app_host
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - *app_host
+        secretName: jellyfin-ingress-cert 

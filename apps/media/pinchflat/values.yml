@@ -1,0 +1,79 @@
+app_host: &app_host 'pinchflat.k3s.pro'
+app_port: &app_port 8945
+
+controllers:
+  main:
+    strategy: Recreate
+    containers:
+      app:
+        image:
+          repository: ghcr.io/kieraneglin/pinchflat
+          tag: latest
+          pullPolicy: IfNotPresent
+        
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          TZ: "America/Chicago"
+        
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: *app_port
+              initialDelaySeconds: 60
+              periodSeconds: 10
+          readiness: *probes
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+
+persistence:
+  config:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    mountPath: /config
+  downloads:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: downloads-pvc
+    mountPath: /downloads
+    subPath: youtube
+
+service:
+  main:
+    ports:
+      http:
+        port: *app_port
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: Pinchflat
+      gethomepage.dev/description: YouTube video downloader
+      gethomepage.dev/group: Media
+      gethomepage.dev/icon: youtube.png
+      gethomepage.dev/siteMonitor: 'https://pinchflat.k3s.pro'
+    className: 'traefik'
+    hosts:
+      - host: *app_host
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - *app_host
+        secretName: pinchflat-ingress-cert 

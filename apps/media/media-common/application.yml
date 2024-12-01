@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: media-common
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: media
+
+  sources:
+    - repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+      path: apps/media/media-common
+
+  project: default
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true 

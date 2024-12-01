@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pinchflat
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: media
+
+  sources:
+    - repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+      ref: values
+
+    - chart: app-template
+      repoURL: https://bjw-s.github.io/helm-charts
+      targetRevision: 3.4.0
+      helm:
+        releaseName: pinchflat
+        valueFiles:
+          - $values/apps/media/pinchflat/values.yml
+
+  project: default
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true 
