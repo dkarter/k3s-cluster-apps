@@ -8,7 +8,7 @@ controllers:
     containers:
       app:
         image:
-          repository: lscr.io/linuxserver/jellyfin
+          repository: lscr.io/linuxserver/jellyfin:arm64v8-latest
           tag: latest
           pullPolicy: IfNotPresent
 
