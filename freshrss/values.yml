@@ -9,7 +9,7 @@ controllers:
       app:
         image:
           repository: freshrss/freshrss
-          tag: 1.24.3
+          tag: 1.25.0
           pullPolicy: IfNotPresent
 
         env:
