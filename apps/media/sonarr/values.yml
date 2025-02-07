@@ -8,9 +8,9 @@ controllers:
     containers:
       app:
         image:
-          repository: lscr.io/linuxserver/sonarr
-          tag: latest
-          pullPolicy: IfNotPresent
+          repository: ghcr.io/hotio/sonarr
+          tag: release-4.0.12.2823
+          pullPolicy: Always
 
         env:
           PUID: '1000'
@@ -102,4 +102,3 @@ defaultPodOptions:
                 operator: In
                 values:
                   - 'true'
-
