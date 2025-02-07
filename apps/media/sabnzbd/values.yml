@@ -65,7 +65,7 @@ persistence:
     type: persistentVolumeClaim
     existingClaim: downloads-storage
     globalMounts:
-      - path: /downloads
+      - path: /config/Downloads
   tmp:
     enabled: true
     type: emptyDir
