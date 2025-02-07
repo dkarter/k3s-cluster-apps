@@ -44,20 +44,13 @@ persistence:
     size: 200Mi
     globalMounts:
       - path: /config
-  tv:
-    enabled: true
-    type: persistentVolumeClaim
-    existingClaim: downloads-storage
-    globalMounts:
-      - path: /tv
-        subPath: complete/tv
+
   downloads:
     enabled: true
     type: persistentVolumeClaim
     existingClaim: downloads-storage
     globalMounts:
       - path: /downloads
-        subPath: complete
 
 service:
   app:

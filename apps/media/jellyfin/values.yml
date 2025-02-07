@@ -37,6 +37,7 @@ persistence:
     size: 10Gi
     globalMounts:
       - path: /config
+
   downloads:
     enabled: true
     type: persistentVolumeClaim

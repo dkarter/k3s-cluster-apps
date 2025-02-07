@@ -17,24 +17,24 @@ controllers:
           PGID: '1000'
           TZ: 'America/Chicago'
 
-        # probes:
-        #   liveness: &probes
-        #     enabled: true
-        #     custom: true
-        #     spec:
-        #       httpGet:
-        #         path: /
-        #         port: *app_port
-        #       initialDelaySeconds: 60
-        #       periodSeconds: 10
-        #   readiness: *probes
-        # resources:
-        #   requests:
-        #     cpu: 50m
-        #     memory: 128Mi
-        #   limits:
-        #     cpu: 500m
-        #     memory: 512Mi
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: *app_port
+              initialDelaySeconds: 60
+              periodSeconds: 10
+          readiness: *probes
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
 
 persistence:
   config:
@@ -44,20 +44,13 @@ persistence:
     size: 200Mi
     globalMounts:
       - path: /config
-  movies:
-    enabled: true
-    type: persistentVolumeClaim
-    existingClaim: downloads-storage
-    globalMounts:
-      - path: /movies
-        subPath: complete/movies
+
   downloads:
     enabled: true
     type: persistentVolumeClaim
     existingClaim: downloads-storage
     globalMounts:
       - path: /downloads
-        subPath: complete
 
 service:
   app:
