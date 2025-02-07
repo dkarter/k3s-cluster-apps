@@ -9,8 +9,8 @@ controllers:
       app:
         image:
           repository: lscr.io/linuxserver/radarr
-          tag: latest
-          pullPolicy: IfNotPresent
+          tag: 5.18.4
+          pullPolicy: Always
 
         env:
           PUID: '1000'

@@ -8,8 +8,8 @@ controllers:
       app:
         image:
           repository: ghcr.io/kieraneglin/pinchflat
-          tag: latest
-          pullPolicy: IfNotPresent
+          tag: v2025.1.27
+          pullPolicy: Always
 
         env:
           PUID: '1000'
@@ -94,4 +94,3 @@ defaultPodOptions:
                 operator: In
                 values:
                   - 'true'
-

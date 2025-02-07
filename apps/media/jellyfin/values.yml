@@ -9,8 +9,8 @@ controllers:
       app:
         image:
           repository: lscr.io/linuxserver/jellyfin
-          tag: arm64v8-latest
-          pullPolicy: IfNotPresent
+          tag: 10.10.5
+          pullPolicy: Always
 
         env:
           PUID: '1000'

@@ -8,15 +8,15 @@ controllers:
       app:
         image:
           repository: ghcr.io/hotio/prowlarr
-          tag: latest
-          pullPolicy: IfNotPresent
-        
+          tag: release-1.30.2.4939
+          pullPolicy: Always
+
         env:
-          PUID: "1000"
-          PGID: "1000"
-          UMASK: "002"
-          TZ: "America/Chicago"
-        
+          PUID: '1000'
+          PGID: '1000'
+          UMASK: '002'
+          TZ: 'America/Chicago'
+
         probes:
           liveness: &probes
             enabled: true
@@ -76,7 +76,7 @@ ingress:
     tls:
       - hosts:
           - *app_host
-        secretName: prowlarr-ingress-cert 
+        secretName: prowlarr-ingress-cert
 
 defaultPodOptions:
   affinity:
@@ -88,3 +88,4 @@ defaultPodOptions:
                 operator: In
                 values:
                   - 'true'
+
