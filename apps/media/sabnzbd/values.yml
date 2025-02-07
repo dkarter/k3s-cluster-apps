@@ -8,8 +8,8 @@ controllers:
     containers:
       app:
         image:
-          repository: ghcr.io/onedr0p/sabnzbd
-          tag: 4.4.1
+          repository: ghcr.io/hotio/sabnzbd
+          tag: release-4.4.1
           pullPolicy: Always
 
         env:
