@@ -5,6 +5,22 @@ app_port: &app_port 8096
 controllers:
   main:
     strategy: Recreate
+    initContainers:
+      init:
+        image:
+          repository: busybox
+          tag: latest
+          pullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - |
+            mkdir -p /data/complete/movies /data/complete/tv /data/complete/youtube
+        volumeMounts:
+          - name: downloads
+            existingClaim: downloads-storage
+            mountPath: /data
+
     containers:
       app:
         image:
