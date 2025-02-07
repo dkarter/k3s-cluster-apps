@@ -28,13 +28,13 @@ controllers:
         #       initialDelaySeconds: 60
         #       periodSeconds: 10
         #   readiness: *probes
-        resources:
-          requests:
-            cpu: 50m
-            memory: 128Mi
-          limits:
-            cpu: 500m
-            memory: 512Mi
+        # resources:
+        #   requests:
+        #     cpu: 50m
+        #     memory: 128Mi
+        #   limits:
+        #     cpu: 500m
+        #     memory: 512Mi
 
 persistence:
   config:
