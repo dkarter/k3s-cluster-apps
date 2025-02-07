@@ -37,27 +37,27 @@ persistence:
     size: 10Gi
     globalMounts:
       - path: /config
-  # movies:
-  #   enabled: true
-  #   type: persistentVolumeClaim
-  #   existingClaim: downloads-storage
-  #   globalMounts:
-  #     - path: /data/movies
-  #       subPath: complete/movies
-  # tvshows:
-  #   enabled: true
-  #   type: persistentVolumeClaim
-  #   existingClaim: downloads-storage
-  #   globalMounts:
-  #     - path: /data/tvshows
-  #       subPath: complete/tv
-  # youtube:
-  #   enabled: true
-  #   type: persistentVolumeClaim
-  #   existingClaim: downloads-storage
-  #   globalMounts:
-  #     - path: /data/youtube
-  #       subPath: youtube
+  movies:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: downloads-storage
+    globalMounts:
+      - path: /data/movies
+        subPath: complete/movies
+  tvshows:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: downloads-storage
+    globalMounts:
+      - path: /data/tvshows
+        subPath: complete/tv
+  youtube:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: downloads-storage
+    globalMounts:
+      - path: /data/youtube
+        subPath: youtube
 
 service:
   app:
