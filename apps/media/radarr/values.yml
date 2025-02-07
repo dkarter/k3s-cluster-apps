@@ -50,7 +50,7 @@ persistence:
     type: persistentVolumeClaim
     existingClaim: downloads-storage
     globalMounts:
-      - path: /downloads
+      - path: /config/Downloads/complete/movies
 
 service:
   app:
