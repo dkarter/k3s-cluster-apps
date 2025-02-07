@@ -43,13 +43,13 @@ persistence:
     size: 200Mi
     globalMounts:
       - path: /config
+
   downloads:
     enabled: true
     type: persistentVolumeClaim
     existingClaim: downloads-storage
     globalMounts:
       - path: /downloads
-        subPath: youtube
 
 service:
   app:

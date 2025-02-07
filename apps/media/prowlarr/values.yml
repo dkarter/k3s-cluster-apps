@@ -45,6 +45,13 @@ persistence:
     globalMounts:
       - path: /config
 
+  downloads:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: downloads-storage
+    globalMounts:
+      - path: /downloads
+
 service:
   app:
     controller: main
@@ -88,4 +95,3 @@ defaultPodOptions:
                 operator: In
                 values:
                   - 'true'
-

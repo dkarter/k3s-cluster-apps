@@ -45,7 +45,7 @@ persistence:
     type: persistentVolumeClaim
     existingClaim: downloads-storage
     globalMounts:
-      - path: /data
+      - path: /downloads
 
 service:
   app:
