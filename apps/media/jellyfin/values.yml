@@ -9,7 +9,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/hotio/prowlarr
-          tag: release-10.10.5
+          tag: 10.10.5
           pullPolicy: Always
 
         env:
