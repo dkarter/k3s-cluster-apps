@@ -8,8 +8,8 @@ controllers:
     containers:
       app:
         image:
-          repository: ghcr.io/hotio/prowlarr
-          tag: 10.10.5
+          repository: ghcr.io/hotio/jellyfin
+          tag: release-10.10.5
           pullPolicy: Always
 
         env:
