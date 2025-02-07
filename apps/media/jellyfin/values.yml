@@ -25,7 +25,7 @@ controllers:
               httpGet:
                 path: /
                 port: *app_port
-              initialDelaySeconds: 300
+              initialDelaySeconds: 30
               periodSeconds: 10
               timeoutSeconds: 1
               failureThreshold: 3
