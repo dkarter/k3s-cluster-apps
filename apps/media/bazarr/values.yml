@@ -1,0 +1,98 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.5.1/charts/library/common/values.schema.json
+app_host: &app_host 'bazarr.k3s.pro'
+app_port: &app_port 6767
+
+controllers:
+  main:
+    strategy: Recreate
+    containers:
+      app:
+        image:
+          repository: ghcr.io/hotio/bazarr
+          tag: release-1.5.1
+          pullPolicy: IfNotPresent
+
+        env:
+          PUID: '1000'
+          PGID: '1000'
+          UMASK: '002'
+          TZ: 'America/Chicago'
+
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: *app_port
+              initialDelaySeconds: 60
+              periodSeconds: 10
+          readiness: *probes
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+
+persistence:
+  config:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 200Mi
+    globalMounts:
+      - path: /config
+
+  downloads:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: downloads-storage
+    globalMounts:
+      - path: /downloads
+
+service:
+  app:
+    controller: main
+    ports:
+      http:
+        port: *app_port
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: bazarr
+      gethomepage.dev/description: Subtitle Downloader
+      gethomepage.dev/group: Media
+      gethomepage.dev/icon: bazarr.png
+      gethomepage.dev/siteMonitor: 'https://bazarr.k3s.pro'
+    className: 'traefik'
+    hosts:
+      - host: *app_host
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - *app_host
+        secretName: bazarr-ingress-cert
+
+defaultPodOptions:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: media
+                operator: In
+                values:
+                  - 'true'
