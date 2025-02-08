@@ -10,7 +10,7 @@ controllers:
         image:
           repository: ghcr.io/hotio/sonarr
           tag: release-4.0.12.2823
-          pullPolicy: Always
+          pullPolicy: IfNotPresent
 
         env:
           PUID: '1000'

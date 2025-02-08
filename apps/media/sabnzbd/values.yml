@@ -10,7 +10,7 @@ controllers:
         image:
           repository: ghcr.io/hotio/sabnzbd
           tag: release-4.4.1
-          pullPolicy: Always
+          pullPolicy: IfNotPresent
 
         env:
           PUID: '1000'

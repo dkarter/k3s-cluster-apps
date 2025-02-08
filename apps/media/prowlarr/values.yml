@@ -9,7 +9,7 @@ controllers:
         image:
           repository: ghcr.io/hotio/prowlarr
           tag: release-1.30.2.4939
-          pullPolicy: Always
+          pullPolicy: IfNotPresent
 
         env:
           PUID: '1000'

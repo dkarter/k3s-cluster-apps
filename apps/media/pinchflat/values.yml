@@ -9,7 +9,7 @@ controllers:
         image:
           repository: ghcr.io/kieraneglin/pinchflat
           tag: v2025.1.27
-          pullPolicy: Always
+          pullPolicy: IfNotPresent
 
         env:
           PUID: '1000'

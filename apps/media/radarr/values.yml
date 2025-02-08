@@ -10,7 +10,7 @@ controllers:
         image:
           repository: ghcr.io/hotio/radarr
           tag: release-5.18.4.9674
-          pullPolicy: Always
+          pullPolicy: IfNotPresent
 
         env:
           PUID: '1000'
