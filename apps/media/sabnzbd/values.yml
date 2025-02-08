@@ -33,7 +33,7 @@ controllers:
               httpGet:
                 path: /api?mode=version
                 port: *app_port
-              initialDelaySeconds: 0
+              initialDelaySeconds: 60
               periodSeconds: 10
               timeoutSeconds: 1
               failureThreshold: 3

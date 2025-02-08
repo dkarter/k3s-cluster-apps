@@ -1,31 +1,17 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.5.1/charts/library/common/values.schema.json
 url: &url 'https://browsarr.k3s.pro'
 app_host: &app_host 'browsarr.k3s.pro'
-app_port: &app_port 8334
+app_port: &app_port 8080
 
 controllers:
   main:
     strategy: Recreate
-    initContainers:
-      init-permissions:
-        image:
-          repository: busybox
-          tag: latest
-        command:
-          - /bin/sh
-          - -c
-          - |
-            mkdir -p /app/data/state/config /app/data/state/log /app/data/state/plugins && \
-            chown -R 1000:1000 /app/data/state && \
-            chmod -R 755 /app/data/state
-        securityContext:
-          runAsUser: 0
     containers:
       app:
         image:
-          repository: machines/filestash
-          tag: latest
-          pullPolicy: Always
+          repository: hurlenko/filebrowser
+          tag: v2.32.0
+          pullPolicy: IfNotPresent
 
         securityContext:
           readOnlyRootFilesystem: false
@@ -39,7 +25,6 @@ controllers:
           PGID: '1000'
           UMASK: '002'
           TZ: 'America/Chicago'
-          APPLICATION_URL: *url
 
         probes:
           liveness: &probes
@@ -51,6 +36,8 @@ controllers:
                 port: *app_port
               initialDelaySeconds: 60
               periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
           readiness: *probes
         resources:
           requests:
@@ -61,20 +48,20 @@ controllers:
             memory: 512Mi
 
 persistence:
-  config:
+  filebrowser-config:
     enabled: true
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
     size: 100Mi
     globalMounts:
-      - path: /app/data/state/
+      - path: /config
 
   downloads:
     enabled: true
     type: persistentVolumeClaim
     existingClaim: downloads-storage
     globalMounts:
-      - path: /downloads
+      - path: /data
 
 service:
   app:
@@ -93,7 +80,7 @@ ingress:
       gethomepage.dev/name: browsarr
       gethomepage.dev/description: File Browser
       gethomepage.dev/group: Media
-      gethomepage.dev/icon: browsarr.png
+      gethomepage.dev/icon: filebrowser.png
       gethomepage.dev/siteMonitor: *url
     className: 'traefik'
     hosts:
