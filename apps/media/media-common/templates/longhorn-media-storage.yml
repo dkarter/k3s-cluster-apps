@@ -10,7 +10,7 @@ volumeBindingMode: Immediate
 parameters:
   fromBackup: ''
   fsType: 'ext4'
-  dataLocality: 'strict-local'
+  dataLocality: 'best-effort'
   disableRevisionCounter: 'true'
   unmapMarkSnapChainRemoved: ignored
   numberOfReplicas: '1'
