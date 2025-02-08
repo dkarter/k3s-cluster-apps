@@ -13,6 +13,6 @@ parameters:
   dataLocality: 'best-effort'
   disableRevisionCounter: 'true'
   unmapMarkSnapChainRemoved: ignored
-  numberOfReplicas: '2'
+  numberOfReplicas: '1'
   nodeSelector: 'media'
   diskSelector: 'media'
