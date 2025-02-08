@@ -6,6 +6,20 @@ app_port: &app_port 8080
 controllers:
   main:
     strategy: Recreate
+    initContainers:
+      init-permissions:
+        image:
+          repository: busybox
+          tag: latest
+        command:
+          - /bin/sh
+          - -c
+          - |
+            mkdir -p /config && \
+            chown -R 1000:1000 /config && \
+            chmod -R 755 /config
+        securityContext:
+          runAsUser: 0
     containers:
       app:
         image:
