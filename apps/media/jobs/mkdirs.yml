@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=https://kubernetesjsonschema.dev/v1.18.1-standalone-strict/job.json
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: make-dirs
+  namespace: media
+spec:
+  template:
+    spec:
+      containers:
+        - name: permission-fix
+          env:
+            - name: PGID
+              value: '1000'
+            - name: PUID
+              value: '1000'
+            - name: UMASK
+              value: '002'
+            - name: TZ
+              value: 'America/Chicago'
+          image: busybox
+          command: ['/bin/sh', '-c']
+          args:
+            - mkdir -p /data/youtube /data/tv /data/movies /data/books /data/complete /data/incomplete; chown -R 1000:1000 /data; chmod -R 775 /data
+          volumeMounts:
+            - name: storage
+              mountPath: /data
+      restartPolicy: Never
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: media
+                    operator: In
+                    values:
+                      - 'true'
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: downloads-storage
