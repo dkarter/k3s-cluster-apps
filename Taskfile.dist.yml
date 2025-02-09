@@ -16,3 +16,11 @@ tasks:
     desc: Opens ArgoCD
     cmd: open https://longhorn.k3s.pro
     silent: true
+
+  media:scale_down:
+    desc: Scales down all workloads in the media namespace
+    cmd: kubectl scale deployment --all -n media --replicas=0
+
+  media:scale_up:
+    desc: Scales up all workloads in the media namespace
+    cmd: kubectl scale deployment --all -n media --replicas=1
