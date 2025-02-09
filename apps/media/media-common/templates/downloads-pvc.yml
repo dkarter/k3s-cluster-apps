@@ -10,5 +10,5 @@ spec:
     requests:
       # max is disk size - 25% (https://longhorn.io/docs/archives/1.3.2/references/settings/#storage-minimal-available-percentage)
       # for 500GB it's 375GB, but better make it a little lower to be safe.
-      storage: 350Gi
+      storage: 300Gi
   storageClassName: longhorn-media-storage
