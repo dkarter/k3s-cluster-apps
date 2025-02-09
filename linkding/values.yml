@@ -1,7 +1,12 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.5.1/charts/library/common/values.schema.json
+app_host: &app_host linkding.k3s.pro
+app_url: &app_url 'https://linkding.k3s.pro'
+app_port: &app_port 9090
+
 controllers:
   main:
     strategy: Recreate
+    replicas: 1
 
     containers:
       app:
@@ -26,11 +31,11 @@ controllers:
             spec:
               httpGet:
                 path: /
-                port: &port 9090
-              initialDelaySeconds: 60
+                port: *app_port
+              initialDelaySeconds: 5
               periodSeconds: 10
-              timeoutSeconds: 1
-              failureThreshold: 3
+              timeoutSeconds: 2
+              failureThreshold: 5
           readiness: *probes
 
 persistence:
@@ -47,7 +52,7 @@ service:
     controller: main
     ports:
       http:
-        port: *port
+        port: *app_port
 
 ingress:
   main:
@@ -59,14 +64,14 @@ ingress:
       gethomepage.dev/description: Bookmark manager
       gethomepage.dev/group: Apps
       gethomepage.dev/icon: linkding.svg
-      gethomepage.dev/siteMonitor: 'https://linkding.k3s.pro'
+      gethomepage.dev/siteMonitor: *app_url
 
       # cert-manager
       kubernetes.io/ingress.class: 'traefik'
       cert-manager.io/cluster-issuer: 'letsencrypt'
     className: 'traefik'
     hosts:
-      - host: &host 'linkding.k3s.pro'
+      - host: *app_host
         paths:
           - path: /
             pathType: Prefix
@@ -75,5 +80,5 @@ ingress:
               port: http
     tls:
       - hosts:
-          - *host
+          - *app_host
         secretName: linkding-ingress-cert

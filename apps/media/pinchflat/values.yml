@@ -1,4 +1,5 @@
 app_host: &app_host 'pinchflat.k3s.pro'
+app_url: &app_url 'https://pinchflat.k3s.pro'
 app_port: &app_port 8945
 
 controllers:
@@ -70,7 +71,7 @@ ingress:
       gethomepage.dev/description: YouTube video downloader
       gethomepage.dev/group: Media
       gethomepage.dev/icon: youtube.png
-      gethomepage.dev/siteMonitor: 'https://pinchflat.k3s.pro'
+      gethomepage.dev/siteMonitor: *app_url
     className: 'traefik'
     hosts:
       - host: *app_host
