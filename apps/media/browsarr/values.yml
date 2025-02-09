@@ -12,6 +12,7 @@ controllers:
         image:
           repository: busybox
           tag: latest
+          pullPolicy: IfNotPresent
         command:
           - /bin/sh
           - -c
