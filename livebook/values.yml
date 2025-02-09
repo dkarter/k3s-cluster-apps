@@ -5,6 +5,7 @@ http_port: &http_port 8080
 controllers:
   main:
     strategy: Recreate
+    replicas: 1
 
     containers:
       app:

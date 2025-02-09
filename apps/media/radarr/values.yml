@@ -5,6 +5,7 @@ app_port: &app_port 7878
 controllers:
   main:
     strategy: Recreate
+    replicas: 1
     containers:
       app:
         image:
@@ -26,8 +27,9 @@ controllers:
               httpGet:
                 path: /
                 port: *app_port
-              initialDelaySeconds: 60
+              initialDelaySeconds: 20
               periodSeconds: 10
+              failureThreshold: 5
           readiness: *probes
         resources:
           requests:

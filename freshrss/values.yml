@@ -4,6 +4,7 @@ controllers:
     # not high availability because it's using SQLite (but I can spin up a
     # postgres db - it supports that)
     strategy: Recreate
+    replicas: 1
 
     containers:
       app:

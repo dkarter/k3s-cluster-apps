@@ -4,6 +4,7 @@ app_port: &app_port 9696
 controllers:
   main:
     strategy: Recreate
+    replicas: 1
     containers:
       app:
         image:

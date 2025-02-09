@@ -6,6 +6,7 @@ app_port: &app_port 8080
 controllers:
   main:
     strategy: Recreate
+    replicas: 1
     initContainers:
       init-permissions:
         image:
@@ -48,10 +49,10 @@ controllers:
               httpGet:
                 path: /
                 port: *app_port
-              initialDelaySeconds: 60
+              initialDelaySeconds: 10
               periodSeconds: 10
-              timeoutSeconds: 1
-              failureThreshold: 3
+              timeoutSeconds: 2
+              failureThreshold: 5
           readiness: *probes
         resources:
           requests:

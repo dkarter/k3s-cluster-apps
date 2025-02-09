@@ -8,6 +8,7 @@ playwright_port: &playwright_port 3000
 controllers:
   main:
     strategy: Recreate
+    replicas: 1
 
     containers:
       app:
@@ -36,6 +37,7 @@ controllers:
 
   playwright-chrome:
     strategy: Recreate
+    replicas: 1
 
     containers:
       playwright-chrome:

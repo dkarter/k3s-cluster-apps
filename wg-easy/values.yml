@@ -9,6 +9,7 @@ wireguard_external_port: &wireguard_external_port 31820
 controllers:
   main:
     strategy: Recreate
+    replicas: 1
 
     containers:
       app:

@@ -1,10 +1,12 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.5.1/charts/library/common/values.schema.json
 app_host: &app_host 'bazarr.k3s.pro'
+app_url: &app_url 'https://bazarr.k3s.pro'
 app_port: &app_port 6767
 
 controllers:
   main:
     strategy: Recreate
+    replicas: 1
     containers:
       app:
         image:
@@ -26,8 +28,10 @@ controllers:
               httpGet:
                 path: /
                 port: *app_port
-              initialDelaySeconds: 60
+              initialDelaySeconds: 10
               periodSeconds: 10
+              timeoutSeconds: 2
+              failureThreshold: 5
           readiness: *probes
         resources:
           requests:
@@ -71,7 +75,7 @@ ingress:
       gethomepage.dev/description: Subtitle Downloader
       gethomepage.dev/group: Media
       gethomepage.dev/icon: bazarr.png
-      gethomepage.dev/siteMonitor: 'https://bazarr.k3s.pro'
+      gethomepage.dev/siteMonitor: *app_url
     className: 'traefik'
     hosts:
       - host: *app_host

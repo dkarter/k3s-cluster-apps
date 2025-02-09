@@ -2,6 +2,7 @@
 controllers:
   main:
     strategy: Recreate
+    replicas: 1
 
     containers:
       app:

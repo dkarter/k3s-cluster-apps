@@ -5,6 +5,7 @@ app_port: &app_port 8096
 controllers:
   main:
     strategy: Recreate
+    replicas: 1
     containers:
       app:
         image:
@@ -29,7 +30,7 @@ controllers:
               initialDelaySeconds: 30
               periodSeconds: 10
               timeoutSeconds: 1
-              failureThreshold: 3
+              failureThreshold: 5
           readiness: *probes
 
 persistence:
