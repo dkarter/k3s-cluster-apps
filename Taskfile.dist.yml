@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: 3
+
+tasks:
+  default:
+    desc: Lists all tasks
+    cmd: task -l
+    silent: true
+
+  argo:open:
+    desc: Opens ArgoCD
+    cmd: open https://argocd.k3s.pro
+    silent: true
+
+  longhorn:open:
+    desc: Opens ArgoCD
+    cmd: open https://longhorn.k3s.pro
+    silent: true
