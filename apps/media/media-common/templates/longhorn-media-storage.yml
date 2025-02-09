@@ -8,11 +8,6 @@ reclaimPolicy: Delete
 allowVolumeExpansion: true
 volumeBindingMode: Immediate
 parameters:
-  fromBackup: ''
-  fsType: 'ext4'
   dataLocality: 'best-effort'
-  disableRevisionCounter: 'true'
-  unmapMarkSnapChainRemoved: ignored
-  numberOfReplicas: '1'
   nodeSelector: 'media'
   diskSelector: 'media'
