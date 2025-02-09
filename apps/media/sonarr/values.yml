@@ -43,7 +43,7 @@ persistence:
     enabled: true
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
-    size: 200Mi
+    size: 5Gi
     globalMounts:
       - path: /config
 
