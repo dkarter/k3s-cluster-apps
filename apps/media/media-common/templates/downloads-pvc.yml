@@ -8,5 +8,5 @@ spec:
     - ReadWriteMany # Allows multiple pods to read/write
   resources:
     requests:
-      storage: 300Gi
+      storage: 400Gi
   storageClassName: longhorn-media-storage
