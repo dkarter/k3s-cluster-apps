@@ -126,39 +126,10 @@ configMaps:
             nodes: true
       services.yaml: |
         - Apps:
-            - Libreddit:
-                icon: libreddit.svg
-                href: https://reddit.console.lol
-                description: A private Reddit client
-
-            - ChangeDetection:
-                icon: changedetection-io.png
-                href: &changedetection https://change.console.lol
-                description: Detect changes in websites
-                widget:
-                  type: changedetectionio
-                  url: *changedetection
-                  key: '{{`{{HOMEPAGE_VAR_CHANGEDETECTION_KEY}}`}}'
-
             - OctoPrint:
                 icon: octoprint.png
                 href: https://octoprint.console.lol/
                 description: Manage 3D prints
-
-            - Homebox:
-                icon: homebox.svg
-                href: https://homebox.console.lol
-                description: Home inventory management
-
-            - Monica:
-                icon: monica.svg
-                href: https://monica.console.lol
-                description: Personal CRM
-
-            - Ntfy:
-                icon: ntfy.svg
-                href: https://ntfy.console.lol
-                description: Push notifications
 
         - System:
             - Portainer:
@@ -191,16 +162,6 @@ configMaps:
                 icon: adguard-home.svg
                 href: &adguard https://adguard.console.lol
                 description: DNS Ad Blocker
-
-            - Wireguard:
-                icon: wireguard.svg
-                href: https://wg.console.lol
-                description: Wireguard VPN
-
-            - Nginx Proxy Manager:
-                icon: nginx-proxy-manager.svg
-                href: https://npm.console.lol/
-                description: 'Reverse Proxy Manager for Docker Apps'
 
       bookmarks.yaml: |
         - Homelab:
