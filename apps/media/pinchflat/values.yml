@@ -10,7 +10,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/kieraneglin/pinchflat
-          tag: v2025.1.27
+          tag: v2025.2.20
           pullPolicy: IfNotPresent
 
         env:
