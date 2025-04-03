@@ -11,7 +11,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/livebook-dev/livebook
-          tag: 0.15.2
+          tag: 0.15.5
           pullPolicy: IfNotPresent
 
         envFrom:
