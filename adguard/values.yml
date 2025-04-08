@@ -34,13 +34,18 @@ controllers:
           readiness: *probes
 
 persistence:
-  data:
-    enabled: true
-    type: persistentVolumeClaim
-    accessMode: ReadWriteOnce
-    size: 1Gi
+  adguard-data:
+    storageClass: 'longhorn'
+    accessMode: 'ReadWriteOnce'
+    size: 300Mi
     globalMounts:
-      - path: /data
+      - path: /opt/adguardhome/work
+  adguard-conf:
+    storageClass: 'longhorn'
+    accessMode: 'ReadWriteOnce'
+    size: 10Mi
+    globalMounts:
+      - path: /opt/adguardhome/conf
 
 service:
   app:
