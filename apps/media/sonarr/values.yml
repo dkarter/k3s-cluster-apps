@@ -10,7 +10,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/hotio/sonarr
-          tag: release-4.0.12.2823
+          tag: release-4.0.14.2939
           pullPolicy: IfNotPresent
 
         env:

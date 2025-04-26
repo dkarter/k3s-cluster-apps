@@ -10,7 +10,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/hotio/radarr
-          tag: release-5.18.4.9674
+          tag: release-5.22.4.9896
           pullPolicy: IfNotPresent
 
         env:
