@@ -31,7 +31,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/hotio/sabnzbd
-          tag: release-4.4.1
+          tag: release-4.5.1
           pullPolicy: IfNotPresent
 
         env:
