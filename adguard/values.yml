@@ -15,9 +15,9 @@ controllers:
           tag: v0.107.61
           pullPolicy: IfNotPresent
 
-        envFrom:
-          - secretRef:
-              name: adguard-env
+        # envFrom:
+        #   - secretRef:
+        #       name: adguard-env
 
         probes:
           liveness: &probes
