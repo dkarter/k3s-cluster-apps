@@ -21,6 +21,10 @@ spec:
         valueFiles:
           - $values/apps/media/sonarr/values.yml
 
+    - path: apps/media/sonarr/templates
+      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+
   project: default
 
   syncPolicy:
