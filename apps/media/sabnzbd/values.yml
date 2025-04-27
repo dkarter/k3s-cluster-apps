@@ -142,7 +142,7 @@ service:
 serviceMonitor:
   exportarr:
     enabled: true
-    serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
+    serviceName: 'sabnzbd-exportarr'
     endpoints:
       - port: http
         scheme: http
