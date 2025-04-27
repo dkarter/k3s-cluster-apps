@@ -68,6 +68,28 @@ controllers:
           limits:
             cpu: 2000m
             memory: 5Gi
+  exportarr:
+    strategy: Recreate
+
+    containers:
+      main:
+        image:
+          repository: ghcr.io/onedr0p/exportar
+          tag: v2.2.0
+        args:
+          - sabnzbd
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - all
+            add: ['CHOWN', 'FOWNER', 'SETGID', 'SETUID']
+        env:
+          PORT: '9707'
+          URL: 'http://sabnzbd.default.svc.cluster.local:8080'
+        envFrom:
+          - secretRef:
+              name: sabnzbd-env
 
 persistence:
   config:
@@ -108,6 +130,27 @@ service:
     ports:
       http:
         port: *app_port
+
+  exportarr:
+    controller: exportarr
+    ports:
+      http:
+        port: 9707
+    labels:
+      instance: 'exportarr.monitoring.svc.cluster.local'
+
+serviceMonitor:
+  exportarr:
+    enabled: true
+    serviceName: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
+    endpoints:
+      - port: http
+        scheme: http
+        path: /metrics
+        interval: 1m
+        scrapeTimeout: 10s
+    targetLabels:
+      - instance
 
 ingress:
   main:
