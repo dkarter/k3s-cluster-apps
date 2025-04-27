@@ -86,7 +86,7 @@ controllers:
             add: ['CHOWN', 'FOWNER', 'SETGID', 'SETUID']
         env:
           PORT: '9707'
-          URL: 'http://sabnzbd.default.svc.cluster.local:8080'
+          URL: 'https://sabnzbd.k3s.pro'
         envFrom:
           - secretRef:
               name: sabnzbd-env
