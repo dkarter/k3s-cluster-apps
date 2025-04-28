@@ -121,7 +121,7 @@ ingress:
       gethomepage.dev/name: adguard
       gethomepage.dev/description: Network Ad Blocker
       gethomepage.dev/group: Apps
-      gethomepage.dev/icon: adguard.svg
+      gethomepage.dev/icon: adguard-home.svg
       gethomepage.dev/siteMonitor: 'https://adguard.k3s.pro'
 
       # cert-manager

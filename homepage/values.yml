@@ -26,9 +26,9 @@ controllers:
               httpGet:
                 path: /
                 port: &port 3000
-              initialDelaySeconds: 60
+              initialDelaySeconds: 20
               periodSeconds: 10
-              timeoutSeconds: 1
+              timeoutSeconds: 10
               failureThreshold: 3
           readiness: *probes
 
@@ -117,7 +117,7 @@ configMaps:
 
         - longhorn:
             # Show the expanded view
-            expanded: true
+            expanded: false
             # Shows a node representing the aggregate values
             total: true
             # Shows the node names as labels
@@ -130,38 +130,6 @@ configMaps:
                 icon: octoprint.png
                 href: https://octoprint.console.lol/
                 description: Manage 3D prints
-
-        - System:
-            - Portainer:
-                icon: portainer.svg
-                href: &portainer https://portainer.console.lol
-                description: Manage docker container based apps
-                widget:
-                  type: portainer
-                  url: *portainer
-                  env: 2
-                  key: '{{`{{HOMEPAGE_VAR_PORTAINER_TOKEN }}`}}'
-
-            - PiSrv I Grafana:
-                icon: grafana.svg
-                href: https://monitor.console.lol/d/Ss3q6hSZkw/docker-and-os-metrics-for-raspberry-pi-15120?orgId=1&refresh=5m
-                description: Monitor Pi-Srv Server
-
-            - PiSrv II Grafana:
-                icon: grafana.svg
-                href: https://monitor.console.lol/d/Ss3q6hSZkw-pi-srv2/pi-srv2-docker-and-os-metrics-for-raspberry-pi-15120?orgId=1&refresh=10s
-                description: Monitor Pi-Srv2 Server
-
-        - Network:
-            - Speed Monitor:
-                icon: grafana.svg
-                href: https://monitor.console.lol/d/-fs18ztMz/speedtest-dashboard?orgId=1&refresh=5m
-                description: 'Check for internet speed changes over time'
-
-            - Adguard:
-                icon: adguard-home.svg
-                href: &adguard https://adguard.console.lol
-                description: DNS Ad Blocker
 
       bookmarks.yaml: |
         - Homelab:
