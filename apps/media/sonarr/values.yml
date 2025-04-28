@@ -54,6 +54,12 @@ controllers:
             drop:
               - all
             add: ['CHOWN', 'FOWNER', 'SETGID', 'SETUID']
+        resources:
+          requests:
+            cpu: 15m
+            memory: 50Mi
+          limits:
+            memory: 100Mi
         env:
           PORT: '9707'
           URL: 'https://sonarr.k3s.pro'
