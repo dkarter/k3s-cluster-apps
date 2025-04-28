@@ -9,6 +9,7 @@ controllers:
     replicas: 1
     containers:
       app:
+        nameOverride: bazarr
         image:
           repository: ghcr.io/hotio/bazarr
           tag: release-1.5.1
@@ -41,6 +42,35 @@ controllers:
             cpu: 500m
             memory: 512Mi
 
+  exportarr:
+    strategy: Recreate
+
+    containers:
+      main:
+        image:
+          repository: ghcr.io/onedr0p/exportarr
+          tag: v2.2.0
+        args:
+          - sonarr
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - all
+            add: ['CHOWN', 'FOWNER', 'SETGID', 'SETUID']
+        resources:
+          requests:
+            cpu: 15m
+            memory: 50Mi
+          limits:
+            memory: 100Mi
+        env:
+          PORT: '9707'
+          URL: 'https://bazarr.k3s.pro'
+        envFrom:
+          - secretRef:
+              name: bazarr-env
+
 persistence:
   config:
     enabled: true
@@ -63,6 +93,27 @@ service:
     ports:
       http:
         port: *app_port
+
+  exportarr:
+    controller: exportarr
+    ports:
+      http:
+        port: 9707
+    labels:
+      instance: 'bazarr'
+
+serviceMonitor:
+  exportarr:
+    enabled: true
+    serviceName: 'bazarr-exportarr'
+    endpoints:
+      - port: http
+        scheme: http
+        path: /metrics
+        interval: 1m
+        scrapeTimeout: 10s
+    targetLabels:
+      - instance
 
 ingress:
   main:

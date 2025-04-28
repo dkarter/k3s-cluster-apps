@@ -21,6 +21,10 @@ spec:
         valueFiles:
           - $values/apps/media/bazarr/values.yml
 
+    - path: apps/media/bazarr/templates
+      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+
   project: default
 
   syncPolicy:
