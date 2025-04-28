@@ -83,6 +83,7 @@ persistence:
     globalMounts:
       - path: /app/config/logs
 
+# for icons check https://dashboardicons.com/
 configMaps:
   config:
     enabled: true

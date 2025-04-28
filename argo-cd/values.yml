@@ -65,7 +65,7 @@ server:
       gethomepage.dev/enabled: 'true'
       gethomepage.dev/description: Continuous Delivery
       gethomepage.dev/group: System
-      gethomepage.dev/icon: argocd.svg
+      gethomepage.dev/icon: argo-cd.svg
       gethomepage.dev/name: ArgoCD
       gethomepage.dev/siteMonitor: 'https://argocd.k3s.pro'
     tls: true
