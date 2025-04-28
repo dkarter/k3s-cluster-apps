@@ -89,7 +89,7 @@ service:
       http:
         port: 9707
     labels:
-      instance: 'sonarr-exportarr.monitoring.svc.cluster.local'
+      instance: 'sonarr'
 
 serviceMonitor:
   exportarr:

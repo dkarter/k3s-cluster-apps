@@ -137,7 +137,7 @@ service:
       http:
         port: 9707
     labels:
-      instance: 'sabnzbd-exportarr.monitoring.svc.cluster.local'
+      instance: 'sabnzbd'
 
 serviceMonitor:
   exportarr:
