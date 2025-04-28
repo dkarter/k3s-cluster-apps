@@ -33,6 +33,38 @@ controllers:
               failureThreshold: 3
           readiness: *probes
 
+  adguard-exporter:
+    annotations:
+      reloader.stakater.com/auto: 'true'
+    containers:
+      app:
+        image:
+          repository: ghcr.io/henrywhitaker3/adguard-exporter
+          tag: v1.2.0
+          pullPolicy: IfNotPresent
+
+        env:
+          ADGUARD_SERVERS: 'https://adguard.k3s.pro'
+
+        envFrom:
+          - secretRef:
+              name: adguard-exporter-env
+
+        securityContext:
+          runAsNonRoot: true
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+
+        resources:
+          requests:
+            cpu: 10m
+            memory: 50Mi
+          limits:
+            memory: 128Mi
+
 persistence:
   adguard-data:
     storageClass: 'longhorn'
@@ -63,6 +95,22 @@ service:
         port: *dns_port
         protocol: UDP
         targetPort: *dns_port
+
+  exporter:
+    controller: adguard-exporter
+    ports:
+      http:
+        port: 9618
+
+serviceMonitor:
+  exporter:
+    serviceName: adguard-exporter
+    endpoints:
+      - port: http
+        scheme: http
+        path: /metrics
+        interval: 1m
+        scrapeTimeout: 10s
 
 ingress:
   main:

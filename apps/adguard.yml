@@ -21,6 +21,10 @@ spec:
         valueFiles:
           - $values/adguard/values.yml
 
+    - path: adguard/templates
+      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+
   project: default
 
   syncPolicy:
