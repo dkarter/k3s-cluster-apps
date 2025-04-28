@@ -29,6 +29,7 @@ controllers:
           runAsUser: 0
     containers:
       app:
+        nameOverride: 'sabnzbd'
         image:
           repository: ghcr.io/hotio/sabnzbd
           tag: release-4.5.1
