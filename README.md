@@ -16,6 +16,7 @@ Repository for managing apps on my Raspberry Pi K3s bare metal cluster
 - [ ] add redundancy to adguard - can't use the same app due to potential pvc corruption
 - [ ] finish adding exportarr to all media services
 - [ ] add additional observability
+- [ ] look into setting up Tailscale operator
 
 ## Maybe
 
