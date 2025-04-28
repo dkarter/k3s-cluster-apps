@@ -51,7 +51,7 @@ controllers:
           repository: ghcr.io/onedr0p/exportarr
           tag: v2.2.0
         args:
-          - sonarr
+          - bazarr
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
