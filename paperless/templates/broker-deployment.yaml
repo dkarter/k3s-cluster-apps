@@ -19,7 +19,7 @@ spec:
 
     spec:
       containers:
-        - image: docker.io/library/redis:7
+        - image: docker.io/library/redis:8
           name: broker
           volumeMounts:
             - name: redisdata
