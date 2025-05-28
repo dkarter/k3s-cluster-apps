@@ -15,7 +15,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/wg-easy/wg-easy
-          tag: '14'
+          tag: '15'
           pullPolicy: IfNotPresent
 
         securityContext:
