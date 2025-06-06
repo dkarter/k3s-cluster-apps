@@ -84,7 +84,7 @@ spec:
                   name: paperless-secret
                   key: PAPERLESS_ADMIN_PASSWORD
 
-          image: ghcr.io/paperless-ngx/paperless-ngx:2.15.3
+          image: ghcr.io/paperless-ngx/paperless-ngx:2.16.3
 
           livenessProbe:
             exec:
