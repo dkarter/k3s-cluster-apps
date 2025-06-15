@@ -1,2 +1,3 @@
 [tools]
+committed = "latest"
 "npm:@anthropic-ai/claude-code" = "latest"
