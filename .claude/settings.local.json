@@ -8,7 +8,12 @@
       "Bash(kubectl delete:*)",
       "Bash(kubectl scale:*)",
       "Bash(kubectl exec:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(committed --help)",
+      "Bash(lefthook:*)",
+      "Bash(committed --dump-config -)",
+      "Bash(committed --version)"
     ],
     "deny": []
   }
