@@ -1,0 +1,92 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.7.0/charts/library/common/values.schema.json
+app_host: &app_host n8n.k3s.pro
+app_url: &app_url 'https://n8n.k3s.pro'
+app_port: &app_port 5678
+
+controllers:
+  main:
+    strategy: Recreate
+    replicas: 1
+
+    containers:
+      app:
+        image:
+          repository: n8nio/n8n
+          tag: 1.69.0
+          pullPolicy: IfNotPresent
+
+        env:
+          TZ: America/Chicago
+          N8N_PORT: *app_port
+          N8N_PROTOCOL: https
+          N8N_HOST: *app_host
+          WEBHOOK_URL: *app_url
+          GENERIC_TIMEZONE: America/Chicago
+          N8N_LOG_LEVEL: info
+          DB_TYPE: postgresdb
+          DB_POSTGRESDB_HOST: n8n-db-rw.n8n.svc.cluster.local
+          DB_POSTGRESDB_PORT: "5432"
+          DB_POSTGRESDB_DATABASE: n8n
+
+        envFrom:
+          - secretRef:
+              name: n8n-env
+
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: *app_port
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 5
+          readiness: *probes
+
+persistence:
+  data:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 5Gi
+    globalMounts:
+      - path: /home/node/.n8n
+
+service:
+  app:
+    controller: main
+    ports:
+      http:
+        port: *app_port
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      # These annotations will configure how this deployment is shown in Homepage
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: n8n
+      gethomepage.dev/description: Workflow automation
+      gethomepage.dev/group: Apps
+      gethomepage.dev/icon: n8n.svg
+      gethomepage.dev/siteMonitor: *app_url
+
+      # cert-manager
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+    className: 'traefik'
+    hosts:
+      - host: *app_host
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - *app_host
+        secretName: n8n-ingress-cert

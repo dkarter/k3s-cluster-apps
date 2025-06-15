@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=https://deedee-ops.github.io/schemas/argoproj.io/application_v1alpha1.json
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: n8n
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: n8n
+
+  sources:
+    - path: n8n/templates
+      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+
+    - repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+      ref: values
+
+    - chart: app-template
+      repoURL: https://bjw-s.github.io/helm-charts
+      targetRevision: 3.7.3
+      helm:
+        releaseName: n8n
+        valueFiles:
+          - $values/n8n/values.yml
+
+  project: default
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

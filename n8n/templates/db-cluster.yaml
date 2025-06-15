@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/postgresql.cnpg.io/cluster_v1.json
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: n8n-db
+  namespace: n8n
+spec:
+  instances: 1
+  storage:
+    # https://cloudnative-pg.io/documentation/current/storage/#block-storage-considerations-ceph-longhorn
+    storageClass: local-path
+    size: 2Gi
