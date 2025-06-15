@@ -1,3 +1,8 @@
 [tools]
 committed = "latest"
 "npm:@anthropic-ai/claude-code" = "latest"
+task = "latest"
+
+[settings]
+experimental = true
+disable_backends = ["asdf"]
