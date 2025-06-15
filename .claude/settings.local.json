@@ -7,7 +7,8 @@
       "Bash(kubectl logs:*)",
       "Bash(kubectl delete:*)",
       "Bash(kubectl scale:*)",
-      "Bash(kubectl exec:*)"
+      "Bash(kubectl exec:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }
