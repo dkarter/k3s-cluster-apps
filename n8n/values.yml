@@ -32,6 +32,11 @@ controllers:
           - secretRef:
               name: n8n-env
 
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          fsGroup: 1000
+
         probes:
           liveness: &probes
             enabled: true
