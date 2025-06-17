@@ -41,11 +41,6 @@ controllers:
             cpu: 200m
             memory: 256Mi
 
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-              - ALL
 
     pod:
       topologySpreadConstraints:
