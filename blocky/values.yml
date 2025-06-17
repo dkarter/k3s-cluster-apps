@@ -69,16 +69,22 @@ configMaps:
   config:
     data:
       config.yml: |
+        # Add bootstrap DNS to resolve upstream servers
+        bootstrapDns:
+          upstream: 1.1.1.1
+          ips:
+            - dns.quad9.net
+
         upstreams:
           groups:
             default:
               - https://dns.quad9.net/dns-query    # Quad9 DoH primary
               - https://1.1.1.1/dns-query          # Cloudflare DoH fallback
           strategy: strict
-          timeout: 2s
+          timeout: 5s
 
         blocking:
-          blackLists:
+          denylists:
             ads:
               - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
               - https://someonewhocares.org/hosts/zero/hosts
@@ -102,9 +108,12 @@ configMaps:
           enable: true
           path: /metrics
 
-        httpPort: 4000
-        logLevel: info
-        logFormat: text
+        ports:
+          http: 4000
+
+        log:
+          level: info
+          format: text
 
 service:
   app:
