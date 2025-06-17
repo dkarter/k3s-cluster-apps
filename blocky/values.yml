@@ -41,7 +41,6 @@ controllers:
             cpu: 200m
             memory: 256Mi
 
-
     pod:
       topologySpreadConstraints:
         - maxSkew: 1
@@ -70,13 +69,13 @@ configMaps:
   config:
     data:
       config.yml: |
-        upstream:
-          default:
-            - https://dns.quad9.net/dns-query    # Quad9 DoH primary
-            - tcp-tls:dns.quad9.net:853          # Quad9 DoT secondary
-            - https://1.1.1.1/dns-query          # Cloudflare DoH fallback
-            - tcp-tls:1.1.1.1:853               # Cloudflare DoT fallback
+        upstreams:
+          groups:
+            default:
+              - https://dns.quad9.net/dns-query    # Quad9 DoH primary
+              - https://1.1.1.1/dns-query          # Cloudflare DoH fallback
           strategy: strict
+          timeout: 2s
 
         blocking:
           blackLists:
