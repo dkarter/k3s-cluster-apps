@@ -2,9 +2,32 @@
 
 Repository for managing apps on my Raspberry Pi K3s bare metal cluster using GitOps with ArgoCD.
 
+## Installation & Setup
+
+### Prerequisites
+
+- Access to a K3s cluster with `kubectl` configured
+- [mise](https://mise.jdx.dev/) installed for tool management
+
+### Setup
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone https://github.com/dkarter/k3s-cluster-apps.git
+   cd k3s-cluster-apps
+   ```
+
+1. **Install required tools using mise:**
+
+   ```bash
+   mise install
+   ```
+
 ## Applications
 
 ### Infrastructure & Core Services
+
 - **ArgoCD** - GitOps continuous delivery tool managing all applications
 - **External Secrets** - Integrates with 1Password Connect for secure secret management
 - **Longhorn** - Distributed block storage system for persistent volumes
@@ -12,6 +35,7 @@ Repository for managing apps on my Raspberry Pi K3s bare metal cluster using Git
 - **CNPG** - Cloud Native PostgreSQL operator for database management
 
 ### Media Management
+
 - **Sonarr** - TV series collection manager and PVR
 - **Radarr** - Movie collection manager and PVR
 - **Bazarr** - Subtitle management for Sonarr and Radarr
@@ -23,10 +47,12 @@ Repository for managing apps on my Raspberry Pi K3s bare metal cluster using Git
 - **Pinchflat** - YouTube channel archiver and downloader
 
 ### Monitoring & Observability
+
 - **Monitoring Stack** - Grafana and Prometheus for metrics and dashboards
 - **Uptime Kuma** - Uptime monitoring and status page
 
 ### Productivity & Tools
+
 - **Homepage** - Customizable dashboard for accessing all services
 - **Linkding** - Bookmark manager with tagging and search
 - **Memos** - Lightweight note-taking and memo service
@@ -37,6 +63,7 @@ Repository for managing apps on my Raspberry Pi K3s bare metal cluster using Git
 - **Changedetection.io** - Website change monitoring and notifications
 
 ### Network & Security
+
 - **AdGuard Home** - Network-wide ad blocker and DNS server
 - **WG Easy** - Simple WireGuard VPN server management
 
