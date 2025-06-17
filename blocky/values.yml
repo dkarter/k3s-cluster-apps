@@ -73,7 +73,7 @@ configMaps:
         bootstrapDns:
           - upstream: tcp+udp:1.1.1.1
             ips:
-              - dns.quad9.net
+              - 9.9.9.9
 
         upstreams:
           groups:
