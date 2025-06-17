@@ -13,6 +13,10 @@ spec:
       targetRevision: HEAD
       ref: values
 
+    - repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+      path: blocky/templates
+
     - chart: app-template
       repoURL: https://bjw-s-labs.github.io/helm-charts
       targetRevision: 3.7.3
@@ -29,4 +33,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-

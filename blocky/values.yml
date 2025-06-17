@@ -8,6 +8,30 @@ controllers:
     strategy: RollingUpdate
     replicas: 3 # High availability with 3 replicas
 
+    initContainers:
+      pg-pass-setup:
+        image:
+          repository: busybox
+          tag: latest
+        command:
+          - /bin/sh
+          - -c
+          - |
+            echo "blocky-db-rw.blocky.svc.cluster.local:5432:app:${DB_USER}:${DB_PASSWORD}" > /shared/pg_pass
+            chmod 600 /shared/pg_pass
+            echo "PGPASSFILE created successfully"
+        env:
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: blocky-db-app
+                key: username
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: blocky-db-app
+                key: password
+
     containers:
       app:
         image:
@@ -18,6 +42,9 @@ controllers:
         args:
           - --config
           - /app/config.yml
+
+        env:
+          PGPASSFILE: /shared/pg_pass
 
         probes:
           liveness: &probes
@@ -59,6 +86,11 @@ persistence:
       - path: /app/config.yml
         subPath: config.yml
         readOnly: true
+
+  shared:
+    type: emptyDir
+    globalMounts:
+      - path: /shared
 
   tmp:
     type: emptyDir
