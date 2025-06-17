@@ -135,17 +135,11 @@ service:
         port: *dns_port
         protocol: UDP
         targetPort: 53
-      metrics:
-        enabled: true
-        port: 9100
-        protocol: TCP
-        targetPort: 9100
-
 serviceMonitor:
   main:
     serviceName: blocky
     endpoints:
-      - port: metrics
+      - port: http
         scheme: http
         path: /metrics
         interval: 30s
