@@ -19,9 +19,6 @@ controllers:
           - |
             chown -R 1000:1000 /home/node/.n8n
             chmod -R 755 /home/node/.n8n
-        volumeMounts:
-          - name: data
-            mountPath: /home/node/.n8n
 
     containers:
       app:
