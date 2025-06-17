@@ -137,7 +137,8 @@ configMaps:
           maxItemsCount: 0
 
         queryLog:
-          type: console
+          type: postgresql
+          target: postgres://app@blocky-db-rw.blocky.svc.cluster.local:5432/app
           logRetentionDays: 7
 
         prometheus:
