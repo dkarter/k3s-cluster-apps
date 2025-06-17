@@ -50,9 +50,22 @@ grafana:
       label: grafana_dashboard
       labelValue: "1"
       searchNamespace: ALL
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
   dashboards:
-    blocky:
-      url: https://raw.githubusercontent.com/0xERR0R/blocky/refs/heads/main/docs/blocky-grafana.json
+    default:
+      blocky:
+        url: https://raw.githubusercontent.com/0xERR0R/blocky/refs/heads/main/docs/blocky-grafana.json
   ingress:
     enabled: true
     ingressClassName: traefik
