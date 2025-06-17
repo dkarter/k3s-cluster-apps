@@ -6,7 +6,7 @@ dns_port: &dns_port 5353 # Using different port for testing alongside AdGuard
 controllers:
   main:
     strategy: RollingUpdate
-    replicas: 3 # High availability with 3 replicas
+    replicas: 1 # High availability with 3 replicas
 
     containers:
       app:
