@@ -119,7 +119,6 @@ configMaps:
 
         queryLog:
           type: postgresql
-          target: postgres://blocky-db-rw.blocky.svc.cluster.local:5432/app
           logRetentionDays: 7
 
         prometheus:
