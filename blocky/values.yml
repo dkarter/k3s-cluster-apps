@@ -42,7 +42,6 @@ controllers:
             memory: 256Mi
 
         securityContext:
-          readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
           capabilities:
             drop:
