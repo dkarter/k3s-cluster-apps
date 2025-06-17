@@ -71,9 +71,9 @@ configMaps:
       config.yml: |
         # Add bootstrap DNS to resolve upstream servers
         bootstrapDns:
-          upstream: 1.1.1.1
-          ips:
-            - dns.quad9.net
+          - upstream: tcp+udp:1.1.1.1
+            ips:
+              - dns.quad9.net
 
         upstreams:
           groups:
