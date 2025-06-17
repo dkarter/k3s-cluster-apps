@@ -44,6 +44,15 @@ grafana:
     existingSecret: 'grafana-admin'
     userKey: grafana_username
     passwordKey: grafana_password
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
+      searchNamespace: ALL
+  dashboards:
+    blocky:
+      url: https://raw.githubusercontent.com/0xERR0R/blocky/refs/heads/main/docs/blocky-grafana.json
   ingress:
     enabled: true
     ingressClassName: traefik
