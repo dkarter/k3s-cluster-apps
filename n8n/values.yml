@@ -23,6 +23,7 @@ controllers:
           WEBHOOK_URL: *app_url
           GENERIC_TIMEZONE: America/Chicago
           N8N_LOG_LEVEL: info
+          N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
           DB_TYPE: postgresdb
           DB_POSTGRESDB_HOST: n8n-db-rw.n8n.svc.cluster.local
           DB_POSTGRESDB_PORT: "5432"
