@@ -130,12 +130,7 @@ service:
         port: *http_port
         protocol: TCP
         targetPort: *http_port
-      dns-tcp:
-        enabled: true
-        port: *dns_port
-        protocol: TCP
-        targetPort: 53
-      dns-udp:
+      dns:
         enabled: true
         port: *dns_port
         protocol: UDP
