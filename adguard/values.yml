@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.7.0/charts/library/common/values.schema.json
 host: &host 'adguard.k3s.pro'
 http_port: &http_port 3000
-dns_port: &dns_port 5352
+dns_port: &dns_port 5353
 
 controllers:
   main:
@@ -94,7 +94,7 @@ service:
         enabled: true
         port: *dns_port
         protocol: UDP
-        targetPort: *dns_port
+        targetPort: 53
 
   exporter:
     controller: adguard-exporter
