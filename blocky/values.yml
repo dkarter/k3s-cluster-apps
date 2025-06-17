@@ -1,0 +1,183 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.7.0/charts/library/common/values.schema.json
+host: &host 'blocky.k3s.pro'
+http_port: &http_port 4000
+dns_port: &dns_port 5353 # Using different port for testing alongside AdGuard
+
+controllers:
+  main:
+    strategy: RollingUpdate
+    replicas: 3 # High availability with 3 replicas
+
+    containers:
+      app:
+        image:
+          repository: ghcr.io/0xerr0r/blocky
+          tag: v0.26
+          pullPolicy: IfNotPresent
+
+        args:
+          - --config
+          - /app/config.yml
+
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /metrics
+                port: *http_port
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 3
+          readiness: *probes
+
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 100
+          runAsGroup: 101
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+
+    pod:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: blocky
+              app.kubernetes.io/instance: blocky
+
+persistence:
+  config:
+    type: configMap
+    name: blocky-config
+    globalMounts:
+      - path: /app/config.yml
+        subPath: config.yml
+        readOnly: true
+
+  tmp:
+    type: emptyDir
+    globalMounts:
+      - path: /tmp
+
+configMaps:
+  config:
+    data:
+      config.yml: |
+        upstream:
+          default:
+            - https://dns.quad9.net/dns-query    # Quad9 DoH primary
+            - tcp-tls:dns.quad9.net:853          # Quad9 DoT secondary
+            - https://1.1.1.1/dns-query          # Cloudflare DoH fallback
+            - tcp-tls:1.1.1.1:853               # Cloudflare DoT fallback
+          strategy: strict
+
+        blocking:
+          blackLists:
+            ads:
+              - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
+              - https://someonewhocares.org/hosts/zero/hosts
+              - https://raw.githubusercontent.com/AdguardTeam/AdguardFilters/master/BaseFilter/sections/adservers.txt
+              - https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=0&mimetype=plaintext
+              - https://raw.githubusercontent.com/crazy-max/WindowsSpyBlocker/master/data/hosts/spy.txt
+          clientGroupsBlock:
+            default:
+              - ads
+
+        caching:
+          minTime: 5m
+          maxTime: 30m
+          maxItemsCount: 0
+
+        queryLog:
+          type: console
+          logRetentionDays: 7
+
+        prometheus:
+          enable: true
+          path: /metrics
+
+        httpPort: 4000
+        logLevel: info
+        logFormat: text
+
+service:
+  app:
+    controller: main
+    primary: true
+    type: LoadBalancer
+    ports:
+      http:
+        enabled: true
+        port: *http_port
+        protocol: TCP
+        targetPort: *http_port
+      dns-tcp:
+        enabled: true
+        port: *dns_port
+        protocol: TCP
+        targetPort: 53
+      dns-udp:
+        enabled: true
+        port: *dns_port
+        protocol: UDP
+        targetPort: 53
+      metrics:
+        enabled: true
+        port: 9100
+        protocol: TCP
+        targetPort: 9100
+
+serviceMonitor:
+  main:
+    serviceName: blocky
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 30s
+        scrapeTimeout: 10s
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      # These annotations will configure how this deployment is shown in Homepage
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: Blocky DNS
+      gethomepage.dev/description: High-Performance DNS Ad Blocker
+      gethomepage.dev/group: Network
+      gethomepage.dev/icon: blocky.svg
+      gethomepage.dev/siteMonitor: 'https://blocky.k3s.pro'
+
+      # cert-manager
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+    className: 'traefik'
+    hosts:
+      - host: *host
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - *host
+        secretName: blocky-ingress-cert
