@@ -85,11 +85,11 @@ controllers:
 
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
-          limits:
-            cpu: 100m
+            cpu: 50m
             memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
 
 persistence:
   config:
