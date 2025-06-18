@@ -2,6 +2,7 @@
 host: &host 'blocky.k3s.pro'
 http_port: &http_port 4000
 dns_port: &dns_port 53
+ui_port: &ui_port 3000
 
 controllers:
   main:
@@ -53,6 +54,42 @@ controllers:
             matchLabels:
               app.kubernetes.io/name: blocky
               app.kubernetes.io/instance: blocky
+
+  ui:
+    strategy: RollingUpdate
+    replicas: 2
+
+    containers:
+      app:
+        image:
+          repository: gabrielduartem/blocky-ui
+          tag: 1.1.3
+          pullPolicy: IfNotPresent
+
+        env:
+          BLOCKY_API_URL: http://blocky-app:4000
+
+        probes:
+          liveness: &ui_probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: *ui_port
+              initialDelaySeconds: 10
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 3
+          readiness: *ui_probes
+
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
 
 persistence:
   config:
@@ -148,6 +185,15 @@ service:
         port: *dns_port
         protocol: UDP
         targetPort: 53
+  ui:
+    controller: ui
+    type: ClusterIP
+    ports:
+      http:
+        enabled: true
+        port: *ui_port
+        protocol: TCP
+        targetPort: *ui_port
 serviceMonitor:
   main:
     serviceName: blocky
@@ -186,3 +232,30 @@ ingress:
       - hosts:
           - *host
         secretName: blocky-ingress-cert
+  ui:
+    enabled: true
+    annotations:
+      # These annotations will configure how this deployment is shown in Homepage
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: Blocky UI
+      gethomepage.dev/description: Web Interface for Blocky DNS
+      gethomepage.dev/group: Network
+      gethomepage.dev/icon: blocky.svg
+      gethomepage.dev/siteMonitor: 'https://blocky-ui.k3s.pro'
+
+      # cert-manager
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+    className: 'traefik'
+    hosts:
+      - host: blocky-ui.k3s.pro
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: ui
+              port: http
+    tls:
+      - hosts:
+          - blocky-ui.k3s.pro
+        secretName: blocky-ui-ingress-cert
