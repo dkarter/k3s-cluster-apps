@@ -67,7 +67,7 @@ controllers:
           pullPolicy: IfNotPresent
 
         env:
-          BLOCKY_API_URL: http://blocky-app:4000
+          BLOCKY_API_URL: http://blocky.blocky.svc.cluster.local:4000
 
         probes:
           liveness: &ui_probes
