@@ -156,7 +156,7 @@ configMaps:
 
         queryLog:
           type: timescale
-          target: postgres://blocky-db-rw.blocky.svc.cluster.local:5432/blocky?sslmode=disable
+          target: postgres://app@blocky-db-rw.blocky.svc.cluster.local:5432/app?sslmode=disable
           logRetentionDays: 7
 
         prometheus:
