@@ -1,11 +1,11 @@
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/postgresql.cnpg.io/cluster_v1.json
+# yaml-language-server: $schema=https://homelab-schemas-epg.pages.dev/postgresql.cnpg.io/cluster_v1.json
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: blocky-db
   namespace: blocky
 spec:
-  instances: 1
+  instances: 2
 
   imageName: ghcr.io/clevyr/cloudnativepg-timescale:17-ts2
 
@@ -20,10 +20,20 @@ spec:
       postInitSQL:
         - CREATE EXTENSION IF NOT EXISTS timescaledb VERSION '2.19.3';
 
+  managed:
+    roles:
+      - name: grafana_readonly
+        ensure: present
+        passwordSecret:
+          name: grafana-readonly-credentials
+        inRoles:
+          - pg_read_all_data
+        login: true
+
   storage:
     # https://cloudnative-pg.io/documentation/current/storage/#block-storage-considerations-ceph-longhorn
     storageClass: local-path
     size: 2Gi
 
   monitoring:
-    enabled: true
+    enablePodMonitor: true

@@ -44,6 +44,27 @@ grafana:
     existingSecret: 'grafana-admin'
     userKey: grafana_username
     passwordKey: grafana_password
+  additionalDataSources:
+    - name: PostgreSQL
+      type: postgres
+      access: proxy
+      url: blocky-db-rw.blocky.svc.cluster.local:5432
+      database: app
+      user: grafana_readonly
+      secureJsonData:
+        password: $__file{/etc/secrets/postgres-password/password}
+      jsonData:
+        sslmode: disable
+        postgresVersion: 1700
+        timescaledb: true
+      version: 1
+      editable: true
+  extraSecretMounts:
+    - name: postgres-password
+      secretName: grafana-postgresql-credentials
+      defaultMode: 0440
+      mountPath: /etc/secrets/postgres-password
+      readOnly: true
   sidecar:
     dashboards:
       enabled: true
