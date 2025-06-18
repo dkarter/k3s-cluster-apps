@@ -48,24 +48,26 @@ grafana:
     dashboards:
       enabled: true
       label: grafana_dashboard
-      labelValue: "1"
+      labelValue: '1'
       searchNamespace: ALL
   dashboardProviders:
     dashboardproviders.yaml:
       apiVersion: 1
       providers:
-      - name: 'default'
-        orgId: 1
-        folder: ''
-        type: file
-        disableDeletion: false
-        editable: true
-        options:
-          path: /var/lib/grafana/dashboards/default
+        - name: 'default'
+          orgId: 1
+          folder: ''
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
   dashboards:
     default:
       blocky:
         url: https://raw.githubusercontent.com/0xERR0R/blocky/refs/heads/main/docs/blocky-grafana.json
+      blocky_querylog:
+        url: https://raw.githubusercontent.com/0xERR0R/blocky/refs/heads/main/docs/blocky-query-grafana-postgres.json
   ingress:
     enabled: true
     ingressClassName: traefik
