@@ -6,7 +6,24 @@ metadata:
   namespace: blocky
 spec:
   instances: 1
+
+  imageName: ghcr.io/clevyr/cloudnativepg-timescale:17-ts2
+
+  postgresql:
+    shared_preload_libraries:
+      - timescaledb
+
+  bootstrap:
+    initdb:
+      database: blocky
+      owner: blocky
+      postInitSQL:
+        - CREATE EXTENSION IF NOT EXISTS timescaledb;
+
   storage:
     # https://cloudnative-pg.io/documentation/current/storage/#block-storage-considerations-ceph-longhorn
     storageClass: local-path
     size: 2Gi
+
+  monitoring:
+    enabled: true

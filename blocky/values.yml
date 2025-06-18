@@ -155,7 +155,8 @@ configMaps:
           maxItemsCount: 0
 
         queryLog:
-          type: postgresql
+          type: timescale
+          target: postgres://blocky-db-rw.blocky.svc.cluster.local:5432/blocky?sslmode=disable
           logRetentionDays: 7
 
         prometheus:
