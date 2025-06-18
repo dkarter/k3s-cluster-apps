@@ -20,11 +20,6 @@ controllers:
           - |
             cp /tmp/pgpass-source/pgpass /shared/pgpass
             chmod 600 /shared/pgpass
-        volumeMounts:
-          - name: pgpass-source
-            mountPath: /tmp/pgpass-source
-          - name: shared-pgpass
-            mountPath: /shared
 
     containers:
       app:
@@ -128,6 +123,7 @@ persistence:
         fix-pgpass:
           - path: /tmp/pgpass-source
             readOnly: true
+        app: []
 
   shared-pgpass:
     type: emptyDir
