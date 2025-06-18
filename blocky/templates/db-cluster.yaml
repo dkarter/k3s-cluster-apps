@@ -15,10 +15,10 @@ spec:
 
   bootstrap:
     initdb:
-      database: blocky
-      owner: blocky
+      database: app
+      owner: app
       postInitSQL:
-        - CREATE EXTENSION IF NOT EXISTS timescaledb;
+        - CREATE EXTENSION IF NOT EXISTS timescaledb VERSION '2.19.3';
 
   storage:
     # https://cloudnative-pg.io/documentation/current/storage/#block-storage-considerations-ceph-longhorn
