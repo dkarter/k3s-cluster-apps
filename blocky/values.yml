@@ -9,18 +9,6 @@ controllers:
     strategy: RollingUpdate
     replicas: 3 # High availability with 3 replicas
 
-    initContainers:
-      fix-pgpass:
-        image:
-          repository: busybox
-          tag: latest
-        command:
-          - sh
-          - -c
-          - |
-            cp /tmp/pgpass-source/pgpass /shared/pgpass
-            chmod 600 /shared/pgpass
-
     containers:
       app:
         image:
@@ -33,7 +21,11 @@ controllers:
           - /app/config.yml
 
         env:
-          PGPASSFILE: /shared/pgpass
+          PGPASSWORD:
+            valueFrom:
+              secretKeyRef:
+                name: blocky-db-app
+                key: password
 
         probes:
           liveness: &probes
@@ -111,28 +103,6 @@ persistence:
       - path: /app/config.yml
         subPath: config.yml
         readOnly: true
-
-  pgpass-source:
-    type: secret
-    name: blocky-db-app
-    items:
-      - key: pgpass
-        path: pgpass
-    advancedMounts:
-      main:
-        fix-pgpass:
-          - path: /tmp/pgpass-source
-            readOnly: true
-        app: []
-
-  shared-pgpass:
-    type: emptyDir
-    advancedMounts:
-      main:
-        fix-pgpass:
-          - path: /shared
-        app:
-          - path: /shared
 
   tmp:
     type: emptyDir
