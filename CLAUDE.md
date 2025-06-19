@@ -107,3 +107,4 @@ Most applications follow this pattern:
   good idea just let the user know and stop
 - All changes must be made through Git commits to configuration files
 - ArgoCD will automatically sync changes from the repository
+- **NEVER** delete a persistent volume claim (pvc), or a Kubernetes volume without explicitly confirming with the user
