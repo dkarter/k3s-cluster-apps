@@ -32,6 +32,8 @@ controllers:
           # for client config file generation
           WG_PORT: *wireguard_external_port
           ENABLE_PROMETHEUS_METRICS: 'true'
+          # Required for v15 when using HTTP connections
+          INSECURE: 'true'
 
         envFrom:
           - secretRef:
