@@ -105,6 +105,10 @@ Most applications follow this pattern:
 - **NEVER** use `kubectl patch`, `kubectl annotate`, or similar commands to modify
   Kubernetes resources directly - this breaks GitOps principles. If this is a
   good idea just let the user know and stop
+- The only way to make a change to the infrastructure is to commit and push
+  changes up via git. After pushing changes you need to be patient and wait. If
+  needed, use a sleep command.
 - All changes must be made through Git commits to configuration files
 - ArgoCD will automatically sync changes from the repository
-- **NEVER** delete a persistent volume claim (pvc), or a Kubernetes volume without explicitly confirming with the user
+- **NEVER** delete a persistent volume claim (PVC), or a Kubernetes volume
+  without explicitly confirming with the user
