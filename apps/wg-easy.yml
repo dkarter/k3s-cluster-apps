@@ -9,10 +9,6 @@ spec:
     namespace: wg-easy
 
   sources:
-    - path: wg-easy/templates
-      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
-      targetRevision: HEAD
-
     - repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
       targetRevision: HEAD
       ref: values
