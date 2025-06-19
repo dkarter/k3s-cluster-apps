@@ -25,19 +25,6 @@ controllers:
               - SYS_MODULE
           privileged: true
 
-        env:
-          # WEBUI_HOST: *host
-          WG_HOST: *external_host
-          # does not change the internal port in the container, likely just used
-          # for client config file generation
-          WG_PORT: *wireguard_external_port
-          ENABLE_PROMETHEUS_METRICS: 'true'
-          # Required for v15 when using HTTP connections
-          INSECURE: 'true'
-
-        envFrom:
-          - secretRef:
-              name: wg-easy-env
 
         probes:
           liveness: &probes
