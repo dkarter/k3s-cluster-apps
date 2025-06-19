@@ -102,7 +102,8 @@ Most applications follow this pattern:
 - External Secrets are required for most applications to function
 - Media services can be bulk scaled for maintenance operations
 - Git commits are formatted using conventional commits
-- **NEVER** use `kubectl patch`, `kubectl annotate`, or similar commands to modify 
-  Kubernetes resources directly - this breaks GitOps principles
+- **NEVER** use `kubectl patch`, `kubectl annotate`, or similar commands to modify
+  Kubernetes resources directly - this breaks GitOps principles. If this is a
+  good idea just let the user know and stop
 - All changes must be made through Git commits to configuration files
 - ArgoCD will automatically sync changes from the repository
