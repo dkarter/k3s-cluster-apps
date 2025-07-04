@@ -16,9 +16,9 @@ controllers:
           - /bin/sh
           - -c
           - |
-            mkdir -p /downloads/movies /downloads/tv /downloads/youtube /downloads/x && \
-            chown -R 1000:1000 /downloads && \
-            chmod -R 755 /downloads
+              mkdir -p /downloads/movies /downloads/tv /downloads/youtube /downloads/x && \
+              chown -R 1000:1000 /downloads && \
+              chmod -R 755 /downloads
         securityContext:
           runAsUser: 0
     containers:

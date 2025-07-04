@@ -5,7 +5,7 @@ metadata:
   name: homepage
 rules:
   - apiGroups:
-      - ""
+      - ''
     resources:
       - namespaces
       - pods

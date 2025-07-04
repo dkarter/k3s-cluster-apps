@@ -32,15 +32,15 @@ spec:
 
             - name: PAPERLESS_REDIS
               value: redis://broker.paperless.svc.cluster.local:6379
-              
+
             - name: PAPERLESS_SECRET_KEY
               valueFrom:
-                secretKeyRef: 
+                secretKeyRef:
                   name: paperless-secret
                   key: PAPERLESS_SECRET_KEY
 
             - name: PAPERLESS_TIME_ZONE
-              value: "America/Chicago"
+              value: 'America/Chicago'
 
             - name: PAPERLESS_URL
               value: https://paperless.k3s.pro
@@ -50,13 +50,13 @@ spec:
 
             - name: PAPERLESS_DBUSER
               valueFrom:
-                secretKeyRef: 
+                secretKeyRef:
                   name: db-app
                   key: username
 
             - name: PAPERLESS_DBPASS
               valueFrom:
-                secretKeyRef: 
+                secretKeyRef:
                   name: db-app
                   key: password
 
@@ -74,13 +74,13 @@ spec:
 
             - name: PAPERLESS_ADMIN_USER
               valueFrom:
-                secretKeyRef: 
+                secretKeyRef:
                   name: paperless-secret
                   key: PAPERLESS_ADMIN_USER
 
             - name: PAPERLESS_ADMIN_PASSWORD
               valueFrom:
-                secretKeyRef: 
+                secretKeyRef:
                   name: paperless-secret
                   key: PAPERLESS_ADMIN_PASSWORD
 
@@ -93,7 +93,7 @@ spec:
                 - -fs
                 - -S
                 - --max-time
-                - "2"
+                - '2'
                 - http://localhost:8000
             failureThreshold: 5
             periodSeconds: 30
@@ -109,7 +109,7 @@ spec:
           volumeMounts:
             - name: webserver-data
               mountPath: /usr/src/paperless/data
-              
+
             - name: webserver-media
               mountPath: /usr/src/paperless/media
 

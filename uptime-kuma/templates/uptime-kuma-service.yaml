@@ -10,7 +10,7 @@ metadata:
 
 spec:
   ports:
-    - name: "3001"
+    - name: '3001'
       port: 3001
       targetPort: 3001
 

@@ -17,9 +17,9 @@ controllers:
           - /bin/sh
           - -c
           - |
-            mkdir -p /config && \
-            chown -R 1000:1000 /config && \
-            chmod -R 755 /config
+              mkdir -p /config && \
+              chown -R 1000:1000 /config && \
+              chmod -R 755 /config
         securityContext:
           runAsUser: 0
     containers:

@@ -16,15 +16,15 @@ controllers:
           - /bin/sh
           - -c
           - |
-            mkdir -p /downloads/complete/movies \
-                     /downloads/complete/tv \
-                     /downloads/complete/books \
-                     /downloads/complete/audio \
-                     /downloads/complete/other \
-                     /downloads/complete/youtube && \
-            mkdir -p /downloads/incomplete && \
-            chown -R 1000:1000 /downloads && \
-            chmod -R 755 /downloads
+              mkdir -p /downloads/complete/movies \
+                       /downloads/complete/tv \
+                       /downloads/complete/books \
+                       /downloads/complete/audio \
+                       /downloads/complete/other \
+                       /downloads/complete/youtube && \
+              mkdir -p /downloads/incomplete && \
+              chown -R 1000:1000 /downloads && \
+              chmod -R 755 /downloads
         securityContext:
           runAsUser: 0
     containers:

@@ -10,7 +10,7 @@ controllers:
   main:
     strategy: Recreate
     replicas: 1
-    
+
     pod:
       nodeSelector:
         kubernetes.io/arch: amd64
@@ -28,7 +28,6 @@ controllers:
               - NET_ADMIN
               - SYS_MODULE
           privileged: true
-
 
         probes:
           liveness: &probes

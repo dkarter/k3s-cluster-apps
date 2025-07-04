@@ -20,7 +20,7 @@ spec:
   template:
     metadata:
       labels:
-        io.kompose.network/uptime-kuma-default: "true"
+        io.kompose.network/uptime-kuma-default: 'true'
         io.kompose.service: uptime-kuma
 
     spec:
