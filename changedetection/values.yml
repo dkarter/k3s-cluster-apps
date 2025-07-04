@@ -95,6 +95,9 @@ ingress:
       gethomepage.dev/group: Apps
       gethomepage.dev/icon: changedetection.svg
       gethomepage.dev/siteMonitor: *app_url
+      gethomepage.dev/pod-selector: >-
+        app.kubernetes.io/name=changedetection,
+        app.kubernetes.io/component=main
 
       # cert-manager
       kubernetes.io/ingress.class: 'traefik'

@@ -64,7 +64,7 @@ ingress:
       gethomepage.dev/description: Bookmark manager
       gethomepage.dev/group: Apps
       gethomepage.dev/icon: linkding.svg
-      gethomepage.dev/siteMonitor: *app_url
+      gethomepage.dev/siteMonitor: https://linkding.k3s.pro/health
 
       # cert-manager
       kubernetes.io/ingress.class: 'traefik'

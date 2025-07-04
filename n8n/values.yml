@@ -88,7 +88,7 @@ ingress:
       gethomepage.dev/description: Workflow automation
       gethomepage.dev/group: Apps
       gethomepage.dev/icon: n8n.svg
-      gethomepage.dev/siteMonitor: *app_url
+      gethomepage.dev/siteMonitor: https://n8n.k3s.pro/healthz
 
       # cert-manager
       kubernetes.io/ingress.class: 'traefik'
