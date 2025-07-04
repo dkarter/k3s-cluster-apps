@@ -93,7 +93,7 @@ ingress:
       gethomepage.dev/name: ChangeDetection
       gethomepage.dev/description: Detect changes in websites
       gethomepage.dev/group: Apps
-      gethomepage.dev/icon: changedetection-io.png
+      gethomepage.dev/icon: changedetection.svg
       gethomepage.dev/siteMonitor: *app_url
 
       # cert-manager
