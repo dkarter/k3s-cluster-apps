@@ -14,7 +14,24 @@ tasks:
 
   argo:login:
     desc: Logs into argocd via the CLI
-    cmd: argocd login argocd.k3s.pro --username "admin" --password "$(op read 'op://Private/K3s ArgoCD/password')"
+    cmd: argocd login argocd.k3s.pro --username "admin" --password "$(op read 'op://Private/K3s ArgoCD/password')" --grpc-web
+    silent: true
+
+  argo:app:ls:
+    desc: Lists all argocd apps
+    cmd: argocd app list --grpc-web
+    silent: true
+
+  argo:app:refresh:all:
+    desc: Refreshes all argocd apps
+    cmd: argocd app list --grpc-web --output name | sed 's/argo-cd\///' | xargs -I{} argocd app get {} --refresh --grpc-web
+    silent: true
+
+  argo:app:refresh:
+    desc: Refreshes a single argocd app selected via fzf
+    cmd: |
+      argocd app list --grpc-web --output name | sed 's/argo-cd\///' | fzf --prompt="Select app to refresh: " | xargs -I{} argocd app get {} --refresh --grpc-web
+    silent: true
 
   fmt:
     desc: formats files
