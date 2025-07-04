@@ -1,8 +1,11 @@
 [tools]
 committed = "latest"
 dprint = "latest"
+elixir = "1.18.4-otp-27"
+erlang = "27"
 lefthook = { version = "latest", postinstall = "lefthook install" }
 "npm:@anthropic-ai/claude-code" = "latest"
+"pipx:check-jsonschema" = "latest"
 task = "latest"
 
 [settings]

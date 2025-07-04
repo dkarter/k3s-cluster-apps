@@ -58,3 +58,20 @@ tasks:
     silent: true
     cmd: |
       gh pr list --state open --author 'app/renovate' | awk '{ print $1 }' | xargs -I{} gh pr merge {} --auto --squash --delete-branch
+
+  validate:
+    desc: Validates YAML and JSON files against their defined schemas
+    summary: |
+      Validates YAML and JSON files against their defined schemas using Elixir
+
+      This task:
+      - Uses parallel processing via Task.async_stream for better performance (~9x faster)
+      - Validates YAML files against remote schemas defined in comments
+      - Validates JSON files against remote schemas defined in $schema properties
+      - Excludes node_modules and focuses on schema-annotated files only
+      - Uses check-jsonschema for actual schema compliance validation
+      - Prints green dots (.) for success, red X for failures
+      - Lists errors and exits with non-zero status on failures
+      - Supports --concurrency flag to control parallel jobs (default: 25)
+    silent: true
+    cmd: ./validate.exs {{.CLI_ARGS}}

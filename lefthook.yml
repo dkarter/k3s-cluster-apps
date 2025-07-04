@@ -1,4 +1,14 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/evilmartians/lefthook/master/schema.json
+
 commit-msg:
   jobs:
     - name: conventional commits
       run: committed --commit-file {1}
+
+pre-push:
+  commands:
+    validate:
+      run: task validate
+
+    format:check:
+      run: task fmt:check
