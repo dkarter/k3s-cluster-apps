@@ -14,6 +14,8 @@ metadata:
     gethomepage.dev/icon: uptime-kuma.svg
     gethomepage.dev/name: Uptime Kuma K3s
     gethomepage.dev/siteMonitor: 'https://uptime.k3s.pro'
+    gethomepage.dev/pod-selector: >-
+      io.kompose.service=uptime-kuma
 spec:
   rules:
     - host: &host uptime.k3s.pro

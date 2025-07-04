@@ -103,6 +103,8 @@ grafana:
       gethomepage.dev/icon: grafana.svg
       gethomepage.dev/name: Grafana
       gethomepage.dev/siteMonitor: 'https://grafana.k3s.pro/api/health'
+      gethomepage.dev/pod-selector: >-
+        app.kubernetes.io/name=grafana
       gethomepage.dev/widget.type: 'grafana'
       gethomepage.dev/widget.url: 'https://grafana.k3s.pro'
       gethomepage.dev/widget.username: 'admin'

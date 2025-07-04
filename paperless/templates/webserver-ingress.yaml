@@ -14,6 +14,8 @@ metadata:
     gethomepage.dev/icon: paperless-ngx.svg
     gethomepage.dev/name: Paperless
     gethomepage.dev/siteMonitor: 'https://paperless.k3s.pro'
+    gethomepage.dev/pod-selector: >-
+      app=webserver
     gethomepage.dev/widget.type: 'paperlessngx'
     gethomepage.dev/widget.url: 'https://paperless.k3s.pro'
     gethomepage.dev/widget.token: '{{`{{HOMEPAGE_VAR_PAPERLESS_TOKEN}}`}}'

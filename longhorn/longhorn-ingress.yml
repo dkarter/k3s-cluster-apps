@@ -13,6 +13,8 @@ metadata:
     gethomepage.dev/icon: longhorn.svg
     gethomepage.dev/name: Longhorn
     gethomepage.dev/siteMonitor: 'https://longhorn.k3s.pro'
+    gethomepage.dev/pod-selector: >-
+      app=longhorn-ui
 spec:
   rules:
     - host: 'longhorn.k3s.pro'

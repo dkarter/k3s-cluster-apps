@@ -14,6 +14,8 @@ metadata:
     gethomepage.dev/icon: memos.png
     gethomepage.dev/name: Memos
     gethomepage.dev/siteMonitor: 'https://memos.k3s.pro/healthz'
+    gethomepage.dev/pod-selector: >-
+      io.kompose.service=memos
 spec:
   rules:
     - host: memos.k3s.pro
