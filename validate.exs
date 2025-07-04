@@ -200,4 +200,3 @@ if __ENV__.file == :stdin do
 else
   SchemaValidator.main(System.argv())
 end
-
