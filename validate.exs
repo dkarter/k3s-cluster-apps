@@ -3,37 +3,38 @@
 defmodule SchemaValidator do
   @moduledoc """
   Parallel schema validation for YAML and JSON files.
-  Maintains compatibility with the existing bash validation output format.
   """
 
-  defstruct [:total_files, :passed_files, :failed_files, :errors]
+  @schema_annotation_regex ~r/\$schema"?[=:]\s*"?([^"\s]+)"?/
 
-  def new do
-    %__MODULE__{
-      total_files: 0,
-      passed_files: 0,
-      failed_files: 0,
-      errors: []
-    }
+  defmodule Summary do
+    @moduledoc false
+    @type t :: %__MODULE__{
+            total_files: non_neg_integer(),
+            passed_files: non_neg_integer(),
+            failed_files: non_neg_integer(),
+            errors: [String.t()]
+          }
+    defstruct [:total_files, :passed_files, :failed_files, :errors]
+
+    def new do
+      %__MODULE__{
+        total_files: 0,
+        passed_files: 0,
+        failed_files: 0,
+        errors: []
+      }
+    end
   end
 
   def main do
     IO.puts("🔍 Validating files with schema annotations...")
 
-    files_with_schemas = find_files_with_schemas()
-
-    if Enum.empty?(files_with_schemas) do
-      IO.puts("\n📊 Summary:")
-      IO.puts("  Total files: 0")
-      IO.puts("  Passed: 0")
-      IO.puts("  Failed: 0")
-      IO.puts("\n✅ No files with schema annotations found!")
-      System.halt(0)
-    end
+    files = files_with_schemas()
 
     # Process files in parallel
-    results =
-      files_with_schemas
+    summary =
+      files
       |> Task.async_stream(&validate_file/1,
         max_concurrency: min(25, max(10, System.schedulers_online() * 3)),
         timeout: 30_000,
@@ -43,16 +44,12 @@ defmodule SchemaValidator do
         {:ok, result} -> result
         {:exit, reason} -> {:error, "Process timeout or crash: #{inspect(reason)}"}
       end)
+      |> calculate_summary()
 
     IO.puts("\n")
 
-    # Calculate summary
-    summary = calculate_summary(results)
-
-    # Print summary
     print_summary(summary)
 
-    # Exit with appropriate code
     if summary.failed_files > 0 do
       System.halt(1)
     else
@@ -60,71 +57,24 @@ defmodule SchemaValidator do
     end
   end
 
-  defp find_files_with_schemas do
-    yaml_files = find_yaml_files_with_schemas()
-    json_files = find_json_files_with_schemas()
-
-    yaml_files ++ json_files
-  end
-
-  defp find_yaml_files_with_schemas do
-    ["**/*.yaml", "**/*.yml"]
+  defp files_with_schemas do
+    ["**/*.yaml", "**/*.yml", "**/*.json"]
     |> Enum.flat_map(&Path.wildcard/1)
     |> Enum.reject(&String.contains?(&1, "node_modules"))
-    |> Enum.filter(&has_yaml_schema_annotation?/1)
-    |> Enum.map(&{&1, :yaml})
+    |> Enum.filter(&has_schema_annotation?/1)
   end
 
-  defp find_json_files_with_schemas do
-    Path.wildcard("**/*.json")
-    |> Enum.reject(&String.contains?(&1, "node_modules"))
-    |> Enum.filter(&has_json_schema_annotation?/1)
-    |> Enum.map(&{&1, :json})
-  end
-
-  defp has_yaml_schema_annotation?(file) do
+  defp has_schema_annotation?(file) do
     case File.read(file) do
-      {:ok, content} ->
-        content
-        |> String.split("\n")
-        |> Enum.any?(&String.match?(&1, ~r/^\s*#.*yaml-language-server.*schema=/))
-
-      {:error, _} ->
-        false
-    end
-  end
-
-  defp has_json_schema_annotation?(file) do
-    case File.read(file) do
-      {:ok, content} -> String.contains?(content, "\"$schema\"")
+      {:ok, content} -> Regex.match?(@schema_annotation_regex, content)
       {:error, _} -> false
     end
   end
 
-  defp extract_schema_url(file, :yaml) do
+  defp extract_schema_url(file) do
     case File.read(file) do
       {:ok, content} ->
-        content
-        |> String.split("\n")
-        |> Enum.find_value(fn line ->
-          if String.match?(line, ~r/^\s*#.*yaml-language-server.*schema=/) do
-            Regex.run(~r/schema=([^\s]+)/, line, capture: :all_but_first)
-            |> case do
-              [url] -> url
-              _ -> nil
-            end
-          end
-        end)
-
-      {:error, _} ->
-        nil
-    end
-  end
-
-  defp extract_schema_url(file, :json) do
-    case File.read(file) do
-      {:ok, content} ->
-        Regex.run(~r/"\$schema"\s*:\s*"([^"]+)"/, content, capture: :all_but_first)
+        Regex.run(@schema_annotation_regex, content, capture: :all_but_first)
         |> case do
           [url] -> url
           _ -> nil
@@ -135,8 +85,8 @@ defmodule SchemaValidator do
     end
   end
 
-  defp validate_file({file, type}) do
-    schema_url = extract_schema_url(file, type)
+  defp validate_file(file) do
+    schema_url = extract_schema_url(file)
 
     if schema_url do
       case System.cmd("check-jsonschema", ["--schemafile", schema_url, file],
@@ -155,7 +105,7 @@ defmodule SchemaValidator do
   end
 
   defp calculate_summary(results) do
-    summary = new()
+    summary = Summary.new()
 
     Enum.reduce(results, summary, fn result, acc ->
       case result do
