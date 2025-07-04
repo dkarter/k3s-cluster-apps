@@ -17,7 +17,7 @@ defmodule SchemaValidator do
     }
   end
 
-  def main(args \\ []) do
+  def main do
     IO.puts("🔍 Validating files with schema annotations...")
 
     files_with_schemas = find_files_with_schemas()
@@ -194,9 +194,4 @@ defmodule SchemaValidator do
   end
 end
 
-# Run if called directly
-if __ENV__.file == :stdin do
-  SchemaValidator.main()
-else
-  SchemaValidator.main(System.argv())
-end
+SchemaValidator.main()
