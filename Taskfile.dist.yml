@@ -12,6 +12,10 @@ tasks:
     cmd: open https://argocd.k3s.pro
     silent: true
 
+  argo:login:
+    desc: Logs into argocd via the CLI
+    cmd: argocd login argocd.k3s.pro --username "admin" --password "$(op read 'op://Private/K3s ArgoCD/password')"
+
   fmt:
     desc: formats files
     aliases: [format]
