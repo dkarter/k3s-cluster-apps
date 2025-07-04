@@ -12,6 +12,17 @@ tasks:
     cmd: open https://argocd.k3s.pro
     silent: true
 
+  fmt:
+    desc: formats files
+    aliases: [format]
+    cmd: dprint fmt
+    silent: true
+
+  fmt:check:
+    desc: checks formatting
+    cmd: dprint check
+    silent: true
+
   longhorn:open:
     desc: Opens ArgoCD
     cmd: open https://longhorn.k3s.pro

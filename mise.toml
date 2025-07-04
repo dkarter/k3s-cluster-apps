@@ -1,5 +1,6 @@
 [tools]
 committed = "latest"
+dprint = "latest"
 lefthook = { version = "latest", postinstall = "lefthook install" }
 "npm:@anthropic-ai/claude-code" = "latest"
 task = "latest"
