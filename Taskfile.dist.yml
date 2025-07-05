@@ -33,6 +33,17 @@ tasks:
       argocd app list --grpc-web --output name | sed 's/argo-cd\///' | fzf --prompt="Select app to refresh: " | xargs -I{} argocd app get {} --refresh --grpc-web
     silent: true
 
+  argo:app:sync:all:
+    desc: Syncs all argocd apps
+    cmd: argocd app list --grpc-web --output name | sed 's/argo-cd\///' | xargs -I{} argocd app sync {} --grpc-web
+    silent: true
+
+  argo:app:sync:
+    desc: Syncs a single argocd app selected via fzf
+    cmd: |
+      argocd app list --grpc-web --output name | sed 's/argo-cd\///' | fzf --prompt="Select app to sync: " | xargs -I{} argocd app sync {} --grpc-web
+    silent: true
+
   fmt:
     desc: formats files
     aliases: [format]
