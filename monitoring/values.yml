@@ -90,6 +90,8 @@ grafana:
       blocky_querylog:
         url: https://raw.githubusercontent.com/0xERR0R/blocky/refs/heads/main/docs/blocky-query-grafana-postgres.json
         datasource: PostgreSQL
+      speedtest:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/speedtest.json
   ingress:
     enabled: true
     ingressClassName: traefik
