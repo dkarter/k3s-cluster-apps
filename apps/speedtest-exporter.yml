@@ -8,7 +8,7 @@ spec:
     namespace: monitoring
 
   sources:
-    - repoURL: https://github.com/bjw-s/helm-charts
+    - repoURL: https://bjw-s-labs.github.io/helm-charts
       chart: app-template
       targetRevision: 3.7.0
       helm:
