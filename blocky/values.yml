@@ -135,7 +135,7 @@ configMaps:
               - https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=0&mimetype=plaintext
               - https://someonewhocares.org/hosts/zero/hosts
           allowlists:
-            allowed:
+            ads:
               - |
                 t.co
           loading:
