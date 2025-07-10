@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.7.0/charts/library/common/values.schema.json
+app_host: &app_host 'speedtest-exporter.k3s.pro'
+app_port: &app_port 9876
+
+controllers:
+  main:
+    strategy: Recreate
+    replicas: 1
+    containers:
+      app:
+        nameOverride: 'speedtest-exporter'
+        image:
+          repository: caarlos0/speedtest-exporter
+          tag: v0.13.0
+          pullPolicy: IfNotPresent
+
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: *app_port
+              initialDelaySeconds: 10
+              periodSeconds: 60
+          readiness: *probes
+
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+
+service:
+  app:
+    controller: main
+    ports:
+      http:
+        port: *app_port
+
+serviceMonitor:
+  main:
+    enabled: true
+    serviceName: 'speedtest-exporter'
+    endpoints:
+      - port: http
+        scheme: http
+        path: /metrics
+        interval: 30m
+        scrapeTimeout: 1m
+        metricRelabelings:
+          - sourceLabels: [__name__]
+            regex: '^(?!speedtest_).*'
+            action: drop
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+    className: 'traefik'
+    hosts:
+      - host: *app_host
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - *app_host
+        secretName: speedtest-exporter-ingress-cert
+
+defaultPodOptions:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: node-role.kubernetes.io/control-plane
+                operator: Exists
