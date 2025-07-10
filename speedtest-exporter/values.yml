@@ -63,8 +63,8 @@ serviceMonitor:
         scrapeTimeout: 1m
         metricRelabelings:
           - sourceLabels: [__name__]
-            regex: '^(?!speedtest_).*'
-            action: drop
+            regex: '^speedtest_.*'
+            action: keep
 
 ingress:
   main:
