@@ -10,8 +10,8 @@ controllers:
       app:
         nameOverride: 'speedtest-exporter'
         image:
-          repository: caarlos0/speedtest-exporter
-          tag: v0.13.0
+          repository: ghcr.io/caarlos0/speedtest-exporter
+          tag: v1.1.4-arm64
           pullPolicy: IfNotPresent
 
         probes:
