@@ -112,3 +112,7 @@ Most applications follow this pattern:
 - ArgoCD will automatically sync changes from the repository
 - **NEVER** delete a persistent volume claim (PVC), or a Kubernetes volume
   without explicitly confirming with the user
+
+## Interaction Guidelines
+
+- If you need a kubectl port-forward - ask the user to run the command instead of running it yourself
