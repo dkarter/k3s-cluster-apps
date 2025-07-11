@@ -60,8 +60,8 @@ serviceMonitor:
       - port: http
         scheme: http
         path: /metrics
-        interval: 5m
-        scrapeTimeout: 1m
+        interval: 30m
+        scrapeTimeout: 2m
         metricRelabelings:
           - sourceLabels: [__name__]
             regex: '^speedtest_.*'
