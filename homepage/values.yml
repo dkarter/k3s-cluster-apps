@@ -37,7 +37,8 @@ controllers:
           readiness: *probes
 
 serviceAccount:
-  main: {}
+  main:
+    enabled: true
 
 service:
   app:
