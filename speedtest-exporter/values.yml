@@ -13,6 +13,8 @@ controllers:
           repository: ghcr.io/dkarter/speedtest-exporter
           tag: v1.2.2-arm64
           pullPolicy: IfNotPresent
+        args:
+          - --showServerLabels
 
         probes:
           liveness: &probes
