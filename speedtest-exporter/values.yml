@@ -11,7 +11,7 @@ controllers:
         nameOverride: 'speedtest-exporter'
         image:
           repository: ghcr.io/dkarter/speedtest-exporter
-          tag: v1.2.2-arm64
+          tag: v1.2.2-amd64
           pullPolicy: IfNotPresent
         args:
           - --showServerLabels
@@ -94,5 +94,7 @@ defaultPodOptions:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-              - key: node-role.kubernetes.io/control-plane
-                operator: Exists
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                  - k3s6
