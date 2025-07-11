@@ -116,3 +116,7 @@ Most applications follow this pattern:
 ## Interaction Guidelines
 
 - If you need a kubectl port-forward - ask the user to run the command instead of running it yourself
+
+## Kubernetes Command Guidelines
+
+- Never use `kubectl patch` commands unless specifically instructed by the user to patch directly - always prefer using gitops via argocd
