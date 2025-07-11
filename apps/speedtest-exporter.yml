@@ -10,7 +10,7 @@ spec:
   sources:
     - repoURL: https://bjw-s-labs.github.io/helm-charts
       chart: app-template
-      targetRevision: 3.7.3
+      targetRevision: 4.1.2
       helm:
         valueFiles:
           - $values/speedtest-exporter/values.yml
