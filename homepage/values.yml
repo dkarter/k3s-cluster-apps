@@ -7,6 +7,9 @@ controllers:
     strategy: Recreate
     replicas: 1
 
+    serviceAccount:
+      name: homepage
+
     containers:
       app:
         image:
