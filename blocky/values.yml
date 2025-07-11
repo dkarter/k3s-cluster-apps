@@ -147,6 +147,13 @@ configMaps:
             default:
               - ads
 
+        clientLookup:
+          clients:
+            Maxbook:
+              - 10.0.0.57
+            Workbook:
+              - 10.0.0.58
+
         caching:
           minTime: 5m
           maxTime: 30m
