@@ -107,3 +107,52 @@ tasks:
       - Supports --concurrency flag to control parallel jobs (default: 25)
     silent: true
     cmd: ./validate.exs {{.CLI_ARGS}}
+
+  validate:file:
+    desc: Validates a single YAML or JSON file against its defined schema
+    summary: |
+      Validates a single YAML or JSON file against its defined schema
+
+      Usage: task validate:file -- path/to/file.yml
+
+      This task:
+      - Validates a single file against its schema annotation
+      - Uses check-jsonschema for schema compliance validation
+      - Shows detailed error messages for debugging
+      - Requires the file path as an argument
+    silent: true
+    cmd: |
+      if [ -z "{{.CLI_ARGS}}" ]; then
+        echo "❌ Error: File path required"
+        echo "Usage: task validate:file -- path/to/file.yml"
+        exit 1
+      fi
+
+      FILE="{{.CLI_ARGS}}"
+      if [ ! -f "$FILE" ]; then
+        echo "❌ Error: File '$FILE' not found"
+        exit 1
+      fi
+
+      # Extract schema URL from file
+      SCHEMA=$(grep -o '\$schema[=:][[:space:]]*"[^"]*"' "$FILE" | sed 's/.*"\([^"]*\)".*/\1/' | head -1)
+      if [ -z "$SCHEMA" ]; then
+        SCHEMA=$(grep -o 'yaml-language-server:[[:space:]]*\$schema=[^[:space:]]*' "$FILE" | sed 's/.*\$schema=\([^[:space:]]*\).*/\1/' | head -1)
+      fi
+
+      if [ -z "$SCHEMA" ]; then
+        echo "❌ Error: No schema annotation found in '$FILE'"
+        echo "Expected: # yaml-language-server: \$schema=<url> or \$schema: <url>"
+        exit 1
+      fi
+
+      echo "🔍 Validating '$FILE' against schema:"
+      echo "   $SCHEMA"
+      echo ""
+
+      if check-jsonschema --schemafile "$SCHEMA" "$FILE"; then
+        echo "✅ Validation passed!"
+      else
+        echo "❌ Validation failed!"
+        exit 1
+      fi
