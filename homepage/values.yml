@@ -78,7 +78,7 @@ persistence:
   config:
     enabled: true
     type: configMap
-    name: homepage-config
+    name: homepage
     globalMounts:
       - path: /app/config
   logs:
