@@ -4,8 +4,7 @@ app_port: &app_port 3000
 
 controllers:
   main:
-    strategy: Recreate
-    replicas: 1
+    replicas: 2
 
     serviceAccount:
       name: homepage
