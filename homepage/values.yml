@@ -37,8 +37,7 @@ controllers:
           readiness: *probes
 
 serviceAccount:
-  main: {}
-  homepage:
+  main:
     forceRename: homepage
 
 service:
