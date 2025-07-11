@@ -61,7 +61,7 @@ serviceMonitor:
       - port: http
         scheme: http
         path: /metrics
-        interval: 30m
+        interval: 5m
         scrapeTimeout: 1m
         metricRelabelings:
           - sourceLabels: [__name__]
