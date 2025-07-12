@@ -38,6 +38,8 @@ controllers:
           GENERIC_TIMEZONE: America/Chicago
           N8N_LOG_LEVEL: info
           N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: 'true'
+          N8N_RUNNERS_ENABLED: 'true'
+          N8N_PROXY_HOPS: '1'
           DB_TYPE: postgresdb
           DB_POSTGRESDB_HOST: n8n-db-rw.n8n.svc.cluster.local
           DB_POSTGRESDB_PORT: '5432'
