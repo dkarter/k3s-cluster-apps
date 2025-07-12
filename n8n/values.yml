@@ -8,6 +8,20 @@ controllers:
     strategy: Recreate
     replicas: 1
 
+    initContainers:
+      init-permissions:
+        image:
+          repository: busybox
+          tag: 1.36.1
+        command:
+          - /bin/sh
+          - -c
+          - |
+              chown -R 1000:1000 /home/node/.n8n
+              chmod -R 755 /home/node/.n8n
+        securityContext:
+          runAsUser: 0
+
     containers:
       app:
         image:

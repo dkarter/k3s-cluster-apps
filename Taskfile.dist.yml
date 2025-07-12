@@ -1,6 +1,9 @@
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 version: 3
 
+includes:
+  hooks: ./taskfiles/hooks.yml
+
 tasks:
   default:
     desc: Lists all tasks

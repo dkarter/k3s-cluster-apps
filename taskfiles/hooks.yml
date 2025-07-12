@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: 3
+
+tasks:
+  post:edit:validate:
+    desc: Post-edit hook to validate YAML files
+    summary: |
+      Validates YAML files after editing using Claude Code hooks
+
+      Environment variables:
+      - CLAUDE_EDITED_FILE: Path to the file that was edited
+
+      This task checks if the edited file is a YAML file and validates it.
+    silent: true
+    cmd: |
+      if [[ -z "$CLAUDE_EDITED_FILE" ]]; then
+        exit 1
+      fi
+
+      if [[ "$CLAUDE_EDITED_FILE" == *.yaml ]] || [[ "$CLAUDE_EDITED_FILE" == *.yml ]]; then
+        task validate:file -- "$CLAUDE_EDITED_FILE"
+      fi
+
+  post:edit:format:
+    desc: Post-edit hook to format files
+    summary: |
+      Formats any file after editing using Claude Code hooks
+
+      Environment variables:
+      - CLAUDE_EDITED_FILE: Path to the file that was edited
+
+      This task runs dprint formatting on any edited file.
+    silent: true
+    cmd: |
+      if [[ -z "$CLAUDE_EDITED_FILE" ]]; then
+        exit 1
+      fi
+
+      dprint fmt "$CLAUDE_EDITED_FILE"
+
+  post:edit:all:
+    desc: Combined post-edit hook for validation and formatting
+    summary: |
+      Runs both validation (for YAML) and formatting on edited files
+
+      Environment variables:
+      - CLAUDE_EDITED_FILE: Path to the file that was edited
+
+      This task combines both validation and formatting hooks.
+    silent: true
+    cmd: |
+      if [[ -z "$CLAUDE_EDITED_FILE" ]]; then
+        exit 1
+      fi
+
+      # Run validation for YAML files
+      if [[ "$CLAUDE_EDITED_FILE" == *.yaml ]] || [[ "$CLAUDE_EDITED_FILE" == *.yml ]]; then
+        task validate:file -- "$CLAUDE_EDITED_FILE"
+      fi
+
+      # Always run formatting
+      dprint fmt "$CLAUDE_EDITED_FILE"
