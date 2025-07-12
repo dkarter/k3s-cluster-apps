@@ -149,10 +149,20 @@ configMaps:
 
         clientLookup:
           clients:
-            Maxbook:
-              - 10.0.0.57
-            Workbook:
-              - 10.0.0.58
+            apple-tv-living-room: [10.0.0.70]
+            cara-iphone: [10.0.0.71]
+            dorian-ipad: [10.0.0.73]
+            dorian-iphone: [10.0.0.64]
+            dorian-maxbook: [10.0.0.57]
+            dorians-workbook: [10.0.0.58]
+            ecobee-thermostat: [10.0.0.66]
+            epson-printer: [10.0.0.75]
+            eufy-homebase: [10.0.0.65]
+            jetkvm-media: [10.0.0.55]
+            octoprint: [10.0.0.67]
+            rachio: [10.0.0.68]
+            samsung-fridge: [10.0.0.56]
+
 
         caching:
           minTime: 5m
