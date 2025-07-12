@@ -70,6 +70,7 @@ kubectl scale deployment --all -n media --replicas=0
 Most applications follow this pattern:
 
 - Use `bjw-s/app-template` Helm chart for consistency
+  - If you need up-to-date documentation for the app-template use this id with the context7 tool "/bjw-s-labs/helm-charts"
 - Multi-source setup: one for values reference, one for the Helm chart
 - Automated sync with self-healing enabled
 - External secrets integration via templates
