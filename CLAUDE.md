@@ -121,3 +121,4 @@ Most applications follow this pattern:
 ## Kubernetes Command Guidelines
 
 - Never use `kubectl patch` commands unless specifically instructed by the user to patch directly - always prefer using gitops via argocd
+- IMPORTANT never amend a commit that's already been pushed and try to force push it. Always prefer adding a new commit.
