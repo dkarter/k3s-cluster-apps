@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.1.2/charts/other/app-template/values.schema.json
 app_host: &app_host 'qbittorrent.k3s.pro'
 app_port: &app_port 8080
+app_url: &app_url 'https://qbittorrent.k3s.pro'
 
 controllers:
   main:
@@ -9,22 +10,25 @@ controllers:
     containers:
       gluetun:
         image:
-          repository: ghcr.io/qdm12/gluetun
-          tag: v3.41.0
+          repository: qmcgaw/gluetun
+          tag: v3.40.0
           pullPolicy: IfNotPresent
 
         env:
+          # see https://github.com/qdm12/gluetun-wiki/blob/main/setup/providers/protonvpn.md
           VPN_SERVICE_PROVIDER: protonvpn
-          VPN_TYPE: openvpn
+          VPN_TYPE: wireguard
+          VPN_PORT_FORWARDING: 'on'
           FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16,10.43.0.0/16
-          DOT: 'off'
+          # Filter only port-forwarding enabled (aka p2p) servers
+          PORT_FORWARD_ONLY: 'on'
           DNS_KEEP_NAMESERVER: 'on'
           BLOCK_MALICIOUS: 'off'
           BLOCK_SURVEILLANCE: 'off'
           BLOCK_ADS: 'off'
           UNBLOCK: ''
           HEALTH_SUCCESS_WAIT_DURATION: 5s
-          HEALTH_TARGET_ADDRESS: google.com:443
+          HEALTH_TARGET_ADDRESS: proton.me:443
           HEALTH_VPN_DURATION_INITIAL: 30s
           HEALTH_VPN_DURATION_ADDITION: 10s
           LOG_LEVEL: info
@@ -50,8 +54,8 @@ controllers:
       app:
         nameOverride: 'qbittorrent'
         image:
-          repository: ghcr.io/onedr0p/qbittorrent
-          tag: 4.6.0
+          repository: ghcr.io/home-operations/qbittorrent
+          tag: 5.1.2
           pullPolicy: IfNotPresent
 
         dependsOn: gluetun
@@ -167,7 +171,7 @@ ingress:
       gethomepage.dev/description: Torrent downloader with VPN
       gethomepage.dev/group: Media
       gethomepage.dev/icon: qbittorrent.png
-      gethomepage.dev/siteMonitor: 'https://qbittorrent.k3s.pro'
+      gethomepage.dev/siteMonitor: *app_url
     className: 'traefik'
     hosts:
       - host: *app_host
