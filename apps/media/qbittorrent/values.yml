@@ -7,6 +7,27 @@ controllers:
   main:
     strategy: Recreate
     replicas: 1
+    initContainers:
+      init-config:
+        image:
+          repository: busybox
+          tag: latest
+          pullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - |
+              chown -R 1000:1000 /config
+              chmod -R 755 /config
+        securityContext:
+          runAsUser: 0
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            cpu: 50m
+            memory: 32Mi
     containers:
       gluetun:
         image:
@@ -92,8 +113,8 @@ controllers:
 
       port-forward:
         image:
-          repository: ghcr.io/onedr0p/gluetun-qbittorrent-port-manager
-          tag: v1.3.2
+          repository: ghcr.io/bjw-s-labs/gluetun-qb-port-sync
+          tag: v0.0.2
           pullPolicy: IfNotPresent
 
         dependsOn: gluetun
@@ -122,8 +143,12 @@ persistence:
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
     size: 5Gi
-    globalMounts:
-      - path: /config
+    advancedMounts:
+      main:
+        init-config:
+          - path: /config
+        app:
+          - path: /config
 
   downloads:
     enabled: true
