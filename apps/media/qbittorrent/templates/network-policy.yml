@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: qbittorrent-vpn-only
+  namespace: media
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: qbittorrent
+  policyTypes:
+    - Egress
+  egress:
+    # Allow DNS to kube-dns
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+    # Allow local Kubernetes cluster communication
+    # Block all other egress traffic (forces through VPN)
+    - to:
+        - ipBlock:
+            cidr: 10.42.0.0/16
+    - to:
+        - ipBlock:
+            cidr: 10.43.0.0/16
