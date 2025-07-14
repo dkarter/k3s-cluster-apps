@@ -154,3 +154,17 @@ tasks:
         echo "❌ Validation failed!"
         exit 2
       fi
+
+  qb:check:vpn:
+    desc: Checks if QB is routed through the VPN
+    silent: true
+    cmd: |
+      MY_IP=$(curl -s https://ipinfo.io/ip)
+      QB_IP=$(kubectl exec -n media deployment/qbittorrent -c qbittorrent -- curl -s https://ipinfo.io/ip)
+      echo "My IP: ${MY_IP}"
+      echo "QB IP: ${QB_IP}"
+      if [ "${QB_IP}" != "${MY_IP}" ]; then
+        echo "✅ Protected!"
+      else
+        echo "🚨 Something's wrong!"
+      fi
