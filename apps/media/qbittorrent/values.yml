@@ -81,6 +81,11 @@ controllers:
 
         dependsOn: gluetun
 
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          fsGroup: 1000
+
         env:
           PUID: '1000'
           PGID: '1000'
@@ -111,32 +116,6 @@ controllers:
             cpu: 1000m
             memory: 1Gi
 
-      port-forward:
-        image:
-          repository: ghcr.io/bjw-s-labs/gluetun-qb-port-sync
-          tag: v0.0.2
-          pullPolicy: IfNotPresent
-
-        dependsOn: gluetun
-
-        env:
-          GLUETUN_SERVER: localhost
-          GLUETUN_PORT: '8000'
-          QBITTORRENT_SERVER: localhost
-          QBITTORRENT_PORT: *app_port
-
-        envFrom:
-          - secretRef:
-              name: qbittorrent-env
-
-        resources:
-          requests:
-            cpu: 10m
-            memory: 32Mi
-          limits:
-            cpu: 100m
-            memory: 64Mi
-
 persistence:
   config:
     enabled: true
@@ -163,8 +142,6 @@ persistence:
     advancedMounts:
       main:
         gluetun:
-          - path: /tmp/gluetun
-        port-forward:
           - path: /tmp/gluetun
 
 service:
