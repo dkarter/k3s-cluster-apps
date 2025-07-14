@@ -1,0 +1,175 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.1.2/charts/other/app-template/values.schema.json
+app_host: &app_host 'qbittorrent.k3s.pro'
+app_port: &app_port 8080
+
+controllers:
+  main:
+    strategy: Recreate
+    replicas: 1
+    containers:
+      app:
+        nameOverride: 'qbittorrent'
+        image:
+          repository: ghcr.io/onedr0p/qbittorrent
+          tag: 4.6.0
+          pullPolicy: IfNotPresent
+
+        env:
+          PUID: '1000'
+          PGID: '1000'
+          UMASK: '002'
+          TZ: 'America/Chicago'
+
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: *app_port
+              initialDelaySeconds: 60
+              periodSeconds: 10
+          readiness: *probes
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+
+      gluetun:
+        image:
+          repository: ghcr.io/qdm12/gluetun
+          tag: v3.41.0
+          pullPolicy: IfNotPresent
+
+        env:
+          VPN_SERVICE_PROVIDER: custom
+          VPN_TYPE: wireguard
+          VPN_INTERFACE: wg0
+          FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16,10.43.0.0/16
+
+        envFrom:
+          - secretRef:
+              name: qbittorrent-env
+
+        securityContext:
+          capabilities:
+            add:
+              - NET_ADMIN
+
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+
+      port-forward:
+        image:
+          repository: ghcr.io/onedr0p/gluetun-qbittorrent-port-manager
+          tag: v1.3.2
+          pullPolicy: IfNotPresent
+
+        env:
+          GLUETUN_SERVER: localhost
+          GLUETUN_PORT: '8000'
+          QBITTORRENT_SERVER: localhost
+          QBITTORRENT_PORT: *app_port
+
+        envFrom:
+          - secretRef:
+              name: qbittorrent-env
+
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+
+persistence:
+  config:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 5Gi
+    globalMounts:
+      - path: /config
+
+  downloads:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: downloads-storage
+    globalMounts:
+      - path: /downloads
+
+  gluetun-data:
+    enabled: true
+    type: emptyDir
+    advancedMounts:
+      main:
+        gluetun:
+          - path: /tmp/gluetun
+        port-forward:
+          - path: /tmp/gluetun
+
+service:
+  app:
+    controller: main
+    ports:
+      http:
+        port: *app_port
+
+  gluetun:
+    controller: main
+    type: ClusterIP
+    ports:
+      shadowsocks:
+        port: 8388
+      http-proxy:
+        port: 8888
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: qBittorrent
+      gethomepage.dev/description: Torrent downloader with VPN
+      gethomepage.dev/group: Media
+      gethomepage.dev/icon: qbittorrent.png
+      gethomepage.dev/siteMonitor: 'https://qbittorrent.k3s.pro'
+    className: 'traefik'
+    hosts:
+      - host: *app_host
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - *app_host
+        secretName: qbittorrent-ingress-cert
+
+defaultPodOptions:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: media
+                operator: In
+                values:
+                  - 'true'
+
+  automountServiceAccountToken: false
