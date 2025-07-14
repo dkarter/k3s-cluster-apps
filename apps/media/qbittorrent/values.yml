@@ -43,7 +43,7 @@ controllers:
           FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16,10.43.0.0/16
           # Filter only port-forwarding enabled (aka p2p) servers
           PORT_FORWARD_ONLY: 'on'
-          DNS_KEEP_NAMESERVER: 'on'
+          DNS_KEEP_NAMESERVER: 'off'
           BLOCK_MALICIOUS: 'off'
           BLOCK_SURVEILLANCE: 'off'
           BLOCK_ADS: 'off'
