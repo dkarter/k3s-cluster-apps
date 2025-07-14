@@ -92,10 +92,6 @@ controllers:
           UMASK: '002'
           TZ: 'America/Chicago'
 
-        envFrom:
-          - secretRef:
-              name: qbittorrent-env
-
         probes:
           liveness: &probes
             enabled: true
