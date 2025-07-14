@@ -1,0 +1,85 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "task fmt"
+          },
+          {
+            "type": "command",
+            "command": "task hooks:post:edit:validate --exit-code"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "say 'I need your attention!'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "say 'All done!'"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(check-jsonschema:*)",
+      "Bash(chmod:*)",
+      "Bash(committed:*)",
+      "Bash(curl:*)",
+      "Bash(dig:*)",
+      "Bash(dprint check:*)",
+      "Bash(dprint fmt:*)",
+      "Bash(echo)",
+      "Bash(find:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(grep:*)",
+      "Bash(helm show:*)",
+      "Bash(kubectl delete pod:*)",
+      "Bash(kubectl describe:*)",
+      "Bash(kubectl exec:*)",
+      "Bash(kubectl get pods:*)",
+      "Bash(kubectl get:*)",
+      "Bash(kubectl logs:*)",
+      "Bash(kubectl scale:*)",
+      "Bash(kubectl wait:*)",
+      "Bash(lefthook:*)",
+      "Bash(ls:*)",
+      "Bash(mise install:*)",
+      "Bash(mise list:*)",
+      "Bash(mise use:*)",
+      "Bash(mkdir:*)",
+      "Bash(npx ajv-cli validate:*)",
+      "Bash(nslookup:*)",
+      "Bash(rg:*)",
+      "Bash(ssh:*)",
+      "Bash(task:*)",
+      "Bash(time task validate:elixir:*)",
+      "Bash(timeout:*)",
+      "Bash(yamllint:*)",
+      "Bash(yq eval:*)",
+      "WebFetch(domain:*)",
+      "mcp__context7__get-library-docs",
+      "mcp__context7__resolve-library-id"
+    ],
+    "deny": []
+  }
+}
