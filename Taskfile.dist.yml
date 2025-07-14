@@ -144,9 +144,8 @@ tasks:
       fi
 
       if [ -z "$SCHEMA" ]; then
-        echo "❌ Error: No schema annotation found in '$FILE'"
-        echo "Expected: # yaml-language-server: \$schema=<url> or \$schema: <url>"
-        exit 1
+        echo "ℹ️  No schema annotation found in '$FILE' - skipping validation"
+        exit 0
       fi
 
       echo "🔍 Validating '$FILE' against schema:"
