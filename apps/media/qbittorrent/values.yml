@@ -196,8 +196,3 @@ defaultPodOptions:
                   - 'true'
 
   automountServiceAccountToken: false
-
-  securityContext:
-    sysctls:
-      - name: net.ipv6.conf.all.disable_ipv6
-        value: '1'
