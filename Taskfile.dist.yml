@@ -148,13 +148,9 @@ tasks:
         exit 0
       fi
 
-      echo "🔍 Validating '$FILE' against schema:"
-      echo "   $SCHEMA"
-      echo ""
-
-      if check-jsonschema --schemafile "$SCHEMA" "$FILE"; then
+      if check-jsonschema --schemafile "$SCHEMA" "$FILE" 1>&2; then
         echo "✅ Validation passed!"
       else
         echo "❌ Validation failed!"
-        exit 1
+        exit 2
       fi
