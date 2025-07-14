@@ -19,10 +19,15 @@ spec:
         - protocol: UDP
           port: 53
     # Allow local Kubernetes cluster communication
-    # Block all other egress traffic (forces through VPN)
     - to:
         - ipBlock:
             cidr: 10.42.0.0/16
     - to:
         - ipBlock:
             cidr: 10.43.0.0/16
+    # Allow VPN connection (Gluetun handles filtering internally)
+    # Block all other egress traffic (forces through VPN)
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 51820
