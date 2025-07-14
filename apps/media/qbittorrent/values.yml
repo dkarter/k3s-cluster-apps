@@ -7,6 +7,46 @@ controllers:
     strategy: Recreate
     replicas: 1
     containers:
+      gluetun:
+        image:
+          repository: ghcr.io/qdm12/gluetun
+          tag: v3.41.0
+          pullPolicy: IfNotPresent
+
+        env:
+          VPN_SERVICE_PROVIDER: protonvpn
+          VPN_TYPE: openvpn
+          FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16,10.43.0.0/16
+          DOT: 'off'
+          DNS_KEEP_NAMESERVER: 'on'
+          BLOCK_MALICIOUS: 'off'
+          BLOCK_SURVEILLANCE: 'off'
+          BLOCK_ADS: 'off'
+          UNBLOCK: ''
+          HEALTH_SUCCESS_WAIT_DURATION: 5s
+          HEALTH_TARGET_ADDRESS: google.com:443
+          HEALTH_VPN_DURATION_INITIAL: 30s
+          HEALTH_VPN_DURATION_ADDITION: 10s
+          LOG_LEVEL: info
+
+        envFrom:
+          - secretRef:
+              name: gluetun-env
+
+        securityContext:
+          capabilities:
+            add:
+              - NET_ADMIN
+          allowPrivilegeEscalation: false
+
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+
       app:
         nameOverride: 'qbittorrent'
         image:
@@ -14,11 +54,17 @@ controllers:
           tag: 4.6.0
           pullPolicy: IfNotPresent
 
+        dependsOn: gluetun
+
         env:
           PUID: '1000'
           PGID: '1000'
           UMASK: '002'
           TZ: 'America/Chicago'
+
+        envFrom:
+          - secretRef:
+              name: qbittorrent-env
 
         probes:
           liveness: &probes
@@ -40,40 +86,13 @@ controllers:
             cpu: 1000m
             memory: 1Gi
 
-      gluetun:
-        image:
-          repository: ghcr.io/qdm12/gluetun
-          tag: v3.41.0
-          pullPolicy: IfNotPresent
-
-        env:
-          VPN_SERVICE_PROVIDER: custom
-          VPN_TYPE: wireguard
-          VPN_INTERFACE: wg0
-          FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16,10.43.0.0/16
-
-        envFrom:
-          - secretRef:
-              name: qbittorrent-env
-
-        securityContext:
-          capabilities:
-            add:
-              - NET_ADMIN
-
-        resources:
-          requests:
-            cpu: 50m
-            memory: 128Mi
-          limits:
-            cpu: 200m
-            memory: 256Mi
-
       port-forward:
         image:
           repository: ghcr.io/onedr0p/gluetun-qbittorrent-port-manager
           tag: v1.3.2
           pullPolicy: IfNotPresent
+
+        dependsOn: gluetun
 
         env:
           GLUETUN_SERVER: localhost
@@ -130,6 +149,8 @@ service:
     controller: main
     type: ClusterIP
     ports:
+      http:
+        port: 8000
       shadowsocks:
         port: 8388
       http-proxy:
