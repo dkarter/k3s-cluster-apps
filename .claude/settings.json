@@ -23,7 +23,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "say 'I need your attention!'"
+            "command": "task hooks:notification:notify"
           }
         ]
       }
@@ -34,7 +34,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "say 'All done!'"
+            "command": "task hooks:stop:notify"
           }
         ]
       }
