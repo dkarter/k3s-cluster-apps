@@ -185,6 +185,11 @@ ingress:
         secretName: qbittorrent-ingress-cert
 
 defaultPodOptions:
+  dnsConfig:
+    options:
+      - name: ndots
+        value: '1'
+
   affinity:
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
