@@ -25,7 +25,7 @@ spec:
         io.kompose.service: memos
     spec:
       containers:
-        - image: neosmemo/memos:0.24.4
+        - image: neosmemo/memos:0.25.0
           name: memos
           ports:
             - containerPort: &port 5230
