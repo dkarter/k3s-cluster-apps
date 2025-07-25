@@ -1,9 +1,0 @@
-oauth:
-  clientId:
-    secretKeyRef:
-      name: operator-oauth
-      key: client_id
-  clientSecret:
-    secretKeyRef:
-      name: operator-oauth
-      key: client_secret
