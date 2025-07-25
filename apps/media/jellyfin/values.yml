@@ -67,6 +67,8 @@ persistence:
 service:
   app:
     controller: main
+    annotations:
+      tailscale.com/expose: 'true'
     ports:
       http:
         port: *app_port
