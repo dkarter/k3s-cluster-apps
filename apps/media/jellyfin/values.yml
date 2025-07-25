@@ -70,15 +70,6 @@ service:
     ports:
       http:
         port: *app_port
-  tailscale:
-    controller: main
-    type: LoadBalancer
-    loadBalancerClass: tailscale
-    ports:
-      https:
-        port: 443
-        targetPort: *app_port
-        protocol: TCP
 
 ingress:
   main:
@@ -105,6 +96,20 @@ ingress:
       - hosts:
           - *app_host
         secretName: jellyfin-ingress-cert
+  tailscale:
+    enabled: true
+    className: 'tailscale'
+    hosts:
+      - host: jellyfin
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - jellyfin
 
 defaultPodOptions:
   affinity:
