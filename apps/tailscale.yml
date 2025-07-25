@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://deedee-ops.github.io/schemas/argoproj.io/application_v1alpha1.json
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tailscale
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: tailscale
+
+  sources:
+    - path: tailscale
+      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+
+    - chart: tailscale-operator
+      repoURL: https://pkgs.tailscale.com/helmcharts
+      targetRevision: 1.78.3
+      helm:
+        releaseName: tailscale-operator
+        valueFiles:
+          - $values/tailscale/values.yml
+
+  project: default
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
