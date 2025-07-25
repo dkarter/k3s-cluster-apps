@@ -12,7 +12,7 @@ tasks:
             -message 'All done!' \
             -activate 'com.mitchellh.ghostty' \
             -sender 'com.anthropic.claudefordesktop'
-      - cmd: pplay ~/dotfiles/sounds/happy-chime-success.mp3
+      - cmd: pplay happy-chime-success.mp3
 
   notification:notify:
     desc: Notifies when the agent needs your attention
@@ -24,7 +24,7 @@ tasks:
             -message 'I need your attention!' \
             -activate 'com.mitchellh.ghostty' \
             -sender 'com.anthropic.claudefordesktop'
-      - cmd: pplay ~/dotfiles/sounds/attention-chime-notice.mp3
+      - cmd: pplay attention-chime-notice.mp3
 
   post:edit:validate:
     desc: Post-edit hook to validate YAML changes
