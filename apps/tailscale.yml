@@ -9,13 +9,17 @@ spec:
     namespace: tailscale
 
   sources:
-    - path: tailscale
-      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+    - repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
       targetRevision: HEAD
+      ref: values
+
+    - repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+      path: tailscale
 
     - chart: tailscale-operator
       repoURL: https://pkgs.tailscale.com/helmcharts
-      targetRevision: 1.78.3
+      targetRevision: 1.84.3
       helm:
         releaseName: tailscale-operator
         valueFiles:
