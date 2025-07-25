@@ -67,11 +67,18 @@ persistence:
 service:
   app:
     controller: main
-    annotations:
-      tailscale.com/expose: 'true'
     ports:
       http:
         port: *app_port
+  tailscale:
+    controller: main
+    type: LoadBalancer
+    loadBalancerClass: tailscale
+    ports:
+      https:
+        port: 443
+        targetPort: *app_port
+        protocol: TCP
 
 ingress:
   main:
