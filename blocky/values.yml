@@ -191,6 +191,8 @@ service:
     primary: true
     type: LoadBalancer
     externalTrafficPolicy: Local
+    annotations:
+      tailscale.com/expose: 'true'
     ports:
       http:
         enabled: true
