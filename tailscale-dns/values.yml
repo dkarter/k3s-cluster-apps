@@ -1,0 +1,113 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.1.2/charts/other/app-template/values.schema.json
+dns_port: &dns_port 53
+
+controllers:
+  main:
+    strategy: RollingUpdate
+    replicas: 2 # High availability
+
+    containers:
+      app:
+        image:
+          repository: dnsmasq/dnsmasq
+          tag: 2.90-2.1
+          pullPolicy: IfNotPresent
+
+        args:
+          - --conf-file=/etc/dnsmasq/dnsmasq.conf
+          - --no-daemon
+
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - 'nslookup example.com 127.0.0.1 || exit 1'
+              initialDelaySeconds: 10
+              periodSeconds: 30
+              timeoutSeconds: 5
+              failureThreshold: 3
+          readiness: *probes
+
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 65534
+          runAsGroup: 65534
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+
+defaultPodOptions:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: blocky
+          topologyKey: kubernetes.io/hostname
+
+persistence:
+  config:
+    type: configMap
+    name: tailscale-dns
+    globalMounts:
+      - path: /etc/dnsmasq
+        readOnly: true
+
+configMaps:
+  config:
+    data:
+      dnsmasq.conf: |
+        # Listen on all interfaces
+        listen-address=0.0.0.0
+        port=53
+
+        # Don't read /etc/hosts or /etc/resolv.conf
+        no-hosts
+        no-resolv
+
+        # Log queries for debugging (remove in production)
+        log-queries
+
+        # Forward all non-k3s.pro queries to Blocky
+        server=10.0.1.100  # Blocky LoadBalancer IP
+
+        # Custom entries for k3s.pro domains pointing to Tailscale IPs
+        # NOTE: You'll need to update these IPs after getting your Tailscale ingress IPs
+
+        # Example entries - update these with actual Tailscale IPs:
+        # address=/jellyfin.k3s.pro/100.x.x.x
+        # address=/blocky.k3s.pro/100.x.x.x
+        # address=/blocky-ui.k3s.pro/100.x.x.x
+
+        # For now, let's add a placeholder that we'll update
+        address=/jellyfin.k3s.pro/127.0.0.1
+
+        # Wildcard for all k3s.pro subdomains (fallback)
+        address=/.k3s.pro/127.0.0.1
+
+service:
+  app:
+    controller: main
+    type: ClusterIP
+    annotations:
+      tailscale.com/expose: 'true'
+    ports:
+      dns:
+        enabled: true
+        port: *dns_port
+        protocol: UDP
+        targetPort: 53
