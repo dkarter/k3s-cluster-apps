@@ -41,8 +41,7 @@ controllers:
             memory: 128Mi
 
         securityContext:
-          runAsUser: 1000
-          runAsGroup: 1000
+          runAsUser: 0 # Run as root - dockur image needs write access to /etc/
           allowPrivilegeEscalation: false
           capabilities:
             add:
