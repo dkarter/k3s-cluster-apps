@@ -9,13 +9,16 @@ controllers:
     containers:
       app:
         image:
-          repository: dnsmasq/dnsmasq
-          tag: 2.90-2.1
+          repository: alpine
+          tag: 3.22.1
           pullPolicy: IfNotPresent
 
-        args:
-          - --conf-file=/etc/dnsmasq/dnsmasq.conf
-          - --no-daemon
+        command:
+          - /bin/sh
+          - -c
+          - |
+              apk add --no-cache dnsmasq
+              exec dnsmasq --conf-file=/etc/dnsmasq/dnsmasq.conf --no-daemon
 
         probes:
           liveness: &probes
