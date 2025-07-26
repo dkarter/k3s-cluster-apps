@@ -13,9 +13,8 @@ controllers:
           tag: 2.91
           pullPolicy: IfNotPresent
 
-        args:
-          - --conf-file=/etc/dnsmasq/dnsmasq.conf
-          - --no-daemon
+        env:
+          DNS1: '10.0.1.100' # Forward to Blocky
 
         probes:
           liveness: &probes
@@ -42,11 +41,12 @@ controllers:
             memory: 128Mi
 
         securityContext:
-          runAsNonRoot: true
           runAsUser: 1000
           runAsGroup: 1000
           allowPrivilegeEscalation: false
           capabilities:
+            add:
+              - NET_ADMIN
             drop:
               - ALL
 
@@ -64,27 +64,14 @@ persistence:
     type: configMap
     name: tailscale-dns
     globalMounts:
-      - path: /etc/dnsmasq
+      - path: /etc/dnsmasq.d/tailscale.conf
+        subPath: tailscale.conf
         readOnly: true
 
 configMaps:
   config:
     data:
-      dnsmasq.conf: |
-        # Listen on all interfaces
-        listen-address=0.0.0.0
-        port=53
-
-        # Don't read /etc/hosts or /etc/resolv.conf
-        no-hosts
-        no-resolv
-
-        # Log queries for debugging (remove in production)
-        log-queries
-
-        # Forward all non-k3s.pro queries to Blocky
-        server=10.0.1.100  # Blocky LoadBalancer IP
-
+      tailscale.conf: |
         # Custom entries for k3s.pro domains pointing to Tailscale IPs
         # NOTE: You'll need to update these IPs after getting your Tailscale ingress IPs
 
@@ -93,8 +80,8 @@ configMaps:
         # address=/blocky.k3s.pro/100.x.x.x
         # address=/blocky-ui.k3s.pro/100.x.x.x
 
-        # For now, let's add a placeholder that we'll update
-        address=/jellyfin.k3s.pro/127.0.0.1
+        # Jellyfin Tailscale IP
+        address=/jellyfin.k3s.pro/100.82.14.60
 
         # Wildcard for all k3s.pro subdomains (fallback)
         address=/.k3s.pro/127.0.0.1
