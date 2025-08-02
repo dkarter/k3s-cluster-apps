@@ -134,6 +134,8 @@ configMaps:
               - https://malware-filter.gitlab.io/malware-filter/phishing-filter-hosts.txt
               - https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=0&mimetype=plaintext
               - https://someonewhocares.org/hosts/zero/hosts
+              - |
+                improving.duckduckgo.com
           allowlists:
             ads:
               - |
