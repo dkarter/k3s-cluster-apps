@@ -5,7 +5,7 @@ metadata:
   name: db
   namespace: paperless
 spec:
-  instances: 3
+  instances: 2
   storage:
     # https://cloudnative-pg.io/documentation/current/storage/#block-storage-considerations-ceph-longhorn
     storageClass: local-path
