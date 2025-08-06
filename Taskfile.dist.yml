@@ -108,6 +108,7 @@ tasks:
       - Prints green dots (.) for success, red X for failures
       - Lists errors and exits with non-zero status on failures
       - Supports --concurrency flag to control parallel jobs (default: 25)
+      - Supports --trace flag for sequential processing with verbose output (concurrency: 1)
     silent: true
     cmd: ./validate.exs {{.CLI_ARGS}}
 

@@ -28,23 +28,34 @@ defmodule SchemaValidator do
   end
 
   def main do
+    args = System.argv()
+    trace_mode = "--trace" in args
+
     IO.puts("🔍 Validating files with schema annotations...")
 
     files = files_with_schemas()
 
-    # Process files in parallel
+    # Process files - either in parallel or sequentially with trace
     summary =
-      files
-      |> Task.async_stream(&validate_file/1,
-        max_concurrency: min(25, max(10, System.schedulers_online() * 3)),
-        timeout: 30_000,
-        on_timeout: :kill_task
-      )
-      |> Enum.map(fn
-        {:ok, result} -> result
-        {:exit, reason} -> {:error, "Process timeout or crash: #{inspect(reason)}"}
-      end)
-      |> calculate_summary()
+      if trace_mode do
+        IO.puts("🔍 Running in trace mode (concurrency: 1)...")
+
+        files
+        |> Enum.map(&validate_file_with_trace/1)
+        |> calculate_summary()
+      else
+        files
+        |> Task.async_stream(&validate_file/1,
+          max_concurrency: min(25, max(10, System.schedulers_online() * 3)),
+          timeout: 30_000,
+          on_timeout: :kill_task
+        )
+        |> Enum.map(fn
+          {:ok, result} -> result
+          {:exit, reason} -> {:error, "Process timeout or crash: #{inspect(reason)}"}
+        end)
+        |> calculate_summary()
+      end
 
     IO.puts("\n")
 
@@ -102,6 +113,29 @@ defmodule SchemaValidator do
       {:ok, _file} -> IO.write("\e[32m.\e[0m")
       {:error, _file} -> IO.write("\e[31mX\e[0m")
     end)
+  end
+
+  defp validate_file_with_trace(file) do
+    IO.puts("Validating: #{file}")
+
+    schema_url = extract_schema_url(file)
+
+    if schema_url do
+      case System.cmd("check-jsonschema", ["--schemafile", schema_url, file],
+             stderr_to_stdout: true
+           ) do
+        {_output, 0} ->
+          IO.puts("  ✅ Passed")
+          {:ok, file}
+
+        {_output, _exit_code} ->
+          IO.puts("  ❌ Failed")
+          {:error, file}
+      end
+    else
+      IO.puts("  ❌ Failed (no schema found)")
+      {:error, file}
+    end
   end
 
   defp calculate_summary(results) do
