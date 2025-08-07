@@ -1,0 +1,203 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.1.2/charts/other/app-template/values.schema.json
+app_host: &app_host 'deluge.k3s.pro'
+app_port: &app_port 8112
+app_url: &app_url 'https://deluge.k3s.pro'
+
+controllers:
+  main:
+    strategy: Recreate
+    replicas: 1
+    initContainers:
+      init-config:
+        image:
+          repository: busybox
+          tag: latest
+          pullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - |
+              chown -R 1000:1000 /config
+              chmod -R 755 /config
+        securityContext:
+          runAsUser: 0
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            cpu: 50m
+            memory: 32Mi
+    containers:
+      gluetun:
+        image:
+          repository: qmcgaw/gluetun
+          tag: v3.40.0
+          pullPolicy: IfNotPresent
+
+        env:
+          # see https://github.com/qdm12/gluetun-wiki/blob/main/setup/providers/protonvpn.md
+          VPN_SERVICE_PROVIDER: protonvpn
+          VPN_TYPE: wireguard
+          VPN_PORT_FORWARDING: 'on'
+          FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16,10.43.0.0/16
+          # Filter only port-forwarding enabled (aka p2p) servers
+          PORT_FORWARD_ONLY: 'on'
+          DNS_KEEP_NAMESERVER: 'off'
+          BLOCK_MALICIOUS: 'off'
+          BLOCK_SURVEILLANCE: 'off'
+          BLOCK_ADS: 'off'
+          UNBLOCK: ''
+          HEALTH_SUCCESS_WAIT_DURATION: 5s
+          HEALTH_TARGET_ADDRESS: proton.me:443
+          HEALTH_VPN_DURATION_INITIAL: 30s
+          HEALTH_VPN_DURATION_ADDITION: 10s
+          LOG_LEVEL: info
+
+        envFrom:
+          - secretRef:
+              name: gluetun-env
+
+        securityContext:
+          capabilities:
+            add:
+              - NET_ADMIN
+          allowPrivilegeEscalation: false
+
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+
+      app:
+        nameOverride: 'deluge'
+        image:
+          repository: lscr.io/linuxserver/deluge
+          tag: 2.1.2
+          pullPolicy: IfNotPresent
+
+        dependsOn: gluetun
+
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          fsGroup: 1000
+
+        env:
+          PUID: '1000'
+          PGID: '1000'
+          UMASK: '002'
+          TZ: 'America/Chicago'
+
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: *app_port
+              initialDelaySeconds: 60
+              periodSeconds: 10
+          readiness: *probes
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+
+persistence:
+  config:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 5Gi
+    advancedMounts:
+      main:
+        init-config:
+          - path: /config
+        app:
+          - path: /config
+
+  downloads:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: downloads-storage
+    globalMounts:
+      - path: /downloads
+
+  gluetun-data:
+    enabled: true
+    type: emptyDir
+    advancedMounts:
+      main:
+        gluetun:
+          - path: /tmp/gluetun
+
+service:
+  app:
+    controller: main
+    ports:
+      http:
+        port: *app_port
+
+  gluetun:
+    controller: main
+    type: ClusterIP
+    ports:
+      http:
+        port: 8000
+      shadowsocks:
+        port: 8388
+      http-proxy:
+        port: 8888
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: Deluge
+      gethomepage.dev/description: Torrent downloader with VPN
+      gethomepage.dev/group: Media
+      gethomepage.dev/icon: deluge.png
+      gethomepage.dev/siteMonitor: *app_url
+    className: 'traefik'
+    hosts:
+      - host: *app_host
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - *app_host
+        secretName: deluge-ingress-cert
+
+defaultPodOptions:
+  dnsConfig:
+    options:
+      - name: ndots
+        value: '1'
+
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: media
+                operator: In
+                values:
+                  - 'true'
+
+  automountServiceAccountToken: false
