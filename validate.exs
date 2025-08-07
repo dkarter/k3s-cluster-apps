@@ -6,6 +6,7 @@ defmodule SchemaValidator do
   """
 
   @schema_annotation_regex ~r/\$schema"?[=:]\s*"?([^"\s]+)"?/
+  @cache_dir "tmp/cache/schemas"
 
   defmodule Summary do
     @moduledoc false
@@ -30,7 +31,15 @@ defmodule SchemaValidator do
   def main do
     args = System.argv()
     trace_mode = "--trace" in args
+    clear_cache = "--clear-cache" in args
 
+    if clear_cache do
+      clear_schema_cache()
+      IO.puts("🗑️  Cache cleared successfully!")
+      System.halt(0)
+    end
+
+    ensure_cache_dir()
     IO.puts("🔍 Validating files with schema annotations...")
 
     files = files_with_schemas()
@@ -100,7 +109,9 @@ defmodule SchemaValidator do
     schema_url = extract_schema_url(file)
 
     if schema_url do
-      case System.cmd("check-jsonschema", ["--schemafile", schema_url, file],
+      cached_schema = get_cached_schema(schema_url)
+
+      case System.cmd("check-jsonschema", ["--schemafile", cached_schema, file],
              stderr_to_stdout: true
            ) do
         {_output, 0} -> {:ok, file}
@@ -121,7 +132,10 @@ defmodule SchemaValidator do
     schema_url = extract_schema_url(file)
 
     if schema_url do
-      case System.cmd("check-jsonschema", ["--schemafile", schema_url, file],
+      cached_schema = get_cached_schema(schema_url)
+      IO.puts("  Using schema: #{cached_schema}")
+
+      case System.cmd("check-jsonschema", ["--schemafile", cached_schema, file],
              stderr_to_stdout: true
            ) do
         {_output, 0} ->
@@ -174,6 +188,42 @@ defmodule SchemaValidator do
     else
       IO.puts("")
       IO.puts("✅ All files passed validation!")
+    end
+  end
+
+  defp ensure_cache_dir do
+    File.mkdir_p!(@cache_dir)
+  end
+
+  defp clear_schema_cache do
+    if File.exists?(@cache_dir) do
+      File.rm_rf!(@cache_dir)
+    end
+
+    File.mkdir_p!(@cache_dir)
+  end
+
+  defp get_cached_schema(schema_url) do
+    cache_filename =
+      schema_url
+      |> String.replace([":", "/", "?", "=", "&"], "_")
+      |> String.replace("__", "_")
+      |> then(&"#{&1}.json")
+
+    cache_path = Path.join(@cache_dir, cache_filename)
+
+    if File.exists?(cache_path) do
+      cache_path
+    else
+      download_and_cache_schema(schema_url, cache_path)
+    end
+  end
+
+  defp download_and_cache_schema(schema_url, cache_path) do
+    case System.cmd("curl", ["-s", "-L", "-o", cache_path, schema_url]) do
+      {_, 0} -> cache_path
+      # Fall back to original URL if download fails
+      {_, _} -> schema_url
     end
   end
 end
