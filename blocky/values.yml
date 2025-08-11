@@ -217,7 +217,7 @@ service:
         targetPort: *ui_port
 serviceMonitor:
   main:
-    serviceName: blocky
+    serviceName: blocky-app
     endpoints:
       - port: http
         scheme: http
