@@ -13,4 +13,4 @@ pre-push:
       run: task validate
 
     - name: Check formatting
-      run: task ci:fmt:check
+      run: task fmt:check
