@@ -1,0 +1,115 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.1.2/charts/other/app-template/values.schema.json
+app_host: &app_host 'flood.k3s.pro'
+app_port: &app_port 3000
+app_url: &app_url 'https://flood.k3s.pro'
+
+controllers:
+  main:
+    strategy: Recreate
+    replicas: 1
+    containers:
+      app:
+        nameOverride: 'flood'
+        image:
+          repository: jesec/flood
+          tag: '4.9.5'
+          pullPolicy: IfNotPresent
+
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          fsGroup: 1000
+
+        env:
+          PUID: '1000'
+          PGID: '1000'
+          TZ: 'America/Chicago'
+
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: *app_port
+              initialDelaySeconds: 30
+              periodSeconds: 10
+          readiness: *probes
+
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+
+persistence:
+  config:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    advancedMounts:
+      main:
+        app:
+          - path: /data
+
+  downloads:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: downloads-storage
+    globalMounts:
+      - path: /downloads
+
+service:
+  app:
+    controller: main
+    ports:
+      http:
+        port: *app_port
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: Flood
+      gethomepage.dev/description: Modern web UI for torrent clients
+      gethomepage.dev/group: Media
+      gethomepage.dev/icon: flood.png
+      gethomepage.dev/siteMonitor: *app_url
+    className: 'traefik'
+    hosts:
+      - host: *app_host
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - *app_host
+        secretName: flood-ingress-cert
+
+defaultPodOptions:
+  dnsConfig:
+    options:
+      - name: ndots
+        value: '1'
+
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: media
+                operator: In
+                values:
+                  - 'true'
+
+  automountServiceAccountToken: false
