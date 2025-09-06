@@ -1,0 +1,15 @@
+{
+  "name": "plugin",
+  "private": true,
+  "devDependencies": {
+    "@opencode-ai/plugin": "^0.6.4",
+    "@types/bun": "latest",
+    "@types/node-notifier": "^8.0.5",
+    "biome": "^0.3.3",
+    "node-notifier": "^10.0.1",
+    "toasted-notifier": "^10.1.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

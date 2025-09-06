@@ -1,0 +1,11 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["CLAUDE.md"],
+  "share": "disabled",
+  "formatter": {
+    "dprint": {
+      "command": ["dprint", "fmt", "$FILE"],
+      "extensions": ["ts", "tsx", "js", "jsx", "json", "jsonc", "md", "toml", "yaml", "yml", "ex", "exs"],
+    },
+  },
+}
