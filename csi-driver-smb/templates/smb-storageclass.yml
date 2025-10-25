@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.26.1-standalone-strict/storageclass-storage-v1.json
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: smb
+provisioner: smb.csi.k8s.io
+parameters:
+  csi.storage.k8s.io/node-stage-secret-name: k3s-smb-nas-creds
+  csi.storage.k8s.io/node-stage-secret-namespace: kube-system
+volumeBindingMode: Immediate
+reclaimPolicy: Retain

@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://deedee-ops.github.io/schemas/argoproj.io/application_v1alpha1.json
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: csi-driver-smb
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: kube-system
+
+  sources:
+    - chart: csi-driver-smb
+      repoURL: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/master/charts
+      targetRevision: v1.19.1
+      helm:
+        releaseName: csi-driver-smb
+        valuesObject:
+          # Disable Windows support for Raspberry Pi cluster
+          windows:
+            enabled: false
+
+    - path: csi-driver-smb
+      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+
+  project: default
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

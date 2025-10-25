@@ -114,6 +114,14 @@ persistence:
     globalMounts:
       - path: /downloads
 
+  nas:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: nas
+    globalMounts:
+      - path: /media
+        subPath: media
+
   tmp:
     enabled: true
     type: emptyDir
