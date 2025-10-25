@@ -6,5 +6,12 @@
   },
   "argocd": {
     "fileMatch": ["apps/.+\\.yml$"]
-  }
+  },
+  "customManagers": [{
+    "customType": "regex",
+    "fileMatch": ["\\.yml$", "\\.yaml$"],
+    "matchStrings": ["image: (?<depName>ghcr.io/hotio/.*):release-(?<currentValue>.*)"],
+    "extractVersionTemplate": "^release-(?<version>.*)$",
+    "datasourceTemplate": "docker"
+  }]
 }
