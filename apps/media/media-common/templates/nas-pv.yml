@@ -12,6 +12,9 @@ spec:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   storageClassName: smb
+  claimRef:
+    name: nas
+    namespace: media
   mountOptions:
     - dir_mode=0777
     - file_mode=0777
