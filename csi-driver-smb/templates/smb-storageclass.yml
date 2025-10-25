@@ -4,8 +4,5 @@ kind: StorageClass
 metadata:
   name: smb
 provisioner: smb.csi.k8s.io
-parameters:
-  csi.storage.k8s.io/node-stage-secret-name: k3s-smb-nas-creds
-  csi.storage.k8s.io/node-stage-secret-namespace: kube-system
 volumeBindingMode: Immediate
 reclaimPolicy: Retain

@@ -25,4 +25,4 @@ spec:
       source: //10.0.0.54/k3s
     nodeStageSecretRef:
       name: k3s-smb-nas-creds
-      namespace: kube-system
+      namespace: media
