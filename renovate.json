@@ -16,8 +16,17 @@
   },
   "packageRules": [
     {
+      "matchManagers": ["mise"],
+      "enabled": false
+    },
+    {
       "matchPackageNames": [
-        "ghcr.io/hotio/**"
+        "ghcr.io/hotio/bazarr",
+        "ghcr.io/hotio/jellyserr",
+        "ghcr.io/hotio/prowlarr",
+        "ghcr.io/hotio/radarr",
+        "ghcr.io/hotio/sabnzbd",
+        "ghcr.io/hotio/sonarr"
       ],
       "versionCompatibility": "^(?<compatibility>release-)(?<version>.+)$"
     }
