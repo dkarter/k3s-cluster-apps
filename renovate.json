@@ -14,17 +14,12 @@
       "/apps/.+\\.yml$/"
     ]
   },
-  "customManagers": [
+  "packageRules": [
     {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/\\.yml$/",
-        "/\\.yaml$/"
+      "matchPackageNames": [
+        "ghcr.io/hotio/**"
       ],
-      "matchStrings": [
-        "repository:\\s+(?<depName>ghcr\\.io/hotio/[^\\s]+)\\s+tag:\\s+release-(?<currentValue>[^\\s]+)"
-      ],
-      "datasourceTemplate": "docker"
+      "versionCompatibility": "^(?<compatibility>release-)(?<version>.+)$"
     }
   ]
 }
