@@ -1,17 +1,31 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+  "extends": [
+    "config:recommended"
+  ],
   "kubernetes": {
-    "fileMatch": ["\\.yml$", "\\.yaml$"]
+    "managerFilePatterns": [
+      "/\\.yml$/",
+      "/\\.yaml$/"
+    ]
   },
   "argocd": {
-    "fileMatch": ["apps/.+\\.yml$"]
+    "managerFilePatterns": [
+      "/apps/.+\\.yml$/"
+    ]
   },
-  "customManagers": [{
-    "customType": "regex",
-    "fileMatch": ["\\.yml$", "\\.yaml$"],
-    "matchStrings": ["image: (?<depName>ghcr.io/hotio/.*):release-(?<currentValue>.*)"],
-    "extractVersionTemplate": "^release-(?<version>.*)$",
-    "datasourceTemplate": "docker"
-  }]
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/\\.yml$/",
+        "/\\.yaml$/"
+      ],
+      "matchStrings": [
+        "image: (?<depName>ghcr.io/hotio/.*):release-(?<currentValue>.*)"
+      ],
+      "extractVersionTemplate": "^release-(?<version>.*)$",
+      "datasourceTemplate": "docker"
+    }
+  ]
 }
