@@ -20,7 +20,7 @@ spec:
     readOnly: false
     # volumeHandle format: {smb-server-address}#{sub-dir-name}#{share-name}
     # make sure this value is unique for every share in the cluster
-    volumeHandle: nas
+    volumeHandle: smb-nas-media
     volumeAttributes:
       source: //10.0.0.54/k3s
     nodeStageSecretRef:
