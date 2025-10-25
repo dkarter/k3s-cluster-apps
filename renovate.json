@@ -22,9 +22,8 @@
         "/\\.yaml$/"
       ],
       "matchStrings": [
-        "image: (?<depName>ghcr.io/hotio/.*):release-(?<currentValue>.*)"
+        "repository:\\s+(?<depName>ghcr\\.io/hotio/[^\\s]+)\\s+tag:\\s+release-(?<currentValue>[^\\s]+)"
       ],
-      "extractVersionTemplate": "^release-(?<version>.*)$",
       "datasourceTemplate": "docker"
     }
   ]
