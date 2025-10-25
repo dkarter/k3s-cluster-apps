@@ -24,7 +24,14 @@ controllers:
                        /downloads/complete/youtube && \
               mkdir -p /downloads/incomplete && \
               chown -R 1000:1000 /downloads && \
-              chmod -R 755 /downloads
+              chmod -R 755 /downloads && \
+              mkdir -p /media/movies \
+                       /media/tv \
+                       /media/books \
+                       /media/audio \
+                       /media/youtube && \
+              chown -R 1000:1000 /media && \
+              chmod -R 755 /media
         securityContext:
           runAsUser: 0
     containers:
