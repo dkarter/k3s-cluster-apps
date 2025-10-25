@@ -135,7 +135,7 @@ persistence:
   nas:
     enabled: true
     type: persistentVolumeClaim
-    existingClaim: nas-media
+    existingClaim: smb-nas-media
     globalMounts:
       - path: /media
         subPath: media
