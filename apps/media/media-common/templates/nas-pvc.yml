@@ -10,5 +10,5 @@ spec:
   resources:
     requests:
       storage: 1Ti
-  volumeName: nas
+  volumeName: nas-media
   storageClassName: smb
