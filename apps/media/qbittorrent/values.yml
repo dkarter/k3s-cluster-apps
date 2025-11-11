@@ -76,7 +76,7 @@ controllers:
         nameOverride: 'qbittorrent'
         image:
           repository: ghcr.io/home-operations/qbittorrent
-          tag: 5.1.2
+          tag: 5.1.3
           pullPolicy: IfNotPresent
 
         dependsOn: gluetun
