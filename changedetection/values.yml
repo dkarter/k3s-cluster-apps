@@ -14,7 +14,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/dgtlmoon/changedetection.io
-          tag: 0.50.40
+          tag: 0.51.4
           pullPolicy: IfNotPresent
 
         env:
