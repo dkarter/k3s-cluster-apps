@@ -11,3 +11,4 @@ task = "latest"
 [settings]
 experimental = true
 disable_backends = ["asdf"]
+npm.bun = true
