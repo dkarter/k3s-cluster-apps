@@ -100,15 +100,7 @@ controllers:
 
         probes:
           liveness:
-            enabled: true
-            custom: true
-            spec:
-              httpGet:
-                path: /ready
-                port: 2000
-              failureThreshold: 5
-              initialDelaySeconds: 10
-              periodSeconds: 10
+            enabled: false
 
 persistence:
   config:
