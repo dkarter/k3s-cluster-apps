@@ -13,7 +13,7 @@ controllers:
           pullPolicy: IfNotPresent
 
         env:
-          NEXTCLOUD_TRUSTED_DOMAINS: nc.tnnl.me
+          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.k3s.pro nc.tnnl.me
           POSTGRES_HOST: nextcloud-db-rw.nextcloud.svc.cluster.local
           POSTGRES_DB: nextcloud
           REDIS_HOST: redis.nextcloud.svc.cluster.local
@@ -145,3 +145,32 @@ service:
     ports:
       metrics:
         port: 2000
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      # Homepage integration
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: Nextcloud
+      gethomepage.dev/description: File Sharing & Collaboration
+      gethomepage.dev/group: Apps
+      gethomepage.dev/icon: nextcloud.svg
+      gethomepage.dev/siteMonitor: 'https://nextcloud.k3s.pro'
+
+      # cert-manager
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+    className: 'traefik'
+    hosts:
+      - host: &host 'nextcloud.k3s.pro'
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: nextcloud
+              port: http
+    tls:
+      - hosts:
+          - *host
+        secretName: nextcloud-ingress-cert
