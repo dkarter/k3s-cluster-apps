@@ -96,7 +96,7 @@ controllers:
             valueFrom:
               secretKeyRef:
                 name: cloudflare-tunnel-credentials
-                key: tunnel-token
+                key: tunnel_token
 
         probes:
           liveness:
