@@ -1,19 +1,19 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.4.0/charts/other/app-template/values.schema.json
 
+# Prevent scheduling on control plane - k3s0 has service networking issues
+defaultPodOptions:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: node-role.kubernetes.io/control-plane
+                operator: DoesNotExist
+
 controllers:
   nextcloud:
     strategy: Recreate
     replicas: 1
-
-    pod:
-      # Prevent scheduling on control plane - k3s0 has service networking issues
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: node-role.kubernetes.io/control-plane
-                    operator: DoesNotExist
 
     containers:
       app:
