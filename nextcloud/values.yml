@@ -5,19 +5,6 @@ controllers:
     strategy: Recreate
     replicas: 1
 
-    pod:
-      # Force Nextcloud to run on different node than database to avoid K3s hairpin NAT issue
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: cnpg.io/cluster
-                    operator: In
-                    values:
-                      - db
-              topologyKey: kubernetes.io/hostname
-
     containers:
       app:
         image:
@@ -29,7 +16,7 @@ controllers:
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.k3s.pro nc.tnnl.me
           POSTGRES_HOST: db-rw.nextcloud.svc.cluster.local:5432
           POSTGRES_DB: app
-          REDIS_HOST: redis.nextcloud.svc.cluster.local
+          REDIS_HOST: nextcloud-redis.nextcloud.svc.cluster.local
           NEXTCLOUD_ADMIN_USER:
             valueFrom:
               secretKeyRef:
