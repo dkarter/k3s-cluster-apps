@@ -114,7 +114,7 @@ persistence:
   config:
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
-    size: 200Mi
+    size: 10Gi
     advancedMounts:
       nextcloud:
         app:
