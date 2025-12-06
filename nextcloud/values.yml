@@ -1,0 +1,155 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.4.0/charts/other/app-template/values.schema.json
+
+controllers:
+  nextcloud:
+    strategy: Recreate
+    replicas: 1
+
+    containers:
+      app:
+        image:
+          repository: nextcloud
+          tag: 32.0.2
+          pullPolicy: IfNotPresent
+
+        env:
+          NEXTCLOUD_TRUSTED_DOMAINS: nc.tnnl.me
+          POSTGRES_HOST: nextcloud-db-rw.nextcloud.svc.cluster.local
+          POSTGRES_DB: nextcloud
+          REDIS_HOST: redis.nextcloud.svc.cluster.local
+          NEXTCLOUD_ADMIN_USER:
+            valueFrom:
+              secretKeyRef:
+                name: nextcloud-admin
+                key: username
+          NEXTCLOUD_ADMIN_PASSWORD:
+            valueFrom:
+              secretKeyRef:
+                name: nextcloud-admin
+                key: password
+          POSTGRES_USER:
+            valueFrom:
+              secretKeyRef:
+                name: nextcloud-db-app
+                key: username
+          POSTGRES_PASSWORD:
+            valueFrom:
+              secretKeyRef:
+                name: nextcloud-db-app
+                key: password
+
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /status.php
+                port: 80
+              initialDelaySeconds: 60
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 5
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /status.php
+                port: 80
+              initialDelaySeconds: 30
+              periodSeconds: 10
+
+  redis:
+    containers:
+      app:
+        image:
+          repository: redis
+          tag: 7.4.2-alpine
+          pullPolicy: IfNotPresent
+
+        command:
+          - redis-server
+          - --save
+          - '60'
+          - '1'
+          - --loglevel
+          - warning
+
+  cloudflared:
+    containers:
+      app:
+        image:
+          repository: cloudflare/cloudflared
+          tag: 2025.11.1
+          pullPolicy: IfNotPresent
+
+        args:
+          - tunnel
+          - --no-autoupdate
+          - run
+          - --token
+          - $(TUNNEL_TOKEN)
+
+        env:
+          TUNNEL_TOKEN:
+            valueFrom:
+              secretKeyRef:
+                name: cloudflare-tunnel-credentials
+                key: tunnel-token
+
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /ready
+                port: 2000
+              failureThreshold: 5
+              initialDelaySeconds: 10
+              periodSeconds: 10
+
+persistence:
+  config:
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 200Mi
+    advancedMounts:
+      nextcloud:
+        app:
+          - path: /var/www/html
+
+  data:
+    type: persistentVolumeClaim
+    existingClaim: nextcloud-nas-data
+    advancedMounts:
+      nextcloud:
+        app:
+          - path: /var/www/html/data
+
+  redis-data:
+    type: emptyDir
+    advancedMounts:
+      redis:
+        app:
+          - path: /data
+
+service:
+  nextcloud:
+    controller: nextcloud
+    ports:
+      http:
+        port: 80
+
+  redis:
+    controller: redis
+    ports:
+      redis:
+        port: 6379
+
+  cloudflared-metrics:
+    controller: cloudflared
+    ports:
+      metrics:
+        port: 2000

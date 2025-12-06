@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://homelab-schemas-epg.pages.dev/postgresql.cnpg.io/cluster_v1.json
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: nextcloud-db
+  namespace: nextcloud
+spec:
+  instances: 1
+  storage:
+    storageClass: local-path
+    size: 10Gi
+  bootstrap:
+    initdb:
+      database: nextcloud
+      owner: nextcloud
