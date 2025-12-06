@@ -2,14 +2,11 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: nextcloud-db
+  name: db
   namespace: nextcloud
 spec:
   instances: 1
   storage:
+    # https://cloudnative-pg.io/documentation/current/storage/#block-storage-considerations-ceph-longhorn
     storageClass: local-path
     size: 10Gi
-  bootstrap:
-    initdb:
-      database: nextcloud
-      owner: nextcloud

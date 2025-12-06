@@ -15,7 +15,7 @@ controllers:
         env:
           NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.k3s.pro nc.tnnl.me
           POSTGRES_HOST: nextcloud-db-rw.nextcloud.svc.cluster.local:5432
-          POSTGRES_DB: nextcloud
+          POSTGRES_DB: app
           REDIS_HOST: redis.nextcloud.svc.cluster.local
           NEXTCLOUD_ADMIN_USER:
             valueFrom:
@@ -30,12 +30,12 @@ controllers:
           POSTGRES_USER:
             valueFrom:
               secretKeyRef:
-                name: nextcloud-db-app
+                name: db-app
                 key: username
           POSTGRES_PASSWORD:
             valueFrom:
               secretKeyRef:
-                name: nextcloud-db-app
+                name: db-app
                 key: password
 
         probes:
