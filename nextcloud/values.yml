@@ -5,6 +5,16 @@ controllers:
     strategy: Recreate
     replicas: 1
 
+    pod:
+      # Prevent scheduling on control plane - k3s0 has service networking issues
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: DoesNotExist
+
     containers:
       app:
         image:
