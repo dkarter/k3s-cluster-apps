@@ -13,7 +13,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/0xerr0r/blocky
-          tag: v0.27.0
+          tag: v0.28.2
           pullPolicy: IfNotPresent
 
         args:
