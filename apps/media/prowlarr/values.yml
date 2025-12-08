@@ -9,7 +9,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/hotio/prowlarr
-          tag: release-2.1.5.5216
+          tag: release-2.3.0.5236
           pullPolicy: IfNotPresent
 
         env:
