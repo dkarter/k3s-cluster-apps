@@ -9,7 +9,7 @@ spec:
     namespace: common
     server: 'https://kubernetes.default.svc'
   source:
-    path: common
+    path: common/templates
     repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
     targetRevision: HEAD
   sources: []
