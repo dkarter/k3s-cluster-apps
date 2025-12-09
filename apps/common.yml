@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=https://deedee-ops.github.io/schemas/argoproj.io/application_v1alpha1.json
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: common
+spec:
+  destination:
+    name: ''
+    namespace: common
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: common
+    repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+    targetRevision: HEAD
+  sources: []
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

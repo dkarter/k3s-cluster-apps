@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.26.1-standalone-strict/storageclass-storage-v1.json
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: longhorn-database
+provisioner: driver.longhorn.io
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+volumeBindingMode: Immediate
+parameters:
+  fsType: 'ext4'
+  # CNPG recommendations: https://cloudnative-pg.io/documentation/current/storage/#block-storage-considerations-ceph-longhorn
+  # Data locality: keep replica on same node as pod for better IOPS/latency
+  dataLocality: 'best-effort'
+  # Single replica: CNPG provides HA at application level, no need for storage-level replication
+  numberOfReplicas: '1'

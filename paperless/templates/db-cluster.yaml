@@ -8,5 +8,5 @@ spec:
   instances: 2
   storage:
     # https://cloudnative-pg.io/documentation/current/storage/#block-storage-considerations-ceph-longhorn
-    storageClass: local-path
-    size: 5Gi
+    storageClass: longhorn-database
+    size: 10Gi
