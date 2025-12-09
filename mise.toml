@@ -1,12 +1,15 @@
 [tools]
-committed = "latest"
 dprint = "latest"
 elixir = "1.18.4-otp-27"
 erlang = "27"
 jq = "latest"
-lefthook = { version = "latest", postinstall = "lefthook install" }
+lefthook = { version = "latest" }
 "pipx:check-jsonschema" = "latest"
 task = "latest"
+"ubi:crate-ci/committed" = "latest"
+
+[hooks]
+postinstall = "lefthook install"
 
 [settings]
 experimental = true
