@@ -12,7 +12,7 @@ controllers:
       app:
         image:
           repository: louislam/uptime-kuma
-          tag: 1.23.17 # Keep v1 for Phase 1
+          tag: 2.0.2 # Keep v1 for Phase 1
           pullPolicy: IfNotPresent
 
         probes:
