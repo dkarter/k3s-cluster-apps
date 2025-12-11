@@ -12,33 +12,16 @@ controllers:
       app:
         image:
           repository: louislam/uptime-kuma
-          tag: 1.23.17 # Keep v1 for Phase 1
+          tag: 2.0.2-slim
           pullPolicy: IfNotPresent
 
         probes:
-          liveness: &probes
-            enabled: true
-            custom: true
-            spec:
-              httpGet:
-                path: /
-                port: *app_port
-              initialDelaySeconds: 10
-              periodSeconds: 10
-              timeoutSeconds: 2
-              failureThreshold: 5
-          readiness: *probes
+          liveness:
+            enabled: false # Disabled during v2 migration
+          readiness:
+            enabled: false # Disabled during v2 migration
           startup:
-            enabled: true
-            custom: true
-            spec:
-              httpGet:
-                path: /
-                port: *app_port
-              initialDelaySeconds: 0
-              periodSeconds: 5
-              timeoutSeconds: 2
-              failureThreshold: 30
+            enabled: false # Disabled to prevent any pod restarts during migration
 
 persistence:
   data:
