@@ -1,0 +1,90 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.4.0/charts/other/app-template/values.schema.json
+app_host: &app_host 'uptime.k3s.pro'
+app_url: &app_url 'https://uptime.k3s.pro'
+app_port: &app_port 3001
+
+controllers:
+  main:
+    strategy: Recreate
+    replicas: 1
+
+    containers:
+      app:
+        image:
+          repository: louislam/uptime-kuma
+          tag: 1.23.17 # Keep v1 for Phase 1
+          pullPolicy: IfNotPresent
+
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: *app_port
+              initialDelaySeconds: 10
+              periodSeconds: 10
+              timeoutSeconds: 2
+              failureThreshold: 5
+          readiness: *probes
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: *app_port
+              initialDelaySeconds: 0
+              periodSeconds: 5
+              timeoutSeconds: 2
+              failureThreshold: 30
+
+persistence:
+  data:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 1Gi # Increased from 500Mi to give more headroom
+    globalMounts:
+      - path: /app/data
+
+service:
+  app:
+    controller: main
+    ports:
+      http:
+        port: *app_port
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      # Homepage integration
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/description: Uptime Kuma on K3s
+      gethomepage.dev/group: System
+      gethomepage.dev/icon: uptime-kuma.svg
+      gethomepage.dev/name: Uptime Kuma K3s
+      gethomepage.dev/siteMonitor: *app_url
+      gethomepage.dev/pod-selector: >-
+        app.kubernetes.io/name=uptime-kuma,
+        app.kubernetes.io/instance=uptime-kuma,
+        app.kubernetes.io/component=main
+
+      # cert-manager
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+    className: 'traefik'
+    hosts:
+      - host: *app_host
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - *app_host
+        secretName: uptime-kuma-ingress-cert

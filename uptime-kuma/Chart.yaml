@@ -1,9 +1,0 @@
-# yaml-language-server: $schema=https://www.schemastore.org/chart.json
-name: uptime-kuma
-description: An uptime monitor and notifier
-version: 0.0.1
-apiVersion: v2
-keywords:
-  - uptime
-  - monitoring
-  - kuma
