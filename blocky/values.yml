@@ -67,7 +67,7 @@ controllers:
       app:
         image:
           repository: gabrielduartem/blocky-ui
-          tag: 1.1.4
+          tag: 1.1.5
           pullPolicy: IfNotPresent
 
         env:
