@@ -26,7 +26,7 @@ controllers:
       app:
         image:
           repository: n8nio/n8n
-          tag: 1.123.5
+          tag: 2.2.1
           pullPolicy: IfNotPresent
 
         env:
