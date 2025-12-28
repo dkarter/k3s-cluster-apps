@@ -146,3 +146,12 @@ prometheus:
       matchLabels: {}
     podMonitorNamespaceSelector:
       matchLabels: {}
+
+    # Additional scrape configurations for external endpoints
+    additionalScrapeConfigs:
+      - job_name: 'atmo-watch'
+        static_configs:
+          - targets:
+              - 'atmo-watch.local:80'
+        metrics_path: '/metrics'
+        scheme: http
