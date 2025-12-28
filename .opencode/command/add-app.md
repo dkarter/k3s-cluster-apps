@@ -23,7 +23,7 @@ IMPORTANT: all yaml files must contain the yaml-language-server annotation at th
 
 For ArgoCD applications use something like this:
 
-# yaml-language-server: $schema=https://deedee-ops.github.io/schemas/argoproj.io/application_v1alpha1.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/argoproj.io/application_v1alpha1.json
 
 Look at other files in this repo to determine what it should be, don't guess and
 if adding a new schema url that doesn't exist in this repo yet, verify that the
