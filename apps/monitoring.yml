@@ -13,10 +13,6 @@ spec:
       targetRevision: HEAD
       ref: values
 
-    - repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
-      targetRevision: HEAD
-      path: monitoring/templates
-
     - chart: kube-prometheus-stack
       repoURL: https://prometheus-community.github.io/helm-charts
       targetRevision: 79.12.0
