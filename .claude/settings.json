@@ -52,7 +52,6 @@
       "Bash(echo)",
       "Bash(find:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)",
       "Bash(grep:*)",
       "Bash(helm show:*)",
       "Bash(kubectl delete pod:*)",
