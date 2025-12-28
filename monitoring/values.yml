@@ -152,6 +152,6 @@ prometheus:
       - job_name: 'atmo-watch'
         static_configs:
           - targets:
-              - 'atmo-watch:80'
+              - '10.0.0.76:80'
         metrics_path: '/metrics'
         scheme: http
