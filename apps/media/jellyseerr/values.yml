@@ -10,8 +10,8 @@ controllers:
     containers:
       app:
         image:
-          repository: ghcr.io/hotio/jellyseerr
-          tag: release-2.5.2
+          repository: fallenbagel/jellyseerr
+          tag: sha-42eec24
           pullPolicy: IfNotPresent
 
         env:
