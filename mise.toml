@@ -1,7 +1,7 @@
 [tools]
 dprint = "latest"
-elixir = "1.18.4-otp-27"
-erlang = "27"
+elixir = "1.19.5-otp-28"
+erlang = "28"
 jq = "latest"
 lefthook = { version = "latest" }
 "pipx:check-jsonschema" = "latest"
