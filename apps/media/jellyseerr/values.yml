@@ -47,7 +47,7 @@ persistence:
     accessMode: ReadWriteOnce
     size: 200Mi
     globalMounts:
-      - path: /config
+      - path: /app/config
 
 service:
   app:
