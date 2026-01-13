@@ -12,7 +12,7 @@ controllers:
       app:
         image:
           repository: sissbruecker/linkding
-          tag: 1.44.1
+          tag: 1.45.0
           pullPolicy: IfNotPresent
 
         env:
