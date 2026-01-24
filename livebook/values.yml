@@ -26,7 +26,7 @@ controllers:
               httpGet:
                 path: /public/health
                 port: *http_port
-              initialDelaySeconds: 60
+              initialDelaySeconds: 2
               periodSeconds: 10
               timeoutSeconds: 1
               failureThreshold: 3
