@@ -1,0 +1,92 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.4.0/charts/other/app-template/values.schema.json
+host: &host 'forgejo.k3s.pro'
+http_port: &http_port 3000
+
+controllers:
+  main:
+    strategy: Recreate
+    replicas: 1
+
+    containers:
+      app:
+        image:
+          repository: codeberg.org/forgejo/forgejo
+          tag: 10.0.1
+          pullPolicy: IfNotPresent
+
+        env:
+          FORGEJO__server__DOMAIN: *host
+          FORGEJO__server__ROOT_URL: 'https://forgejo.k3s.pro'
+          FORGEJO__server__HTTP_PORT: *http_port
+          FORGEJO__server__SSH_DOMAIN: *host
+          FORGEJO__server__SSH_PORT: '2222'
+          FORGEJO__server__SSH_LISTEN_PORT: '2222'
+          FORGEJO__database__DB_TYPE: sqlite3
+          FORGEJO__database__PATH: /data/forgejo/gitea.db
+
+        envFrom:
+          - secretRef:
+              name: forgejo-env
+
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: *http_port
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 3
+          readiness: *probes
+
+persistence:
+  data:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    globalMounts:
+      - path: /data
+
+service:
+  app:
+    controller: main
+    ports:
+      http:
+        port: *http_port
+  ssh:
+    controller: main
+    type: LoadBalancer
+    ports:
+      ssh:
+        port: 2222
+        targetPort: 2222
+        protocol: TCP
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: Forgejo
+      gethomepage.dev/description: Self-hosted Git service
+      gethomepage.dev/group: Dev
+      gethomepage.dev/icon: forgejo.png
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+    className: 'traefik'
+    hosts:
+      - host: *host
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - *host
+        secretName: forgejo-ingress-cert

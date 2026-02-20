@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/argoproj.io/application_v1alpha1.json
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: forgejo
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: forgejo
+
+  sources:
+    - path: forgejo/templates
+      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+
+    - repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
+      targetRevision: HEAD
+      ref: values
+
+    - chart: app-template
+      repoURL: https://bjw-s-labs.github.io/helm-charts
+      targetRevision: 4.4.0
+      helm:
+        releaseName: forgejo
+        valueFiles:
+          - $values/forgejo/values.yml
+
+  project: default
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
