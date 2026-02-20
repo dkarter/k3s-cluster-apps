@@ -21,8 +21,19 @@ controllers:
           FORGEJO__server__SSH_DOMAIN: *host
           FORGEJO__server__SSH_PORT: '2222'
           FORGEJO__server__SSH_LISTEN_PORT: '2222'
-          FORGEJO__database__DB_TYPE: sqlite3
-          FORGEJO__database__PATH: /data/forgejo/gitea.db
+          FORGEJO__database__DB_TYPE: postgres
+          FORGEJO__database__HOST: forgejo-db-rw.forgejo.svc.cluster.local:5432
+          FORGEJO__database__NAME: app
+          FORGEJO__database__USER:
+            valueFrom:
+              secretKeyRef:
+                name: forgejo-db-app
+                key: username
+          FORGEJO__database__PASSWD:
+            valueFrom:
+              secretKeyRef:
+                name: forgejo-db-app
+                key: password
 
         envFrom:
           - secretRef:
