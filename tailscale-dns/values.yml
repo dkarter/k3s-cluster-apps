@@ -10,7 +10,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/dockur/dnsmasq
-          tag: 2.91
+          tag: 2.92
           pullPolicy: IfNotPresent
 
         env:
