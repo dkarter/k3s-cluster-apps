@@ -13,7 +13,7 @@ controllers:
           pullPolicy: IfNotPresent
 
         args:
-          - --advertise-tags=tag:tsidp
+          - -dir=/data
 
         env:
           TAILSCALE_USE_WIP_CODE: '1'
@@ -36,7 +36,7 @@ persistence:
     accessMode: ReadWriteOnce
     size: 1Gi
     globalMounts:
-      - path: /home/app/.config/tsnet-tsidp-server
+      - path: /data
 
 service:
   app:
