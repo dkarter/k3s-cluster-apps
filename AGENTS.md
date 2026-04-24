@@ -95,6 +95,14 @@ Most applications follow this pattern:
 - Common patterns for download/config volume mounts
 - Some apps have external secret templates for API keys
 
+## YAML Language Server Annotations
+
+This repo relies heavily on yaml-language-servers to:
+
+- validate correctness of schemas and reduce hallucinations `task validate`
+- for auto completion in editors
+- whenever adding any new yaml resources/files we should make sure they have the appropriate `yaml-language-server` annotation at the top of the file - search for other files in this repo first to see if we already have one available for that type of resource and use that - otherwise use github codesearch to find one prefer official sources first and foremost, and prefer to have the version match the version we're using if the schema is versioned
+
 ## Development Workflow
 
 1. Modify application configs in respective directories
