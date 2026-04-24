@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: livebook-metallb
+  namespace: livebook
+  labels:
+    app.kubernetes.io/instance: livebook
+    app.kubernetes.io/name: livebook
+    metallb.k3s.pro/address-pool: livebook
+spec:
+  type: LoadBalancer
+  loadBalancerClass: metallb.io/load-balancer
+  loadBalancerIP: 10.0.1.240
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app.kubernetes.io/controller: main
+    app.kubernetes.io/instance: livebook
+    app.kubernetes.io/name: livebook
