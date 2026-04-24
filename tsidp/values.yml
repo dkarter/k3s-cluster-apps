@@ -29,6 +29,9 @@ controllers:
           readiness:
             enabled: false
 
+        securityContext:
+          runAsUser: 0
+
 persistence:
   state:
     enabled: true
