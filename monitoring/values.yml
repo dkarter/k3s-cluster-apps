@@ -47,6 +47,8 @@ grafana:
   serviceMonitor:
     interval: 15s
     scrapeTimeout: 10s
+  podAnnotations:
+    k3s.pro/restartedAt: '2026-04-24T22:11:51Z'
   additionalDataSources:
     - name: PostgreSQL
       type: postgres
