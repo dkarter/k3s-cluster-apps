@@ -54,11 +54,11 @@ grafana:
       type: postgres
       access: proxy
       url: blocky-db-rw.blocky.svc.cluster.local:5432
-      database: app
       user: grafana_readonly
       secureJsonData:
         password: $__file{/etc/secrets/postgres-password/password}
       jsonData:
+        database: app
         sslmode: disable
         postgresVersion: 1700
         timescaledb: true
