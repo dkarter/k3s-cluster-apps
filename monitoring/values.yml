@@ -44,6 +44,9 @@ grafana:
     existingSecret: 'grafana-admin'
     userKey: grafana_username
     passwordKey: grafana_password
+  serviceMonitor:
+    interval: 15s
+    scrapeTimeout: 10s
   additionalDataSources:
     - name: PostgreSQL
       type: postgres
