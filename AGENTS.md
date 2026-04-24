@@ -63,6 +63,12 @@ kubectl describe application <app-name> -n argo-cd
 kubectl scale deployment --all -n media --replicas=0
 ```
 
+IMPORTANT: Never make any mutative changes to the cluster via kubectl - that
+includes apply or patch. We must go through gitops by making a change and
+committing and then pushing it - then we can either trigger a refresh in argo cd
+or just wait for it to happen automatically. You must confirm with the user if
+they want you to make the change before committing and pushing anything.
+
 ## Application Patterns
 
 ### ArgoCD Applications
@@ -121,4 +127,4 @@ Most applications follow this pattern:
 ## Kubernetes Command Guidelines
 
 - Never use `kubectl patch` commands unless specifically instructed by the user to patch directly - always prefer using gitops via argocd
-- IMPORTANT never amend a commit that's already been pushed and try to force push it. Always prefer adding a new commit.
+- IMPORTANT: never amend a commit that's already been pushed and try to force push it. Always prefer adding a new commit.
