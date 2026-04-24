@@ -1,0 +1,45 @@
+app_port: &app_port 443
+
+controllers:
+  main:
+    strategy: Recreate
+    replicas: 1
+
+    containers:
+      app:
+        image:
+          repository: ghcr.io/tailscale/tsidp
+          tag: v0.0.12
+          pullPolicy: IfNotPresent
+
+        env:
+          TAILSCALE_USE_WIP_CODE: '1'
+          TS_ADVERTISE_TAGS: 'tag:tsidp'
+          TS_AUTHKEY:
+            valueFrom:
+              secretKeyRef:
+                name: tsidp-env
+                key: TS_AUTHKEY
+
+        probes:
+          liveness:
+            enabled: false
+          readiness:
+            enabled: false
+
+persistence:
+  state:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    globalMounts:
+      - path: /root/.local/share/tsnet-tsidp
+
+service:
+  app:
+    controller: main
+    ports:
+      https:
+        port: *app_port
+        protocol: HTTPS
