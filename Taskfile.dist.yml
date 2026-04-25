@@ -112,6 +112,35 @@ tasks:
     silent: true
     cmd: ./validate.exs {{.CLI_ARGS}}
 
+  validate:crd-schema-annotations:
+    desc: Ensures chart CRD updates include yaml-language-server schema annotation updates
+    summary: |
+      Detects ArgoCD chart targetRevision changes that update Helm chart CRDs.
+
+      If CRDs changed, the same branch must also update at least one
+      yaml-language-server $schema annotation so custom resource schemas do not
+      silently drift behind installed CRDs.
+
+      Helm-derived CRD targets are cached under tmp/cache/helm-crd-targets so
+      repeated local runs stay fast enough for git hooks.
+    silent: true
+    cmd: ./validate-crd-schema-annotations.exs {{.CLI_ARGS}}
+
+  validate:values-schema-annotations:
+    desc: Ensures Helm values schema annotations match chart target revisions
+    summary: |
+      Detects ArgoCD chart targetRevision changes where the referenced Helm
+      valueFiles have yaml-language-server schema URLs pinned to a chart version.
+
+      Version-pinned values schema annotations must match the chart targetRevision.
+    silent: true
+    cmd: ./validate-values-schema-annotations.exs {{.CLI_ARGS}}
+
+  test:validators:
+    desc: Tests local validation helper scripts
+    silent: true
+    cmd: elixir test/validator_checks_test.exs
+
   validate:file:
     desc: Validates a single YAML or JSON file against its defined schema
     summary: |
