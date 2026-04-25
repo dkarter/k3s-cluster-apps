@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: forgejo-ssh-metallb
+  namespace: forgejo
+  labels:
+    app.kubernetes.io/instance: forgejo
+    app.kubernetes.io/name: forgejo
+    metallb.k3s.pro/address-pool: forgejo-ssh
+spec:
+  type: LoadBalancer
+  loadBalancerClass: metallb.io/load-balancer
+  loadBalancerIP: 10.0.1.241
+  ports:
+    - name: ssh
+      port: 2222
+      protocol: TCP
+      targetPort: 22
+  selector:
+    app.kubernetes.io/controller: main
+    app.kubernetes.io/instance: forgejo
+    app.kubernetes.io/name: forgejo

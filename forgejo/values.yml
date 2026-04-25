@@ -70,9 +70,6 @@ service:
         port: *http_port
   ssh:
     controller: main
-    type: LoadBalancer
-    loadBalancerClass: metallb.io/load-balancer
-    loadBalancerIP: 10.0.1.241
     ports:
       ssh:
         port: 2222
