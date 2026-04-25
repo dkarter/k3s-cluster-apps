@@ -74,6 +74,7 @@ controllers:
           - sh
           - -ec
           - |
+              rm -f /data/.runner
               mkdir -p /data/.cache/act
               printf '%s\n' \
                 'host:' \
