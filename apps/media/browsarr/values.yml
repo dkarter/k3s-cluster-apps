@@ -34,7 +34,6 @@ controllers:
           runAsNonRoot: false
           runAsUser: 1000
           runAsGroup: 1000
-          fsGroup: 1000
 
         env:
           PUID: '1000'
@@ -113,6 +112,14 @@ ingress:
         secretName: browsarr-ingress-cert
 
 defaultPodOptions:
+  # Keep API-defaulted pod fields explicit so ArgoCD does not report harmless
+  # app-template render drift after Kubernetes normalizes the Deployment.
+  hostIPC: false
+  hostNetwork: false
+  hostPID: false
+  securityContext:
+    fsGroup: 1000
+
   affinity:
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:

@@ -34,3 +34,15 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+      - RespectIgnoreDifferences=true
+
+  # The redis-ha chart added selector labels that cannot be patched onto the
+  # existing HAProxy Deployment. Ignore only the immutable selector so sync can
+  # converge without deleting and recreating ArgoCD's Redis HAProxy workload.
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      name: argo-cd-redis-ha-haproxy
+      namespace: argo-cd
+      jsonPointers:
+        - /spec/selector

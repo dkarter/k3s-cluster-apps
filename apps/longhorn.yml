@@ -23,7 +23,10 @@ spec:
 
   syncPolicy:
     automated:
-      prune: false
+      # Prune only removes ArgoCD-tracked chart resources that disappear from
+      # the Longhorn release, such as obsolete Services. Longhorn volumes and
+      # application PVCs are not defined by this Application.
+      prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
