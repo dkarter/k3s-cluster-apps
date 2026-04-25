@@ -27,17 +27,6 @@
           }
         ]
       }
-    ],
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "task hooks:stop:notify"
-          }
-        ]
-      }
     ]
   },
   "permissions": {
