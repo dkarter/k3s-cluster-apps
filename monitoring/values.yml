@@ -1,3 +1,11 @@
+crds:
+  upgradeJob:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: busybox
+      tag: "1.37.0"
+
 additionalServiceMonitors:
   - name: external-secrets
     namespace: external-secrets
