@@ -31,8 +31,6 @@ additionalServiceMonitors:
       - port: 8083
 
 alertmanager:
-  annotations:
-    argocd.argoproj.io/sync-options: ServerSideApply=false
   ingress:
     enabled: true
     ingressClassName: traefik
@@ -139,8 +137,6 @@ grafana:
           - 'grafana.k3s.pro'
 
 prometheus:
-  annotations:
-    argocd.argoproj.io/sync-options: ServerSideApply=false
   # ref: https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
   prometheusSpec:
     # ref: https://github.com/prometheus-operator/prometheus-operator/blob/release-0.44/pkg/prometheus/promcfg.go#L180-L183
