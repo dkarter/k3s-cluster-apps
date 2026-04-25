@@ -53,6 +53,31 @@ defmodule ValidatorChecksTest do
     end)
   end
 
+  test "values schema check compares feature branches to origin main by default" do
+    in_tmp_repo(fn repo ->
+      write_app(repo, "4.6.2")
+
+      write_file(repo, "apps/demo/values.yml", """
+      # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+      controllers: {}
+      """)
+
+      git!(repo, ["add", "."])
+      git!(repo, ["commit", "-m", "base"])
+      git!(repo, ["update-ref", "refs/remotes/origin/main", "HEAD"])
+      git!(repo, ["checkout", "-b", "feature/schema-drift"])
+
+      write_app(repo, "4.7.0")
+      git!(repo, ["add", "."])
+      git!(repo, ["commit", "-m", "update chart"])
+
+      {output, status} = run_script(repo, @values_script, [])
+
+      assert status == 1
+      assert output =~ "apps/demo/values.yml: app-template annotation is 4.6.2, chart is 4.7.0"
+    end)
+  end
+
   test "CRD check ignores CRD schema content changes that keep the same schema targets" do
     in_tmp_repo(fn repo ->
       write_external_secrets_app(repo, "1.3.2")
@@ -89,6 +114,33 @@ defmodule ValidatorChecksTest do
       assert status == 1
       assert output =~ "Helm chart CRD updates detected"
       assert output =~ "external-secrets 1.3.2 -> 2.4.0 (external-secrets.io)"
+    end)
+  end
+
+  test "CRD check reports worker errors instead of ignoring them" do
+    in_tmp_repo(fn repo ->
+      write_external_secrets_app(repo, "1.3.2")
+      git!(repo, ["add", "."])
+      git!(repo, ["commit", "-m", "base"])
+      base_ref = git_output!(repo, ["rev-parse", "HEAD"])
+      write_external_secrets_app(repo, "2.4.0")
+
+      cache_file =
+        Path.join(
+          repo,
+          "tmp/cache/helm-crd-targets/https_charts.external-secrets.io_external-secrets_1.3.2.txt"
+        )
+
+      File.mkdir_p!(cache_file)
+
+      {output, status} =
+        run_script(repo, @crd_script,
+          bin_path: helm_path(repo, :same_targets),
+          base_ref: base_ref
+        )
+
+      assert status == 2, output
+      assert output =~ "Failed while checking Helm chart CRD updates."
     end)
   end
 
@@ -145,7 +197,7 @@ defmodule ValidatorChecksTest do
   end
 
   defp run_script(repo, script, opts) do
-    env = [{"BASE_REF", Keyword.fetch!(opts, :base_ref)}]
+    env = if base_ref = opts[:base_ref], do: [{"BASE_REF", base_ref}], else: []
 
     env =
       if bin_path = opts[:bin_path],

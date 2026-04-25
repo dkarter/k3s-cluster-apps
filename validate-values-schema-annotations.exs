@@ -1,16 +1,18 @@
 #!/usr/bin/env elixir
 
+Code.require_file("validator_utils.exs", __DIR__)
+
 defmodule ValuesSchemaAnnotationValidator do
   @moduledoc false
 
   @app_file_regex ~r|^apps/.+\.ya?ml$|
 
   def main do
-    base_commit = base_ref() |> merge_base()
+    base_commit = ValidatorUtils.comparison_base()
 
     mismatches =
       base_commit
-      |> changed_files()
+      |> ValidatorUtils.changed_files()
       |> Enum.filter(&Regex.match?(@app_file_regex, &1))
       |> Enum.flat_map(&changed_chart_sources(&1, base_commit))
       |> Enum.flat_map(&value_schema_mismatches/1)
@@ -36,32 +38,8 @@ defmodule ValuesSchemaAnnotationValidator do
     end
   end
 
-  defp base_ref do
-    System.get_env("BASE_REF") ||
-      System.get_env("GITHUB_BASE_REF") ||
-      "origin/main"
-  end
-
-  defp merge_base(base_ref) do
-    case cmd("git", ["merge-base", "HEAD", base_ref]) do
-      {commit, 0} -> String.trim(commit)
-      _ -> base_ref
-    end
-  end
-
-  defp changed_files(base_commit) do
-    [
-      git_lines(["diff", "--name-only", "#{base_commit}...HEAD"]),
-      git_lines(["diff", "--name-only"]),
-      git_lines(["diff", "--cached", "--name-only"])
-    ]
-    |> List.flatten()
-    |> Enum.uniq()
-    |> Enum.filter(&(&1 != ""))
-  end
-
   defp changed_chart_sources(file, base_commit) do
-    old_sources = file_at_ref(base_commit, file) |> parse_chart_sources(file)
+    old_sources = ValidatorUtils.file_at_ref(base_commit, file) |> parse_chart_sources(file)
     new_sources = file_at_worktree(file) |> parse_chart_sources(file)
 
     Enum.flat_map(new_sources, fn new_source ->
@@ -85,13 +63,6 @@ defmodule ValuesSchemaAnnotationValidator do
 
   defp same_chart_source?(old_source, new_source) do
     old_source.chart == new_source.chart && old_source.repo == new_source.repo
-  end
-
-  defp file_at_ref(ref, file) do
-    case cmd("git", ["show", "#{ref}:#{file}"]) do
-      {content, 0} -> content
-      _ -> ""
-    end
   end
 
   defp file_at_worktree(file) do
@@ -195,19 +166,6 @@ defmodule ValuesSchemaAnnotationValidator do
       _ -> nil
     end
   end
-
-  defp git_lines(args) do
-    args |> git_diff() |> String.split("\n", trim: true)
-  end
-
-  defp git_diff(args) do
-    case cmd("git", args) do
-      {output, 0} -> output
-      _ -> ""
-    end
-  end
-
-  defp cmd(command, args), do: System.cmd(command, args, stderr_to_stdout: true)
 end
 
 ValuesSchemaAnnotationValidator.main()

@@ -1,5 +1,7 @@
 #!/usr/bin/env elixir
 
+Code.require_file("validator_utils.exs", __DIR__)
+
 defmodule CrdSchemaAnnotationValidator do
   @moduledoc false
 
@@ -10,13 +12,16 @@ defmodule CrdSchemaAnnotationValidator do
   def main do
     ensure_cache_dir()
 
-    base_ref = base_ref()
-    base_commit = merge_base(base_ref)
+    base_commit = ValidatorUtils.comparison_base()
 
     changed_app_files =
-      changed_files(base_commit) |> Enum.filter(&Regex.match?(@app_file_regex, &1))
+      base_commit
+      |> ValidatorUtils.changed_files()
+      |> Enum.filter(&Regex.match?(@app_file_regex, &1))
 
-    crd_updates =
+    Process.flag(:trap_exit, true)
+
+    crd_update_results =
       changed_app_files
       |> Enum.flat_map(&changed_chart_sources(&1, base_commit))
       |> Task.async_stream(&with_crd_changes/1,
@@ -24,10 +29,29 @@ defmodule CrdSchemaAnnotationValidator do
         timeout: 120_000,
         on_timeout: :kill_task
       )
+      |> Enum.to_list()
+
+    task_errors =
+      crd_update_results
       |> Enum.flat_map(fn
+        {:exit, reason} -> [reason]
+        _ -> []
+      end)
+
+    if task_errors != [] do
+      IO.puts("Failed while checking Helm chart CRD updates.")
+
+      Enum.each(task_errors, fn reason ->
+        IO.puts("- #{inspect(reason)}")
+      end)
+
+      System.halt(2)
+    end
+
+    crd_updates =
+      Enum.flat_map(crd_update_results, fn
         {:ok, nil} -> []
         {:ok, source} -> [source]
-        {:exit, _reason} -> []
       end)
 
     cond do
@@ -62,32 +86,8 @@ defmodule CrdSchemaAnnotationValidator do
     end
   end
 
-  defp base_ref do
-    System.get_env("BASE_REF") ||
-      System.get_env("GITHUB_BASE_REF") ||
-      "origin/main"
-  end
-
-  defp merge_base(base_ref) do
-    case cmd("git", ["merge-base", "HEAD", base_ref]) do
-      {commit, 0} -> String.trim(commit)
-      _ -> base_ref
-    end
-  end
-
-  defp changed_files(base_commit) do
-    [
-      git_lines(["diff", "--name-only", "#{base_commit}...HEAD"]),
-      git_lines(["diff", "--name-only"]),
-      git_lines(["diff", "--cached", "--name-only"])
-    ]
-    |> List.flatten()
-    |> Enum.uniq()
-    |> Enum.filter(&(&1 != ""))
-  end
-
   defp changed_chart_sources(file, base_commit) do
-    old_sources = file_at_ref(base_commit, file) |> parse_chart_sources(file)
+    old_sources = ValidatorUtils.file_at_ref(base_commit, file) |> parse_chart_sources(file)
     new_sources = file_at_worktree(file) |> parse_chart_sources(file)
 
     Enum.flat_map(new_sources, fn new_source ->
@@ -111,13 +111,6 @@ defmodule CrdSchemaAnnotationValidator do
 
   defp same_chart_source?(old_source, new_source) do
     old_source.chart == new_source.chart && old_source.repo == new_source.repo
-  end
-
-  defp file_at_ref(ref, file) do
-    case cmd("git", ["show", "#{ref}:#{file}"]) do
-      {content, 0} -> content
-      _ -> ""
-    end
   end
 
   defp file_at_worktree(file) do
@@ -294,12 +287,8 @@ defmodule CrdSchemaAnnotationValidator do
   defp schema_annotations_changed?(base_commit, crd_updates) do
     changed_crd_groups = crd_updates |> Enum.flat_map(& &1.crd_groups) |> Enum.uniq()
 
-    [
-      git_diff(["diff", "#{base_commit}...HEAD"]),
-      git_diff(["diff"]),
-      git_diff(["diff", "--cached"])
-    ]
-    |> Enum.join("\n")
+    base_commit
+    |> ValidatorUtils.changed_diff()
     |> String.split("\n")
     |> Enum.any?(fn line ->
       String.starts_with?(line, ["+", "-"]) && Regex.match?(@schema_annotation_regex, line) &&
@@ -307,18 +296,7 @@ defmodule CrdSchemaAnnotationValidator do
     end)
   end
 
-  defp git_lines(args) do
-    args |> git_diff() |> String.split("\n", trim: true)
-  end
-
-  defp git_diff(args) do
-    case cmd("git", args) do
-      {output, 0} -> output
-      _ -> ""
-    end
-  end
-
-  defp cmd(command, args), do: System.cmd(command, args, stderr_to_stdout: true)
+  defp cmd(command, args), do: ValidatorUtils.cmd(command, args)
 
   defp ensure_cache_dir do
     File.mkdir_p!(@cache_dir)
