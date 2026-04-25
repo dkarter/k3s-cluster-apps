@@ -21,6 +21,8 @@ controllers:
           FORGEJO__server__SSH_DOMAIN: *host
           FORGEJO__server__SSH_PORT: '2222'
           FORGEJO__server__SSH_LISTEN_PORT: '2222'
+          FORGEJO__actions__ENABLED: 'true'
+          FORGEJO__actions__DEFAULT_ACTIONS_URL: https://data.forgejo.org
           FORGEJO__database__DB_TYPE: postgres
           FORGEJO__database__HOST: forgejo-db-rw.forgejo.svc.cluster.local:5432
           FORGEJO__database__NAME: app
@@ -53,14 +55,90 @@ controllers:
               failureThreshold: 3
           readiness: *probes
 
+  runner:
+    strategy: Recreate
+    replicas: 1
+
+    pod:
+      securityContext:
+        fsGroup: 1000
+
+    containers:
+      runner:
+        image:
+          repository: data.forgejo.org/forgejo/runner
+          tag: 12
+          pullPolicy: IfNotPresent
+
+        command:
+          - sh
+          - -ec
+          - |
+              cd /data
+              if [ ! -f .runner ]; then
+                forgejo-runner register --no-interactive --instance "$FORGEJO_INSTANCE_URL" --token "$FORGEJO_RUNNER_REGISTRATION_TOKEN" --name "$FORGEJO_RUNNER_NAME" --labels "$FORGEJO_RUNNER_LABELS"
+              fi
+              exec forgejo-runner daemon
+
+        env:
+          DOCKER_HOST: tcp://localhost:2375
+          FORGEJO_INSTANCE_URL: http://forgejo.forgejo.svc.cluster.local:3000
+          FORGEJO_RUNNER_NAME: forgejo-runner
+          FORGEJO_RUNNER_LABELS: ubuntu-latest:docker://docker.io/library/node:24-bookworm,docker:docker://docker.io/library/node:24-bookworm
+
+        envFrom:
+          - secretRef:
+              name: forgejo-runner-env
+
+        securityContext:
+          runAsGroup: 1000
+          runAsUser: 1000
+
+      docker-in-docker:
+        image:
+          repository: docker
+          tag: 29-dind
+          pullPolicy: IfNotPresent
+
+        args:
+          - dockerd
+          - --host=tcp://0.0.0.0:2375
+          - --tls=false
+
+        env:
+          DOCKER_TLS_CERTDIR: ''
+
+        securityContext:
+          privileged: true
+
 persistence:
   data:
     enabled: true
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
     size: 10Gi
-    globalMounts:
-      - path: /data
+    advancedMounts:
+      main:
+        app:
+          - path: /data
+
+  runner-data:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 5Gi
+    advancedMounts:
+      runner:
+        runner:
+          - path: /data
+
+  docker-graph-storage:
+    enabled: true
+    type: emptyDir
+    advancedMounts:
+      runner:
+        docker-in-docker:
+          - path: /var/lib/docker
 
 service:
   app:
