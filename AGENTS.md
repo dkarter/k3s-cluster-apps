@@ -127,6 +127,7 @@ This repo relies heavily on yaml-language-servers to:
 - ArgoCD will automatically sync changes from the repository
 - **NEVER** delete a persistent volume claim (PVC), or a Kubernetes volume
   without explicitly confirming with the user
+- For docker images, never use the `latest` tag - that breaks the ability to control updates - instead find the latest exact version tag from the official online source and use that
 
 ## Interaction Guidelines
 
