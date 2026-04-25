@@ -152,7 +152,9 @@ configMaps:
         clientLookup:
           clients:
             apple-tv-living-room: [10.0.0.70]
+            asustor-nas: [10.0.0.54]
             cara-iphone: [10.0.0.72]
+            cara-work: [10.0.0.82]
             dorian-air: [10.0.0.80]
             dorian-ipad: [10.0.0.73]
             dorian-iphone: [10.0.0.64]
@@ -163,10 +165,13 @@ configMaps:
             epson-printer: [10.0.0.75]
             eufy-homebase: [10.0.0.65]
             jetkvm-media: [10.0.0.55]
+            lutron-hub: [10.0.0.51]
             octoprint: [10.0.0.67]
+            philips-hue-bridge-lr: [10.0.0.50]
             rachio: [10.0.0.68]
             roku: [10.0.0.63]
             samsung-fridge: [10.0.0.56]
+            truck: [10.0.0.81]
             washer: [10.0.0.61]
 
 
