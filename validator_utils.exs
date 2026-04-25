@@ -2,8 +2,8 @@ defmodule ValidatorUtils do
   @moduledoc false
 
   def base_ref do
-    System.get_env("BASE_REF") ||
-      System.get_env("GITHUB_BASE_REF") ||
+    env_ref("BASE_REF") ||
+      env_ref("GITHUB_BASE_REF") ||
       default_base_ref()
   end
 
@@ -55,6 +55,13 @@ defmodule ValidatorUtils do
   end
 
   def cmd(command, args), do: System.cmd(command, args, stderr_to_stdout: true)
+
+  defp env_ref(name) do
+    case System.get_env(name) do
+      nil -> nil
+      value -> if String.trim(value) == "", do: nil, else: value
+    end
+  end
 
   defp default_base_ref do
     case current_branch() do

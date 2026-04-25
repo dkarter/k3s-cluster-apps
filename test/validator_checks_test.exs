@@ -71,7 +71,7 @@ defmodule ValidatorChecksTest do
       git!(repo, ["add", "."])
       git!(repo, ["commit", "-m", "update chart"])
 
-      {output, status} = run_script(repo, @values_script, [])
+      {output, status} = run_script(repo, @values_script, env: [{"GITHUB_BASE_REF", ""}])
 
       assert status == 1
       assert output =~ "apps/demo/values.yml: app-template annotation is 4.6.2, chart is 4.7.0"
@@ -197,7 +197,9 @@ defmodule ValidatorChecksTest do
   end
 
   defp run_script(repo, script, opts) do
-    env = if base_ref = opts[:base_ref], do: [{"BASE_REF", base_ref}], else: []
+    env = opts[:env] || []
+
+    env = if base_ref = opts[:base_ref], do: [{"BASE_REF", base_ref} | env], else: env
 
     env =
       if bin_path = opts[:bin_path],
