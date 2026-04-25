@@ -120,6 +120,9 @@ tasks:
       If CRDs changed, the same branch must also update at least one
       yaml-language-server $schema annotation so custom resource schemas do not
       silently drift behind installed CRDs.
+
+      Helm-derived CRD targets are cached under tmp/cache/helm-crd-targets so
+      repeated local runs stay fast enough for git hooks.
     silent: true
     cmd: ./validate-crd-schema-annotations.exs {{.CLI_ARGS}}
 

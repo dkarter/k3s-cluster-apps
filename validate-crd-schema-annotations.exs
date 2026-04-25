@@ -5,8 +5,11 @@ defmodule CrdSchemaAnnotationValidator do
 
   @app_file_regex ~r|^apps/.+\.ya?ml$|
   @schema_annotation_regex ~r/yaml-language-server:\s*\$schema=/
+  @cache_dir "tmp/cache/helm-crd-targets"
 
   def main do
+    ensure_cache_dir()
+
     base_ref = base_ref()
     base_commit = merge_base(base_ref)
 
@@ -186,6 +189,18 @@ defmodule CrdSchemaAnnotationValidator do
   end
 
   defp crd_schema_targets(source, version) do
+    cache_path = crd_targets_cache_path(source, version)
+
+    if File.exists?(cache_path) do
+      cache_path |> File.read!() |> String.split("\n", trim: true)
+    else
+      targets = uncached_crd_schema_targets(source, version)
+      File.write!(cache_path, Enum.join(targets, "\n"))
+      targets
+    end
+  end
+
+  defp uncached_crd_schema_targets(source, version) do
     source
     |> rendered_crds(version)
     |> split_crd_documents()
@@ -304,6 +319,19 @@ defmodule CrdSchemaAnnotationValidator do
   end
 
   defp cmd(command, args), do: System.cmd(command, args, stderr_to_stdout: true)
+
+  defp ensure_cache_dir do
+    File.mkdir_p!(@cache_dir)
+  end
+
+  defp crd_targets_cache_path(source, version) do
+    cache_key =
+      [source.repo, source.chart, version]
+      |> Enum.join("|")
+      |> String.replace(~r/[^A-Za-z0-9_.-]+/, "_")
+
+    Path.join(@cache_dir, "#{cache_key}.txt")
+  end
 end
 
 CrdSchemaAnnotationValidator.main()
