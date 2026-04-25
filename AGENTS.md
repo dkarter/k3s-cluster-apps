@@ -110,6 +110,11 @@ This repo relies heavily on yaml-language-servers to:
 3. Use Renovate for dependency updates (runs automatically)
 4. Manual sync can be triggered via ArgoCD UI if needed
 
+### Pull Requests
+
+- PR titles must use Conventional Commits format, matching the commit style used in this repository.
+- When opening a PR, use the `open-pr` skill unless the user explicitly asks to create or manage the PR with raw CLI/API commands.
+
 ## Important Notes
 
 - The cluster uses `.k3s.pro` domain for ingress
