@@ -15,5 +15,11 @@ pre-push:
     - name: Validate YAML files against schemas
       run: task validate
 
+    - name: Check drift in yaml-language-server schemas when updating CRDs
+      run: task validate:crd-schema-annotations
+
+    - name: Check drift in yaml-language-server schemas for values when updating helm chart
+      run: task validate:values-schema-annotations
+
     - name: Check formatting
       run: task fmt:check

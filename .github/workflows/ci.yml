@@ -1,0 +1,84 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install tools
+        uses: jdx/mise-action@v3
+        with:
+          install: true
+
+      - name: Validate schema annotations
+        run: task validate
+
+  crd-schema-annotations:
+    name: CRD Schema Annotations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install tools
+        uses: jdx/mise-action@v3
+        with:
+          install: true
+
+      - name: Check CRD schema annotation updates
+        env:
+          BASE_REF: origin/${{ github.base_ref || 'main' }}
+        run: task validate:crd-schema-annotations
+
+  values-schema-annotations:
+    name: Values Schema Annotations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install tools
+        uses: jdx/mise-action@v3
+        with:
+          install: true
+
+      - name: Check values schema annotation updates
+        env:
+          BASE_REF: origin/${{ github.base_ref || 'main' }}
+        run: task validate:values-schema-annotations
+
+  validator-tests:
+    name: Validator Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install tools
+        uses: jdx/mise-action@v3
+        with:
+          install: true
+
+      - name: Test validator scripts
+        run: task test:validators
