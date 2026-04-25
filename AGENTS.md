@@ -114,6 +114,7 @@ This repo relies heavily on yaml-language-servers to:
 
 - The cluster uses `.k3s.pro` domain for ingress
 - Longhorn provides persistent storage - be careful with PVC operations
+- For app-template persistence/PVC changes, use the project-local `k3s-persistence-safety` skill.
 - External Secrets are required for most applications to function
 - Media services can be bulk scaled for maintenance operations
 - Git commits are formatted using conventional commits
