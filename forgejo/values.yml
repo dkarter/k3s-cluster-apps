@@ -68,14 +68,6 @@ service:
     ports:
       http:
         port: *http_port
-  ssh:
-    controller: main
-    ports:
-      ssh:
-        port: 2222
-        targetPort: 22
-        protocol: TCP
-
 ingress:
   main:
     enabled: true
