@@ -1,941 +1,1223 @@
 {
-  "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
-        "datasource": {
-          "uid": "-- Grafana --"
-        },
+  "annotations": [
+    {
+      "kind": "AnnotationQuery",
+      "spec": {
+        "builtIn": true,
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [],
-          "type": "dashboard"
-        },
-        "type": "dashboard"
+        "query": {
+          "group": "grafana",
+          "kind": "DataQuery",
+          "spec": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "version": "v0"
+        }
       }
-    ]
-  },
-  "editable": true,
-  "fiscalYearStartMonth": 0,
-  "graphTooltip": 0,
-  "id": 3,
-  "links": [],
-  "panels": [
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "PostgreSQL"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
-          },
-          "displayName": "${__field.labels.response_type}",
-          "mappings": [],
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 0,
-        "y": 0
-      },
-      "id": 14,
-      "options": {
-        "displayLabels": [],
-        "legend": {
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true,
-          "values": [
-            "value"
-          ]
-        },
-        "pieType": "pie",
-        "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "sort": "desc",
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.3.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "PostgreSQL"
-          },
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT  t.response_type, max(t.request_Ts) as time, count(*) as cnt from log_entries t \n  WHERE $__timeFilter(t.request_Ts) and \n        ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n        ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n        (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0)\n        group by t.response_type\n        order by time",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Query count by response type",
-      "type": "piechart"
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "PostgreSQL"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
-          },
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 6,
-        "y": 0
-      },
-      "id": 16,
-      "options": {
-        "displayLabels": [],
-        "legend": {
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true,
-          "values": [
-            "value"
-          ]
-        },
-        "pieType": "pie",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "sort": "desc",
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.3.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "PostgreSQL"
-          },
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT max(t.request_ts) AS time,\n       case when t.reason  like 'BLOCKED%' then SPLIT_PART(SPLIT_PART(t.reason,'(',-1), ')',1) else '' end AS metric,\n       count(t.reason) AS cnt\nFROM log_entries t\nWHERE t.response_type ='BLOCKED'\n  AND $__timeFilter(t.request_Ts)\n  AND ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ',')))\n  AND (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0)\nGROUP BY 2\nORDER BY time",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "duration_ms"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "log_entries",
-          "timeColumn": "request_ts",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Blocked by Denylist",
-      "type": "piechart"
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "PostgreSQL"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 0
-      },
-      "id": 13,
-      "options": {
-        "displayMode": "gradient",
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
-        "maxVizHeight": 300,
-        "minVizHeight": 16,
-        "minVizWidth": 8,
-        "namePlacement": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": true
-        },
-        "showUnfilled": true,
-        "sizing": "auto",
-        "text": {},
-        "valueMode": "color"
-      },
-      "pluginVersion": "12.3.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "PostgreSQL"
-          },
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT  max(t.request_Ts) as time, t.client_name as metric, count(*) as cnt from log_entries t \n  WHERE $__timeFilter(t.request_Ts) and \n        ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n        ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n        (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0)\n  group by t.client_name\n  order by 3 desc",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Query count by client",
-      "type": "bargauge"
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "PostgreSQL"
-      },
-      "description": "Top 20 effective top level domain plus one more label",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "axisSoftMin": 0,
-            "fillOpacity": 67,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 2,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "displayName": "count",
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 8
-      },
-      "id": 11,
-      "options": {
-        "barRadius": 0,
-        "barWidth": 0.26,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
-        "orientation": "horizontal",
-        "showValue": "never",
-        "stacking": "none",
-        "text": {
-          "valueSize": 10
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        },
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 0
-      },
-      "pluginVersion": "12.3.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "PostgreSQL"
-          },
-          "format": "table",
-          "group": [],
-          "hide": false,
-          "metricColumn": "question_name",
-          "rawQuery": true,
-          "rawSql": "SELECT t.effective_tldp as metric, count(*) as value from log_entries t \nWHERE $__timeFilter(t.request_Ts) \n    and ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) \n    and ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) \n    and (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0) \n    group by t.effective_tldp order by count(*) desc limit 20",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "log_entries",
-          "timeColumn": "request_ts",
-          "where": []
-        }
-      ],
-      "title": "Top 20 effective TLD+1",
-      "type": "barchart"
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "PostgreSQL"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "axisSoftMin": 0,
-            "fillOpacity": 67,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 2,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "displayName": "count",
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 8
-      },
-      "id": 8,
-      "options": {
-        "barRadius": 0,
-        "barWidth": 0.26,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
-        "orientation": "horizontal",
-        "showValue": "never",
-        "stacking": "none",
-        "text": {
-          "valueSize": 10
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        },
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 0
-      },
-      "pluginVersion": "12.3.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "PostgreSQL"
-          },
-          "format": "table",
-          "group": [],
-          "hide": false,
-          "metricColumn": "question_name",
-          "rawQuery": true,
-          "rawSql": "SELECT t.question_name as metric, count(*) as value from log_entries t \n  WHERE $__timeFilter(t.request_Ts) and \n  ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n  ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n  (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0) \n  group by t.question_name order by count(*) desc limit 20",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "log_entries",
-          "timeColumn": "request_ts",
-          "where": []
-        }
-      ],
-      "title": "Top 20 queried domains",
-      "type": "barchart"
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "PostgreSQL"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "queries count",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "bars",
-            "fillOpacity": 35,
-            "gradientMode": "hue",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 1,
-            "pointSize": 12,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "showValues": false,
-            "spanNulls": 3600000,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "displayName": "${__field.labels.client_name}",
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 16
-      },
-      "id": 12,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "max",
-            "sum"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true,
-          "sortBy": "Last *",
-          "sortDesc": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.3.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "PostgreSQL"
-          },
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n $__timeGroupAlias(t.request_Ts, '30m'),\n  t.client_name,\n  count(*) as c\nFROM log_entries t\nWHERE\n  $__timeFilter(t.request_Ts) and \n  ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n  ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n  (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0)\nGROUP BY 1,2\nORDER BY 1",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "duration_ms"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "log_entries",
-          "timeColumn": "request_ts",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Queries number per client (30m)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "PostgreSQL"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": -1,
-            "barWidthFactor": 0.6,
-            "drawStyle": "bars",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "stepBefore",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "line"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "dtdurationms"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 23
-      },
-      "id": 10,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.3.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "PostgreSQL"
-          },
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  EXTRACT(EPOCH from t.request_Ts) as time,\n  t.duration_ms\nFROM log_entries t\nWHERE\n  $__timeFilter(t.request_Ts) and \n  ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n  ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n  (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0)\nORDER BY request_ts",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "duration_ms"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "log_entries",
-          "timeColumn": "request_ts",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Query duration",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "postgres",
-        "uid": "PostgreSQL"
-      },
-      "description": "Last 100 queries, newest on top",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "filterable": false,
-            "footer": {
-              "reducers": []
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "time"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "dateTimeAsIsoNoDateIfToday"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 31
-      },
-      "id": 4,
-      "options": {
-        "cellHeight": "sm",
-        "showHeader": true
-      },
-      "pluginVersion": "12.3.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "PostgreSQL"
-          },
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT EXTRACT(EPOCH from t.request_Ts) as \"time\", \n       t.client_ip as \"client IP\", \n       t.client_name as \"client name\", \n       t.duration_ms as \"duration in ms\", \n       t.response_type as \"response type\", \n       t.question_type as \"question type\", \n       t.question_name as \"question name\", \n       t.effective_tldp as \"effective TLD+1\", \n       t.answer as \"answer\" from log_entries t \n       WHERE $__timeFilter(t.request_Ts) and \n       ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n       ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n       (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0) \n       order by t.request_Ts desc limit 100",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Last queries",
-      "type": "table"
     }
   ],
+  "cursorSync": "Off",
+  "editable": true,
+  "elements": {
+    "panel-10": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "PostgreSQL"
+                    },
+                    "group": "postgres",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [],
+                      "metricColumn": "none",
+                      "rawQuery": true,
+                      "rawSql": "SELECT\n  EXTRACT(EPOCH from t.request_Ts) as time,\n  t.duration_ms\nFROM log_entries t\nWHERE\n  $__timeFilter(t.request_Ts) and \n  ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n  ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n  (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0)\nORDER BY request_ts",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "duration_ms"
+                            ],
+                            "type": "column"
+                          }
+                        ]
+                      ],
+                      "table": "log_entries",
+                      "timeColumn": "request_ts",
+                      "timeColumnType": "timestamp",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 10,
+        "links": [],
+        "title": "Query duration",
+        "vizConfig": {
+          "group": "timeseries",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": -1,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "bars",
+                  "fillOpacity": 0,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "stepBefore",
+                  "lineStyle": {
+                    "fill": "solid"
+                  },
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "auto",
+                  "showValues": false,
+                  "spanNulls": true,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "line"
+                  }
+                },
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    }
+                  ]
+                },
+                "unit": "dtdurationms"
+              },
+              "overrides": []
+            },
+            "options": {
+              "annotations": {
+                "clustering": -1,
+                "multiLane": false
+              },
+              "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": false
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            }
+          },
+          "version": "13.0.1"
+        }
+      }
+    },
+    "panel-11": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "PostgreSQL"
+                    },
+                    "group": "postgres",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "table",
+                      "group": [],
+                      "metricColumn": "question_name",
+                      "rawQuery": true,
+                      "rawSql": "SELECT t.effective_tldp as metric, count(*) as value from log_entries t \nWHERE $__timeFilter(t.request_Ts) \n    and ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) \n    and ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) \n    and (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0) \n    group by t.effective_tldp order by count(*) desc limit 20",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          }
+                        ]
+                      ],
+                      "table": "log_entries",
+                      "timeColumn": "request_ts",
+                      "where": []
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "Top 20 effective top level domain plus one more label",
+        "id": 11,
+        "links": [],
+        "title": "Top 20 effective TLD+1",
+        "vizConfig": {
+          "group": "barchart",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "axisSoftMin": 0,
+                  "fillOpacity": 67,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "lineWidth": 2,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "displayName": "count",
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "options": {
+              "barRadius": 0,
+              "barWidth": 0.26,
+              "fullHighlight": false,
+              "groupWidth": 0.7,
+              "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": false
+              },
+              "orientation": "horizontal",
+              "showValue": "never",
+              "stacking": "none",
+              "text": {
+                "valueSize": 10
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              },
+              "xTickLabelRotation": 0,
+              "xTickLabelSpacing": 0
+            }
+          },
+          "version": "13.0.1"
+        }
+      }
+    },
+    "panel-12": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "PostgreSQL"
+                    },
+                    "group": "postgres",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [],
+                      "metricColumn": "none",
+                      "rawQuery": true,
+                      "rawSql": "SELECT\n $__timeGroupAlias(t.request_Ts, '30m'),\n  t.client_name,\n  count(*) as c\nFROM log_entries t\nWHERE\n  $__timeFilter(t.request_Ts) and \n  ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n  ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n  (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0)\nGROUP BY 1,2\nORDER BY 1",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "duration_ms"
+                            ],
+                            "type": "column"
+                          }
+                        ]
+                      ],
+                      "table": "log_entries",
+                      "timeColumn": "request_ts",
+                      "timeColumnType": "timestamp",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 12,
+        "links": [],
+        "title": "Queries number per client (30m)",
+        "vizConfig": {
+          "group": "timeseries",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "queries count",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "bars",
+                  "fillOpacity": 35,
+                  "gradientMode": "hue",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineStyle": {
+                    "fill": "solid"
+                  },
+                  "lineWidth": 1,
+                  "pointSize": 12,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": 3600000,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "displayName": "${__field.labels.client_name}",
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "sishort"
+              },
+              "overrides": []
+            },
+            "options": {
+              "annotations": {
+                "clustering": -1,
+                "multiLane": false
+              },
+              "legend": {
+                "calcs": [
+                  "lastNotNull",
+                  "max",
+                  "sum"
+                ],
+                "displayMode": "table",
+                "placement": "right",
+                "showLegend": true,
+                "sortBy": "Total",
+                "sortDesc": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            }
+          },
+          "version": "13.0.1"
+        }
+      }
+    },
+    "panel-13": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "PostgreSQL"
+                    },
+                    "group": "postgres",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "table",
+                      "group": [],
+                      "metricColumn": "none",
+                      "rawQuery": true,
+                      "rawSql": "SELECT  max(t.request_Ts) as time, t.client_name as metric, count(*) as cnt from log_entries t \n  WHERE $__timeFilter(t.request_Ts) and \n        ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n        ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n        (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0)\n  group by t.client_name\n  order by 3 desc",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          }
+                        ]
+                      ],
+                      "timeColumn": "time",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 13,
+        "links": [],
+        "title": "Query count by client",
+        "vizConfig": {
+          "group": "bargauge",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "options": {
+              "displayMode": "gradient",
+              "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": false
+              },
+              "maxVizHeight": 300,
+              "minVizHeight": 16,
+              "minVizWidth": 8,
+              "namePlacement": "auto",
+              "orientation": "horizontal",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": true
+              },
+              "showUnfilled": true,
+              "sizing": "auto",
+              "text": {},
+              "valueMode": "color"
+            }
+          },
+          "version": "13.0.1"
+        }
+      }
+    },
+    "panel-14": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "PostgreSQL"
+                    },
+                    "group": "postgres",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [],
+                      "metricColumn": "none",
+                      "rawQuery": true,
+                      "rawSql": "SELECT  t.response_type, max(t.request_Ts) as time, count(*) as cnt from log_entries t \n  WHERE $__timeFilter(t.request_Ts) and \n        ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n        ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n        (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0)\n        group by t.response_type\n        order by time",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          }
+                        ]
+                      ],
+                      "timeColumn": "time",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 14,
+        "links": [],
+        "title": "Query count by response type",
+        "vizConfig": {
+          "group": "piechart",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  }
+                },
+                "displayName": "${__field.labels.response_type}",
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "options": {
+              "displayLabels": [],
+              "legend": {
+                "displayMode": "table",
+                "placement": "right",
+                "showLegend": true,
+                "values": [
+                  "value"
+                ]
+              },
+              "pieType": "pie",
+              "reduceOptions": {
+                "calcs": [
+                  "sum"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "sort": "desc",
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            }
+          },
+          "version": "13.0.1"
+        }
+      }
+    },
+    "panel-16": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "PostgreSQL"
+                    },
+                    "group": "postgres",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [],
+                      "metricColumn": "none",
+                      "rawQuery": true,
+                      "rawSql": "SELECT max(t.request_ts) AS time,\n       case when t.reason  like 'BLOCKED%' then SPLIT_PART(SPLIT_PART(t.reason,'(',-1), ')',1) else '' end AS metric,\n       count(t.reason) AS cnt\nFROM log_entries t\nWHERE t.response_type ='BLOCKED'\n  AND $__timeFilter(t.request_Ts)\n  AND ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ',')))\n  AND (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0)\nGROUP BY 2\nORDER BY time",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "duration_ms"
+                            ],
+                            "type": "column"
+                          }
+                        ]
+                      ],
+                      "table": "log_entries",
+                      "timeColumn": "request_ts",
+                      "timeColumnType": "timestamp",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 16,
+        "links": [],
+        "title": "Blocked by Denylist",
+        "vizConfig": {
+          "group": "piechart",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  }
+                }
+              },
+              "overrides": []
+            },
+            "options": {
+              "displayLabels": [],
+              "legend": {
+                "displayMode": "table",
+                "placement": "right",
+                "showLegend": true,
+                "values": [
+                  "value"
+                ]
+              },
+              "pieType": "pie",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "sort": "desc",
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            }
+          },
+          "version": "13.0.1"
+        }
+      }
+    },
+    "panel-4": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "PostgreSQL"
+                    },
+                    "group": "postgres",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "table",
+                      "group": [],
+                      "metricColumn": "none",
+                      "rawQuery": true,
+                      "rawSql": "SELECT EXTRACT(EPOCH from t.request_Ts) as \"time\", \n       t.client_ip as \"client IP\", \n       t.client_name as \"client name\", \n       t.duration_ms as \"duration in ms\", \n       t.response_type as \"response type\", \n       t.question_type as \"question type\", \n       t.question_name as \"question name\", \n       t.effective_tldp as \"effective TLD+1\", \n       t.answer as \"answer\" from log_entries t \n       WHERE $__timeFilter(t.request_Ts) and \n       ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n       ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n       (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0) \n       order by t.request_Ts desc limit 100",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          }
+                        ]
+                      ],
+                      "timeColumn": "time",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "Last 100 queries, newest on top",
+        "id": 4,
+        "links": [],
+        "title": "Last queries",
+        "vizConfig": {
+          "group": "table",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "custom": {
+                  "align": "auto",
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "filterable": false,
+                  "footer": {
+                    "reducers": []
+                  },
+                  "inspect": false
+                },
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    }
+                  ]
+                }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "time"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "dateTimeAsIsoNoDateIfToday"
+                    }
+                  ]
+                }
+              ]
+            },
+            "options": {
+              "cellHeight": "sm",
+              "showHeader": true,
+              "sortBy": [
+                {
+                  "desc": true,
+                  "displayName": "question name"
+                }
+              ]
+            }
+          },
+          "version": "13.0.1"
+        }
+      }
+    },
+    "panel-8": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "PostgreSQL"
+                    },
+                    "group": "postgres",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "table",
+                      "group": [],
+                      "metricColumn": "question_name",
+                      "rawQuery": true,
+                      "rawSql": "SELECT t.question_name as metric, count(*) as value from log_entries t \n  WHERE $__timeFilter(t.request_Ts) and \n  ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n  ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n  (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0) \n  group by t.question_name order by count(*) desc limit 20",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          }
+                        ]
+                      ],
+                      "table": "log_entries",
+                      "timeColumn": "request_ts",
+                      "where": []
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 8,
+        "links": [],
+        "title": "Top 20 queried domains",
+        "vizConfig": {
+          "group": "barchart",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "axisSoftMin": 0,
+                  "fillOpacity": 67,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "lineWidth": 2,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "displayName": "count",
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "options": {
+              "barRadius": 0,
+              "barWidth": 0.26,
+              "fullHighlight": false,
+              "groupWidth": 0.7,
+              "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": false
+              },
+              "orientation": "horizontal",
+              "showValue": "never",
+              "stacking": "none",
+              "text": {
+                "valueSize": 10
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              },
+              "xTickLabelRotation": 0,
+              "xTickLabelSpacing": 0
+            }
+          },
+          "version": "13.0.1"
+        }
+      }
+    }
+  },
+  "layout": {
+    "kind": "GridLayout",
+    "spec": {
+      "items": [
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-14"
+            },
+            "height": 8,
+            "width": 6,
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-16"
+            },
+            "height": 8,
+            "width": 6,
+            "x": 6,
+            "y": 0
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-13"
+            },
+            "height": 8,
+            "width": 12,
+            "x": 12,
+            "y": 0
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-11"
+            },
+            "height": 8,
+            "width": 12,
+            "x": 0,
+            "y": 8
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-8"
+            },
+            "height": 8,
+            "width": 12,
+            "x": 12,
+            "y": 8
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-12"
+            },
+            "height": 7,
+            "width": 24,
+            "x": 0,
+            "y": 16
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-10"
+            },
+            "height": 8,
+            "width": 24,
+            "x": 0,
+            "y": 23
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-4"
+            },
+            "height": 8,
+            "width": 24,
+            "x": 0,
+            "y": 31
+          }
+        }
+      ]
+    }
+  },
+  "links": [],
+  "liveNow": false,
   "preload": false,
-  "refresh": "",
-  "schemaVersion": 42,
   "tags": [],
-  "templating": {
-    "list": [
-      {
-        "current": {},
-        "datasource": {
-          "type": "postgres",
-          "uid": "PostgreSQL"
+  "timeSettings": {
+    "autoRefresh": "",
+    "autoRefreshIntervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "fiscalYearStartMonth": 0,
+    "from": "now-24h",
+    "hideTimepicker": false,
+    "timezone": "browser",
+    "to": "now"
+  },
+  "title": "Blocky query",
+  "variables": [
+    {
+      "kind": "QueryVariable",
+      "spec": {
+        "allowCustomValue": true,
+        "current": {
+          "text": "",
+          "value": ""
         },
         "definition": "select distinct client_name from log_entries",
+        "hide": "dontHide",
         "includeAll": true,
         "label": "Client name",
         "multi": true,
         "name": "client_name",
         "options": [],
-        "query": "select distinct client_name from log_entries",
-        "refresh": 2,
+        "query": {
+          "datasource": {
+            "name": "PostgreSQL"
+          },
+          "group": "postgres",
+          "kind": "DataQuery",
+          "spec": {
+            "__legacyStringValue": "select distinct client_name from log_entries"
+          },
+          "version": "v0"
+        },
+        "refresh": "onTimeRangeChanged",
         "regex": "",
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "current": {},
-        "datasource": {
-          "type": "postgres",
-          "uid": "PostgreSQL"
+        "regexApplyTo": "value",
+        "skipUrlSync": false,
+        "sort": "alphabeticalAsc"
+      }
+    },
+    {
+      "kind": "QueryVariable",
+      "spec": {
+        "allowCustomValue": true,
+        "current": {
+          "text": "",
+          "value": ""
         },
         "definition": "select distinct response_type from log_entries",
+        "hide": "dontHide",
         "includeAll": true,
         "label": "Response type",
         "multi": true,
         "name": "response_type",
         "options": [],
-        "query": "select distinct response_type from log_entries",
-        "refresh": 2,
+        "query": {
+          "datasource": {
+            "name": "PostgreSQL"
+          },
+          "group": "postgres",
+          "kind": "DataQuery",
+          "spec": {
+            "__legacyStringValue": "select distinct response_type from log_entries"
+          },
+          "version": "v0"
+        },
+        "refresh": "onTimeRangeChanged",
         "regex": "",
-        "sort": 1,
-        "type": "query"
-      },
-      {
+        "regexApplyTo": "value",
+        "skipUrlSync": false,
+        "sort": "alphabeticalAsc"
+      }
+    },
+    {
+      "kind": "TextVariable",
+      "spec": {
         "current": {
           "text": "",
           "value": ""
         },
+        "hide": "dontHide",
         "label": "Domain (contains)",
         "name": "question",
-        "options": [
-          {
-            "selected": true,
-            "text": "",
-            "value": ""
-          }
-        ],
         "query": "",
-        "type": "textbox"
+        "skipUrlSync": false
       }
-    ]
-  },
-  "time": {
-    "from": "now-24h",
-    "to": "now"
-  },
-  "timepicker": {},
-  "timezone": "",
-  "title": "Blocky query",
-  "uid": "AVmWSVWgz",
-  "version": 1
+    }
+  ]
 }
