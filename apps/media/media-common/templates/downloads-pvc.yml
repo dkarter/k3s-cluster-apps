@@ -1,8 +1,12 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.26.1-standalone-strict/persistentvolumeclaim-v1.json
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: downloads-storage
   namespace: media
+  labels:
+    recurring-job.longhorn.io/source: enabled
+    recurring-job.longhorn.io/weekly-filesystem-trim: enabled
 spec:
   accessModes:
     - ReadWriteMany # Allows multiple pods to read/write

@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/longhorn.io/recurringjob_v1beta2.json
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: daily-backup
+  namespace: longhorn-system
+spec:
+  # Runs every day at 01:00.
+  cron: '0 1 * * *'
+  task: backup
+  groups:
+    - default
+  retain: 14
+  concurrency: 1
+  parameters:
+    full-backup-interval: '7'
+  labels:
+    frequency: daily
