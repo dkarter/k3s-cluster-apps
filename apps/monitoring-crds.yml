@@ -2,19 +2,15 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: monitoring
+  name: monitoring-crds
   annotations:
-    argocd.argoproj.io/sync-wave: '0'
+    argocd.argoproj.io/sync-wave: '-1'
 spec:
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: monitoring
 
   sources:
-    - path: monitoring/templates
-      repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
-      targetRevision: HEAD
-
     - repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
       targetRevision: HEAD
       ref: values
@@ -23,10 +19,10 @@ spec:
       repoURL: https://prometheus-community.github.io/helm-charts
       targetRevision: 84.1.0
       helm:
-        releaseName: monitoring
-        skipCrds: true
+        releaseName: monitoring-crds
+        skipCrds: false
         valueFiles:
-          - $values/monitoring/values.yml
+          - $values/monitoring/crds-values.yml
 
   project: default
 
@@ -36,3 +32,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
