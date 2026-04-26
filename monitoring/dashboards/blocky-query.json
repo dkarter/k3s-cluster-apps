@@ -29,7 +29,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "PCC52D03280B7034C"
+        "uid": "PostgreSQL"
       },
       "description": "",
       "fieldConfig": {
@@ -87,13 +87,13 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "PCC52D03280B7034C"
+            "uid": "PostgreSQL"
           },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT  t.response_type, max(t.request_Ts) as time, count(*) as cnt from log_entries t \n  WHERE $__timeFilter(t.request_Ts) and \n        t.response_type in ($response_type) and \n        t.client_name in ($client_name) and \n        (length('$question') = 0 or POSITION(lower('$question') IN t.question_name) > 0)\n        group by t.response_type\n        order by time",
+          "rawSql": "SELECT  t.response_type, max(t.request_Ts) as time, count(*) as cnt from log_entries t \n  WHERE $__timeFilter(t.request_Ts) and \n        ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n        ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n        (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0)\n        group by t.response_type\n        order by time",
           "refId": "A",
           "select": [
             [
@@ -121,7 +121,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "PCC52D03280B7034C"
+        "uid": "PostgreSQL"
       },
       "fieldConfig": {
         "defaults": {
@@ -176,13 +176,13 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "PCC52D03280B7034C"
+            "uid": "PostgreSQL"
           },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT max(t.request_ts) AS time,\n       case when t.reason  like 'BLOCKED%' then SPLIT_PART(SPLIT_PART(t.reason,'(',-1), ')',1) else '' end AS metric,\n       count(t.reason) AS cnt\nFROM log_entries t\nWHERE t.response_type ='BLOCKED'\n  AND $__timeFilter(t.request_Ts)\n  AND t.client_name in ($client_name)\n  AND (length('$question') = 0 or POSITION(lower('$question') IN t.question_name) > 0)\nGROUP BY 2\nORDER BY time",
+          "rawSql": "SELECT max(t.request_ts) AS time,\n       case when t.reason  like 'BLOCKED%' then SPLIT_PART(SPLIT_PART(t.reason,'(',-1), ')',1) else '' end AS metric,\n       count(t.reason) AS cnt\nFROM log_entries t\nWHERE t.response_type ='BLOCKED'\n  AND $__timeFilter(t.request_Ts)\n  AND ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ',')))\n  AND (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0)\nGROUP BY 2\nORDER BY time",
           "refId": "A",
           "select": [
             [
@@ -212,7 +212,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "PCC52D03280B7034C"
+        "uid": "PostgreSQL"
       },
       "description": "",
       "fieldConfig": {
@@ -271,13 +271,13 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "PCC52D03280B7034C"
+            "uid": "PostgreSQL"
           },
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT  max(t.request_Ts) as time, t.client_name as metric, count(*) as cnt from log_entries t \n  WHERE $__timeFilter(t.request_Ts) and \n        t.response_type in ($response_type) and \n        t.client_name in ($client_name) and \n        (length('$question') = 0 or POSITION(lower('$question') IN t.question_name) > 0)\n  group by t.client_name\n  order by 3 desc",
+          "rawSql": "SELECT  max(t.request_Ts) as time, t.client_name as metric, count(*) as cnt from log_entries t \n  WHERE $__timeFilter(t.request_Ts) and \n        ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n        ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n        (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0)\n  group by t.client_name\n  order by 3 desc",
           "refId": "A",
           "select": [
             [
@@ -305,7 +305,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "PCC52D03280B7034C"
+        "uid": "PostgreSQL"
       },
       "description": "Top 20 effective top level domain plus one more label",
       "fieldConfig": {
@@ -387,14 +387,14 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "PCC52D03280B7034C"
+            "uid": "PostgreSQL"
           },
           "format": "table",
           "group": [],
           "hide": false,
           "metricColumn": "question_name",
           "rawQuery": true,
-          "rawSql": "SELECT t.effective_tldp as metric, count(*) as value from log_entries t \nWHERE $__timeFilter(t.request_Ts) \n    and t.response_type in ($response_type) \n    and t.client_name in ($client_name) \n    and (length('$question') = 0 or POSITION(lower('$question') IN t.question_name) > 0) \n    group by t.effective_tldp order by count(*) desc limit 20",
+          "rawSql": "SELECT t.effective_tldp as metric, count(*) as value from log_entries t \nWHERE $__timeFilter(t.request_Ts) \n    and ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) \n    and ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) \n    and (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0) \n    group by t.effective_tldp order by count(*) desc limit 20",
           "refId": "A",
           "select": [
             [
@@ -417,7 +417,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "PCC52D03280B7034C"
+        "uid": "PostgreSQL"
       },
       "description": "",
       "fieldConfig": {
@@ -499,14 +499,14 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "PCC52D03280B7034C"
+            "uid": "PostgreSQL"
           },
           "format": "table",
           "group": [],
           "hide": false,
           "metricColumn": "question_name",
           "rawQuery": true,
-          "rawSql": "SELECT t.question_name as metric, count(*) as value from log_entries t \n  WHERE $__timeFilter(t.request_Ts) and \n  t.response_type in ($response_type) and \n  t.client_name in ($client_name) and \n  (length('$question') = 0 or POSITION(lower('$question') IN t.question_name) > 0) \n  group by t.question_name order by count(*) desc limit 20",
+          "rawSql": "SELECT t.question_name as metric, count(*) as value from log_entries t \n  WHERE $__timeFilter(t.request_Ts) and \n  ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n  ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n  (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0) \n  group by t.question_name order by count(*) desc limit 20",
           "refId": "A",
           "select": [
             [
@@ -529,7 +529,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "PCC52D03280B7034C"
+        "uid": "PostgreSQL"
       },
       "description": "",
       "fieldConfig": {
@@ -623,13 +623,13 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "PCC52D03280B7034C"
+            "uid": "PostgreSQL"
           },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n $__timeGroupAlias(t.request_Ts, '30m'),\n  t.client_name,\n  count(*) as c\nFROM log_entries t\nWHERE\n  $__timeFilter(t.request_Ts) and \n  t.response_type in ($response_type) and \n  t.client_name in ($client_name) and \n  (length('$question') = 0 or POSITION(lower('$question') IN t.question_name) > 0)\nGROUP BY 1,2\nORDER BY 1",
+          "rawSql": "SELECT\n $__timeGroupAlias(t.request_Ts, '30m'),\n  t.client_name,\n  count(*) as c\nFROM log_entries t\nWHERE\n  $__timeFilter(t.request_Ts) and \n  ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n  ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n  (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0)\nGROUP BY 1,2\nORDER BY 1",
           "refId": "A",
           "select": [
             [
@@ -659,7 +659,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "PCC52D03280B7034C"
+        "uid": "PostgreSQL"
       },
       "fieldConfig": {
         "defaults": {
@@ -742,13 +742,13 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "PCC52D03280B7034C"
+            "uid": "PostgreSQL"
           },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  EXTRACT(EPOCH from t.request_Ts) as time,\n  t.duration_ms\nFROM log_entries t\nWHERE\n  $__timeFilter(t.request_Ts) and \n  t.response_type in ($response_type) and \n  t.client_name in ($client_name) and \n  (length('$question') = 0 or POSITION(lower('$question') IN t.question_name) > 0)\nORDER BY request_ts",
+          "rawSql": "SELECT\n  EXTRACT(EPOCH from t.request_Ts) as time,\n  t.duration_ms\nFROM log_entries t\nWHERE\n  $__timeFilter(t.request_Ts) and \n  ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n  ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n  (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0)\nORDER BY request_ts",
           "refId": "A",
           "select": [
             [
@@ -778,7 +778,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "PCC52D03280B7034C"
+        "uid": "PostgreSQL"
       },
       "description": "Last 100 queries, newest on top",
       "fieldConfig": {
@@ -836,13 +836,13 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "PCC52D03280B7034C"
+            "uid": "PostgreSQL"
           },
           "format": "table",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT EXTRACT(EPOCH from t.request_Ts) as \"time\", \n       t.client_ip as \"client IP\", \n       t.client_name as \"client name\", \n       t.duration_ms as \"duration in ms\", \n       t.response_type as \"response type\", \n       t.question_type as \"question type\", \n       t.question_name as \"question name\", \n       t.effective_tldp as \"effective TLD+1\", \n       t.answer as \"answer\" from log_entries t \n       WHERE $__timeFilter(t.request_Ts) and \n       t.response_type in ($response_type) and \n       t.client_name in ($client_name) and \n       (length('$question') = 0 or POSITION(lower('$question') IN t.question_name) > 0) \n       order by t.request_Ts desc limit 100",
+          "rawSql": "SELECT EXTRACT(EPOCH from t.request_Ts) as \"time\", \n       t.client_ip as \"client IP\", \n       t.client_name as \"client name\", \n       t.duration_ms as \"duration in ms\", \n       t.response_type as \"response type\", \n       t.question_type as \"question type\", \n       t.question_name as \"question name\", \n       t.effective_tldp as \"effective TLD+1\", \n       t.answer as \"answer\" from log_entries t \n       WHERE $__timeFilter(t.request_Ts) and \n       ('${response_type:csv}' = '' or t.response_type = ANY(string_to_array('${response_type:csv}', ','))) and \n       ('${client_name:csv}' = '' or t.client_name = ANY(string_to_array('${client_name:csv}', ','))) and \n       (length(${question:sqlstring}) = 0 or POSITION(lower(${question:sqlstring}) IN t.question_name) > 0) \n       order by t.request_Ts desc limit 100",
           "refId": "A",
           "select": [
             [
@@ -876,7 +876,10 @@
     "list": [
       {
         "current": {},
-        "datasource": "PostgreSQL",
+        "datasource": {
+          "type": "postgres",
+          "uid": "PostgreSQL"
+        },
         "definition": "select distinct client_name from log_entries",
         "includeAll": true,
         "label": "Client name",
@@ -891,7 +894,10 @@
       },
       {
         "current": {},
-        "datasource": "PostgreSQL",
+        "datasource": {
+          "type": "postgres",
+          "uid": "PostgreSQL"
+        },
         "definition": "select distinct response_type from log_entries",
         "includeAll": true,
         "label": "Response type",

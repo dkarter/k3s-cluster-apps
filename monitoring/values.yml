@@ -54,6 +54,7 @@ grafana:
     k3s.pro/restartedAt: '2026-04-24T22:11:51Z'
   additionalDataSources:
     - name: PostgreSQL
+      uid: PostgreSQL
       type: postgres
       access: proxy
       url: blocky-db-rw.blocky.svc.cluster.local:5432
