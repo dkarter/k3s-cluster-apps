@@ -14,6 +14,11 @@ spec:
       targetRevision: 1.11.1
       helm:
         releaseName: longhorn
+        valuesObject:
+          defaultBackupStore:
+            backupTarget: 's3://longhorn-backups@us-east-1/'
+            backupTargetCredentialSecret: longhorn-backup-target
+            pollInterval: 180
 
     - path: longhorn
       repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
