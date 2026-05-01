@@ -12,7 +12,7 @@ controllers:
         nameOverride: 'flood'
         image:
           repository: jesec/flood
-          tag: '4.13.9'
+          tag: '4.13.10'
           pullPolicy: IfNotPresent
 
         securityContext:
