@@ -11,7 +11,7 @@ controllers:
       app:
         image:
           repository: codeberg.org/forgejo/forgejo
-          tag: 15.0.0
+          tag: 15.0.1
           pullPolicy: IfNotPresent
 
         env:
