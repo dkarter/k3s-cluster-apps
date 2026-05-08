@@ -12,7 +12,7 @@ controllers:
       app:
         image:
           repository: louislam/uptime-kuma
-          tag: 2.2.1-slim
+          tag: 2.3.2-slim
           pullPolicy: IfNotPresent
 
         probes:
