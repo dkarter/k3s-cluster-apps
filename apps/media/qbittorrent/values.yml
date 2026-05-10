@@ -40,6 +40,8 @@ controllers:
           VPN_SERVICE_PROVIDER: protonvpn
           VPN_TYPE: wireguard
           VPN_PORT_FORWARDING: 'on'
+          SERVER_COUNTRIES: United States
+          SERVER_CITIES: Los Angeles
           FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16,10.43.0.0/16
           # Filter only port-forwarding enabled (aka p2p) servers
           PORT_FORWARD_ONLY: 'on'
