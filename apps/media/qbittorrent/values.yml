@@ -37,14 +37,15 @@ controllers:
 
         env:
           # see https://github.com/qdm12/gluetun-wiki/blob/main/setup/providers/protonvpn.md
-          VPN_SERVICE_PROVIDER: protonvpn
+          VPN_SERVICE_PROVIDER: custom
           VPN_TYPE: wireguard
           VPN_PORT_FORWARDING: 'on'
-          SERVER_COUNTRIES: United States
-          SERVER_CITIES: Los Angeles
+          VPN_PORT_FORWARDING_PROVIDER: protonvpn
+          WIREGUARD_ADDRESSES: 10.2.0.2/32
+          WIREGUARD_ENDPOINT_IP: 146.70.174.194
+          WIREGUARD_ENDPOINT_PORT: '51820'
+          WIREGUARD_PUBLIC_KEY: zD4qEIk4HqXDJ5vHE9G34EUUhEybyBhA/Gs8NrfOdmI=
           FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16,10.43.0.0/16
-          # Filter only port-forwarding enabled (aka p2p) servers
-          PORT_FORWARD_ONLY: 'on'
           DNS_KEEP_NAMESERVER: 'off'
           BLOCK_MALICIOUS: 'off'
           BLOCK_SURVEILLANCE: 'off'
