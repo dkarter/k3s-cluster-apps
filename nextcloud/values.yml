@@ -19,7 +19,7 @@ controllers:
       app:
         image:
           repository: nextcloud
-          tag: 33.0.3
+          tag: 33.0.5
           pullPolicy: IfNotPresent
 
         env:
