@@ -10,7 +10,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/tailscale/tsidp
-          tag: v0.0.12
+          tag: v0.0.14
           pullPolicy: IfNotPresent
 
         args:
