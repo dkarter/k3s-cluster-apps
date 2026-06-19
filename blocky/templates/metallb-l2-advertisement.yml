@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/metallb.io/l2advertisement_v1beta1.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/1de95b7e9cb737ba46b14fa5a033fee2e47d90a3/metallb.io/l2advertisement_v1beta1.json
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
 metadata:
