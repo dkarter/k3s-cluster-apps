@@ -8,6 +8,7 @@ lefthook = { version = "latest" }
 "pipx:check-jsonschema" = "latest"
 task = "latest"
 "github:crate-ci/committed" = "latest"
+aube = "latest"
 
 [hooks]
 postinstall = "lefthook install"
@@ -15,4 +16,4 @@ postinstall = "lefthook install"
 [settings]
 experimental = true
 disable_backends = ["asdf"]
-npm.bun = true
+npm.package_manager = "aube"
