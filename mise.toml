@@ -5,7 +5,7 @@ erlang = "28"
 helm = "latest"
 jq = "latest"
 lefthook = { version = "latest" }
-"pipx:check-jsonschema" = "latest"
+"pipx:check-jsonschema" = "0.37.1"
 task = "latest"
 "github:crate-ci/committed" = "latest"
 aube = "latest"
