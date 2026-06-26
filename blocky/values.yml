@@ -139,6 +139,7 @@ configMaps:
                 amazon-adsystem.com
                 *.volceapplog.com
                 snssdk.insta360.com
+                snssdk-sg.insta360.com
                 *.aliyuncs.com
           allowlists:
             ads:
