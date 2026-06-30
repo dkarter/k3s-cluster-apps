@@ -137,6 +137,15 @@ configMaps:
               - |
                 improving.duckduckgo.com
                 amazon-adsystem.com
+                *.volceapplog.com
+                snssdk.insta360.com
+                snssdk-sg.insta360.com
+                studio-sentry-cn.insta360.com
+                open.douyin.com
+                auth.douyin.com
+                surveys.insta360.com
+                api.meishesdk.com
+                *.aliyuncs.com
           allowlists:
             ads:
               - |
