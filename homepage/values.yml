@@ -38,6 +38,10 @@ controllers:
               failureThreshold: 3
           readiness: *probes
 
+defaultPodOptions:
+  # Homepage runs in cluster mode and requires its service account token.
+  automountServiceAccountToken: true
+
 serviceAccount:
   main:
     enabled: true
