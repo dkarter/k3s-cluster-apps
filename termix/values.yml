@@ -1,0 +1,136 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+app_host: &app_host 'termix.k3s.pro'
+app_url: &app_url 'https://termix.k3s.pro'
+app_port: &app_port 8080
+
+defaultPodOptions:
+  automountServiceAccountToken: false
+
+controllers:
+  main:
+    strategy: Recreate
+    replicas: 1
+
+    containers:
+      app:
+        image:
+          repository: ghcr.io/lukegus/termix
+          tag: 2.6.0
+          pullPolicy: IfNotPresent
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            memory: 1Gi
+
+        env:
+          PORT: *app_port
+          GUACD_HOST: localhost
+          GUACD_PORT: 4822
+          GUACD_RECORDING_PATH: /termix-data/session_recordings/guacamole
+
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: *app_port
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 6
+          readiness: *probes
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: *app_port
+              periodSeconds: 5
+              timeoutSeconds: 5
+              failureThreshold: 60
+
+      guacd:
+        image:
+          repository: guacamole/guacd
+          tag: 1.6.0
+          pullPolicy: IfNotPresent
+
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            memory: 512Mi
+
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              tcpSocket:
+                port: 4822
+              initialDelaySeconds: 10
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 6
+
+persistence:
+  data:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 5Gi
+    storageClass: longhorn-retained
+    retain: true
+    advancedMounts:
+      main:
+        app:
+          - path: /app/data
+          - path: /termix-data
+        guacd:
+          - path: /termix-data
+
+service:
+  app:
+    controller: main
+    ports:
+      http:
+        port: *app_port
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      # Homepage integration
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: Termix
+      gethomepage.dev/description: SSH and remote desktop management
+      gethomepage.dev/group: Apps
+      gethomepage.dev/icon: termix.svg
+      gethomepage.dev/siteMonitor: *app_url
+      gethomepage.dev/pod-selector: >-
+        app.kubernetes.io/name=termix,
+        app.kubernetes.io/instance=termix,
+        app.kubernetes.io/controller=main
+
+      # cert-manager
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+    className: 'traefik'
+    hosts:
+      - host: *app_host
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - *app_host
+        secretName: termix-ingress-cert
