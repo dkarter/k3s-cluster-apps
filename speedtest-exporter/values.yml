@@ -8,9 +8,10 @@ controllers:
     containers:
       app:
         nameOverride: 'speedtest-exporter'
+        # Keep speed tests on amd64 k3s6 so Raspberry Pi throughput limits do not cap the measured internet speed.
         image:
           repository: ghcr.io/dkarter/speedtest-exporter
-          tag: v1.2.2-amd64
+          tag: v1.2.3-amd64
           pullPolicy: IfNotPresent
         args:
           - --showServerLabels
