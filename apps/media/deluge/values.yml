@@ -32,7 +32,7 @@ controllers:
       gluetun:
         image:
           repository: qmcgaw/gluetun
-          tag: v3.41.1
+          tag: v3.41.3
           pullPolicy: IfNotPresent
 
         env:
