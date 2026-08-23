@@ -6,7 +6,7 @@ app_port: &app_port 8080
 controllers:
   main:
     strategy: Recreate
-    replicas: 0
+    replicas: 1
     initContainers:
       init-permissions:
         image:

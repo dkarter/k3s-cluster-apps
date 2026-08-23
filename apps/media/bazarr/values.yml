@@ -6,7 +6,7 @@ app_port: &app_port 6767
 controllers:
   main:
     strategy: Recreate
-    replicas: 0
+    replicas: 1
     containers:
       app:
         nameOverride: bazarr
@@ -44,7 +44,6 @@ controllers:
 
   exportarr:
     strategy: Recreate
-    replicas: 0
 
     containers:
       main:

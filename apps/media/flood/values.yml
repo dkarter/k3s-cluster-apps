@@ -6,7 +6,7 @@ app_url: &app_url 'https://flood.k3s.pro'
 controllers:
   main:
     strategy: Recreate
-    replicas: 0
+    replicas: 1
     containers:
       app:
         nameOverride: 'flood'
