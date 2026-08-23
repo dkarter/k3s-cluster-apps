@@ -15,9 +15,6 @@ spec:
       helm:
         releaseName: longhorn
         valuesObject:
-          defaultSettings:
-            # Temporary: allow the downloads-storage replica to be salvaged, then restore the 25% default.
-            storageMinimalAvailablePercentage: 10
           defaultBackupStore:
             backupTarget: 's3://longhorn-backups@us-east-1/'
             backupTargetCredentialSecret: longhorn-backup-target
