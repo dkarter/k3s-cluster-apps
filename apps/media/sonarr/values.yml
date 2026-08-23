@@ -5,7 +5,7 @@ app_port: &app_port 8989
 controllers:
   main:
     strategy: Recreate
-    replicas: 1
+    replicas: 0
     containers:
       app:
         nameOverride: 'sonarr'
@@ -40,6 +40,7 @@ controllers:
             memory: 512Mi
   exportarr:
     strategy: Recreate
+    replicas: 0
 
     containers:
       main:

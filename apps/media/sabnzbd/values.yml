@@ -5,7 +5,7 @@ app_port: &app_port 8080
 controllers:
   main:
     strategy: Recreate
-    replicas: 1
+    replicas: 0
     initContainers:
       init-dirs:
         image:
@@ -78,6 +78,7 @@ controllers:
             memory: 5Gi
   exportarr:
     strategy: Recreate
+    replicas: 0
 
     containers:
       main:

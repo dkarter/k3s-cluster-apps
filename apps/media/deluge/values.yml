@@ -6,7 +6,7 @@ app_url: &app_url 'https://deluge.k3s.pro'
 controllers:
   main:
     strategy: Recreate
-    replicas: 1
+    replicas: 0
     initContainers:
       init-config:
         image:

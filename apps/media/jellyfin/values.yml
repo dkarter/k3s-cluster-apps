@@ -5,7 +5,7 @@ app_port: &app_port 8096
 controllers:
   main:
     strategy: Recreate
-    replicas: 1
+    replicas: 0
     initContainers:
       init-dirs:
         image:
