@@ -15,6 +15,8 @@ spec:
       helm:
         releaseName: longhorn
         valuesObject:
+          defaultSettings:
+            storageMinimalAvailablePercentage: 25
           defaultBackupStore:
             backupTarget: 's3://longhorn-backups@us-east-1/'
             backupTargetCredentialSecret: longhorn-backup-target
