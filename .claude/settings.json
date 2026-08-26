@@ -16,17 +16,6 @@
           }
         ]
       }
-    ],
-    "Notification": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "task hooks:notification:notify"
-          }
-        ]
-      }
     ]
   },
   "permissions": {

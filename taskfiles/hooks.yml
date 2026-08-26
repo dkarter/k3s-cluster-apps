@@ -2,30 +2,6 @@
 version: 3
 
 tasks:
-  stop:notify:
-    desc: Notifies when a task is done
-    silent: true
-    cmds:
-      - cmd: |
-          terminal-notifier \
-            -title 'Claude Code' \
-            -message 'All done!' \
-            -activate 'com.mitchellh.ghostty' \
-            -sender 'com.anthropic.claudefordesktop'
-      - cmd: pplay happy-chime-success.mp3
-
-  notification:notify:
-    desc: Notifies when the agent needs your attention
-    silent: true
-    cmds:
-      - cmd: |
-          terminal-notifier \
-            -title 'Claude Code' \
-            -message 'I need your attention!' \
-            -activate 'com.mitchellh.ghostty' \
-            -sender 'com.anthropic.claudefordesktop'
-      - cmd: pplay attention-chime-notice.mp3
-
   post:edit:validate:
     desc: Post-edit hook to validate YAML changes
     summary: |
