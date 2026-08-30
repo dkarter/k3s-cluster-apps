@@ -92,7 +92,7 @@ task gh:automerge:renovate
 
 ## TODO
 
-- [ ] move onepassword-connect to be managed by ArgoCD
+- [x] move onepassword-connect to be managed by ArgoCD
 - [ ] Setup more apps:
   - [ ] SpeedTestExporter
   - [ ] GlueTun
