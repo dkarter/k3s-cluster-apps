@@ -39,7 +39,7 @@ controllers:
         nameOverride: 'sabnzbd'
         image:
           repository: ghcr.io/hotio/sabnzbd
-          tag: release-v5.0.4
+          tag: release-v5.1.2
           pullPolicy: IfNotPresent
 
         env:
