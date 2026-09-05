@@ -15,6 +15,25 @@ controllers:
     strategy: Recreate
     replicas: 1
 
+    initContainers:
+      repair:
+        image:
+          repository: nextcloud
+          tag: 33.0.8
+          pullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - |
+              set -eu
+              php occ maintenance:repair --include-expensive
+              php occ app:disable app_api
+              : > /var/www/html/data/nextcloud.log
+        workingDir: /var/www/html
+        securityContext:
+          runAsUser: 33
+          runAsGroup: 33
+
     containers:
       app:
         image:
@@ -135,6 +154,8 @@ persistence:
       nextcloud:
         app:
           - path: /var/www/html
+        repair:
+          - path: /var/www/html
 
   data:
     type: persistentVolumeClaim
@@ -143,6 +164,8 @@ persistence:
       nextcloud:
         app:
           - path: /var/www/html/data
+        repair:
+          - path: /var/www/html/data
 
   trusted-domains:
     type: configMap
@@ -150,6 +173,10 @@ persistence:
     advancedMounts:
       nextcloud:
         app:
+          - path: /var/www/html/config/trusted-domains.config.php
+            subPath: trusted-domains.config.php
+            readOnly: true
+        repair:
           - path: /var/www/html/config/trusted-domains.config.php
             subPath: trusted-domains.config.php
             readOnly: true
@@ -172,6 +199,15 @@ configMaps:
             'nextcloud.k3s.pro',
             'nc.tnnl.me',
           ],
+          'trusted_proxies' => [
+            '10.42.0.0/16',
+          ],
+          'overwriteprotocol' => 'https',
+          'overwrite.cli.url' => 'https://nextcloud.k3s.pro',
+          'maintenance_window_start' => 8,
+          'default_phone_region' => 'US',
+          'serverid' => 0,
+          'twofactor_enforced' => true,
         ];
 
 service:
@@ -208,6 +244,9 @@ ingress:
       # cert-manager
       kubernetes.io/ingress.class: 'traefik'
       cert-manager.io/cluster-issuer: 'letsencrypt'
+
+      # Security headers
+      traefik.ingress.kubernetes.io/router.middlewares: nextcloud-security-headers@kubernetescrd
     className: 'traefik'
     hosts:
       - host: &host 'nextcloud.k3s.pro'
