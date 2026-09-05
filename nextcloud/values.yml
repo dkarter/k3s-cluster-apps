@@ -49,6 +49,18 @@ controllers:
                 key: password
 
         probes:
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /status.php
+                port: 80
+                httpHeaders: &probeHeaders
+                  - name: Host
+                    value: nextcloud.k3s.pro
+              periodSeconds: 10
+              failureThreshold: 60
           liveness:
             enabled: true
             custom: true
@@ -56,6 +68,7 @@ controllers:
               httpGet:
                 path: /status.php
                 port: 80
+                httpHeaders: *probeHeaders
               initialDelaySeconds: 60
               periodSeconds: 10
               timeoutSeconds: 5
@@ -67,6 +80,7 @@ controllers:
               httpGet:
                 path: /status.php
                 port: 80
+                httpHeaders: *probeHeaders
               initialDelaySeconds: 30
               periodSeconds: 10
 
@@ -130,12 +144,35 @@ persistence:
         app:
           - path: /var/www/html/data
 
+  trusted-domains:
+    type: configMap
+    identifier: trusted-domains
+    advancedMounts:
+      nextcloud:
+        app:
+          - path: /var/www/html/config/trusted-domains.config.php
+            subPath: trusted-domains.config.php
+            readOnly: true
+
   redis-data:
     type: emptyDir
     advancedMounts:
       redis:
         app:
           - path: /data
+
+configMaps:
+  trusted-domains:
+    data:
+      trusted-domains.config.php: |
+        <?php
+        $CONFIG = [
+          'trusted_domains' => [
+            'localhost',
+            'nextcloud.k3s.pro',
+            'nc.tnnl.me',
+          ],
+        ];
 
 service:
   nextcloud:
