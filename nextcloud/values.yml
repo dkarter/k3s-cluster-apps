@@ -13,7 +13,7 @@ defaultPodOptions:
 controllers:
   nextcloud:
     strategy: Recreate
-    replicas: 1
+    replicas: 0
 
     containers:
       app:
