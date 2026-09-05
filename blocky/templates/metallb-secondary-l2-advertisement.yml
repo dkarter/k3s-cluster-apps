@@ -2,11 +2,11 @@
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
 metadata:
-  name: blocky
+  name: blocky-secondary
   namespace: metallb-system
 spec:
   ipAddressPools:
-    - blocky
+    - blocky-secondary
   nodeSelectors:
     - matchLabels:
-        kubernetes.io/hostname: k3s2
+        kubernetes.io/hostname: k3s4

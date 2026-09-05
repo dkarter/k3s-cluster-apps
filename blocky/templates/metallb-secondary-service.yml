@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.31.4-standalone-strict/service-v1.json
+apiVersion: v1
+kind: Service
+metadata:
+  name: blocky-metallb-secondary
+  namespace: blocky
+  labels:
+    app.kubernetes.io/instance: blocky
+    app.kubernetes.io/name: blocky
+    metallb.k3s.pro/address-pool: blocky-secondary
+spec:
+  type: LoadBalancer
+  loadBalancerClass: metallb.io/load-balancer
+  loadBalancerIP: 10.0.1.201
+  externalTrafficPolicy: Local
+  ports:
+    - name: dns-udp
+      port: 53
+      protocol: UDP
+      targetPort: 53
+    - name: dns-tcp
+      port: 53
+      protocol: TCP
+      targetPort: 53
+  selector:
+    app.kubernetes.io/controller: main
+    app.kubernetes.io/instance: blocky
+    app.kubernetes.io/name: blocky

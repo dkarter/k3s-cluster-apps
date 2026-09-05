@@ -50,6 +50,17 @@ controllers:
             memory: 256Mi
 
     pod:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - k3s2
+                      - k3s3
+                      - k3s4
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
@@ -58,6 +69,7 @@ controllers:
             matchLabels:
               app.kubernetes.io/name: blocky
               app.kubernetes.io/instance: blocky
+              app.kubernetes.io/controller: main
 
   ui:
     strategy: RollingUpdate
