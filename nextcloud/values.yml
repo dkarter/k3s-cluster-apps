@@ -28,7 +28,7 @@ controllers:
               set -eu
               php occ maintenance:repair --include-expensive
               php occ app:disable app_api
-              php occ twofactorauth:enforce
+              php occ twofactorauth:enforce --on
               : > /var/www/html/data/nextcloud.log
         workingDir: /var/www/html
         securityContext:
