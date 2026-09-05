@@ -6,8 +6,8 @@ ui_port: &ui_port 3000
 
 controllers:
   main:
+    type: daemonset
     strategy: RollingUpdate
-    replicas: 3 # High availability with 3 replicas
 
     containers:
       app:
@@ -61,16 +61,6 @@ controllers:
                       - k3s2
                       - k3s3
                       - k3s4
-      topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/name: blocky
-              app.kubernetes.io/instance: blocky
-              app.kubernetes.io/controller: main
-
   ui:
     strategy: RollingUpdate
     replicas: 1
