@@ -111,6 +111,21 @@ controllers:
           - warning
 
   cloudflared:
+    replicas: 2
+    strategy: RollingUpdate
+
+    pod:
+      annotations:
+        k3s.pro/tunnel-token-revision: '1'
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/controller: cloudflared
+              app.kubernetes.io/instance: nextcloud
+
     containers:
       app:
         image:
@@ -121,20 +136,35 @@ controllers:
         args:
           - tunnel
           - --no-autoupdate
+          - --metrics
+          - 0.0.0.0:2000
           - run
-          - --token
-          - $(TUNNEL_TOKEN)
-
-        env:
-          TUNNEL_TOKEN:
-            valueFrom:
-              secretKeyRef:
-                name: cloudflare-tunnel-credentials
-                key: tunnel_token
+          - --token-file
+          - /etc/cloudflared/token
 
         probes:
           liveness:
             enabled: false
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /ready
+                port: 2000
+              periodSeconds: 10
+              timeoutSeconds: 2
+              failureThreshold: 3
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /ready
+                port: 2000
+              periodSeconds: 5
+              timeoutSeconds: 2
+              failureThreshold: 60
 
 persistence:
   config:
@@ -153,6 +183,19 @@ persistence:
       nextcloud:
         app:
           - path: /var/www/html/data
+
+  tunnel-token:
+    type: secret
+    name: cloudflare-tunnel-credentials
+    items:
+      - key: tunnel_token
+        path: token
+    advancedMounts:
+      cloudflared:
+        app:
+          - path: /etc/cloudflared/token
+            subPath: token
+            readOnly: true
 
   trusted-domains:
     type: configMap
@@ -190,6 +233,7 @@ configMaps:
           ],
           'overwriteprotocol' => 'https',
           'overwrite.cli.url' => 'https://nextcloud.k3s.pro',
+          'files.chunked_upload.max_size' => 50 * 1024 * 1024,
           'maintenance_window_start' => 8,
           'default_phone_region' => 'US',
           'serverid' => 0,
@@ -223,6 +267,17 @@ service:
     ports:
       metrics:
         port: 2000
+
+serviceMonitor:
+  cloudflared:
+    enabled: true
+    serviceName: nextcloud-cloudflared-metrics
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 30s
+        scrapeTimeout: 10s
 
 ingress:
   main:
