@@ -113,6 +113,10 @@ grafana:
       # https://github.com/external-secrets/external-secrets/commit/67a603db02ef92ea0eee6b091927f2727cc54eaa
       external_secrets:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/external-secrets.json
+      # Adapted from Exportarr's v2.3.0 Media Dashboard for the Bazarr exporter.
+      # https://github.com/onedr0p/exportarr/blob/v2.3.0/examples/grafana/dashboard2.json
+      bazarr_exportarr:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/bazarr-exportarr.json
   ingress:
     enabled: true
     ingressClassName: traefik
