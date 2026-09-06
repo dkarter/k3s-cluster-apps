@@ -1,0 +1,951 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Prometheus Operator v0.92.1 control-plane health, built from the live operator metric inventory. The official Prometheus Operator mixin at this version contains alerts but no Grafana dashboard.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [
+    {
+      "targetBlank": true,
+      "title": "Official Prometheus Operator mixin",
+      "type": "link",
+      "url": "https://github.com/prometheus-operator/prometheus-operator/tree/v0.92.1/jsonnet/mixin"
+    }
+  ],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "panels": [],
+      "title": "Operator Health",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Availability of the chart-managed Prometheus Operator ServiceMonitor target.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 4, "x": 0, "y": 1 },
+      "id": 2,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "max(up{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}) or vector(0)",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Target Up",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Lowest readiness state across the operator's controllers.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 4, "x": 4, "y": 1 },
+      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "min(prometheus_operator_ready{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}) or vector(0)",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Controllers Ready",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Objects whose latest reconciliation failed. A healthy state is explicitly shown as zero.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1 }]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 4, "x": 8, "y": 1 },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum(prometheus_operator_syncs{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\",status=\"failed\"}) or vector(0)",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Failed Objects",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Monitoring resources rejected by all operator controllers. A healthy state is explicitly shown as zero.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1 }]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 4, "x": 12, "y": 1 },
+      "id": 5,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum(prometheus_operator_managed_resources{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\",state=\"rejected\"}) or vector(0)",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Rejected Resources",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Reconciliation and status-update errors observed over the last 15 minutes. Healthy counters remain visible as zero.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1 }]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 4, "x": 16, "y": 1 },
+      "id": 6,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum(increase(prometheus_operator_reconcile_errors_total{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[15m])) or vector(0)",
+          "instant": true,
+          "legendFormat": "reconcile",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "editorMode": "code",
+          "expr": "sum(increase(prometheus_operator_status_update_errors_total{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[15m])) or vector(0)",
+          "instant": true,
+          "legendFormat": "status update",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "Errors [15m]",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Operator container restarts over the selected dashboard range. A healthy state is explicitly shown as zero.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1 }]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 4, "x": 20, "y": 1 },
+      "id": 7,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum(increase(kube_pod_container_status_restarts_total{namespace=\"monitoring\",service=\"monitoring-kube-state-metrics\",job=\"kube-state-metrics\",pod=~\"monitoring-kube-prometheus-operator-.*\",container=\"kube-prometheus-stack\"}[$__range])) or vector(0)",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Restarts",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 6 },
+      "id": 8,
+      "panels": [],
+      "title": "Reconciliation",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Reconciliation throughput by controller, with error throughput retained as an intentional zero when healthy.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "ops"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 7 },
+      "id": 9,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (controller) (rate(prometheus_operator_reconcile_operations_total{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[$__rate_interval]))",
+          "legendFormat": "{{controller}} operations",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "editorMode": "code",
+          "expr": "sum by (controller) (rate(prometheus_operator_reconcile_errors_total{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[$__rate_interval]))",
+          "legendFormat": "{{controller}} errors",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Reconciliation Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "95th-percentile reconciliation duration by controller.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 7 },
+      "id": 10,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum by (controller, le) (rate(prometheus_operator_reconcile_duration_seconds_bucket{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[$__rate_interval])))",
+          "legendFormat": "{{controller}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Reconciliation Latency p95",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Current objects grouped by controller and latest reconciliation status.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 7 },
+      "id": 11,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (controller, status) (prometheus_operator_syncs{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"})",
+          "legendFormat": "{{controller}} {{status}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Reconciliation State",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 15 },
+      "id": 12,
+      "panels": [],
+      "title": "Resources and Configuration",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Current monitoring resources selected or rejected during configuration generation.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 10, "x": 0, "y": 16 },
+      "id": 13,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (controller, resource, state) (prometheus_operator_managed_resources{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"})",
+          "legendFormat": "{{controller}} / {{resource}} / {{state}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Selected and Rejected Resources",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "ConfigMap and Secret events that trigger reconciliation and regenerated workload configuration.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "ops"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 7, "x": 10, "y": 16 },
+      "id": 14,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (controller, triggered_by, action) (rate(prometheus_operator_triggered_total{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\",triggered_by=~\"ConfigMap|Secret\"}[$__rate_interval]))",
+          "legendFormat": "{{controller}} / {{triggered_by}} / {{action}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Configuration Input Triggers",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "StatefulSet delete-and-create operations required while applying generated configuration. Healthy operation remains visible as zero.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 7, "x": 17, "y": 16 },
+      "id": 15,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (controller) (increase(prometheus_operator_reconcile_sts_delete_create_total{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[$__rate_interval]))",
+          "legendFormat": "{{controller}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Workload Re-Creations",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 24 },
+      "id": 16,
+      "panels": [],
+      "title": "Kubernetes API Client",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Kubernetes API request throughput grouped by response status code.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 25 },
+      "id": 17,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (status_code) (rate(prometheus_operator_kubernetes_client_http_requests_total{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[$__rate_interval]))",
+          "legendFormat": "HTTP {{status_code}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "API Request Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Kubernetes API HTTP, list, watch, and node-sync errors over the last 15 minutes. Healthy states are explicitly shown as zero.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1 }]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 25 },
+      "id": 18,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum(increase(prometheus_operator_kubernetes_client_http_requests_total{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\",status_code=~\"4..|5..\"}[15m])) or vector(0)",
+          "instant": true,
+          "legendFormat": "HTTP",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "editorMode": "code",
+          "expr": "sum(increase(prometheus_operator_list_operations_failed_total{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[15m])) or vector(0)",
+          "instant": true,
+          "legendFormat": "list",
+          "range": false,
+          "refId": "B"
+        },
+        {
+          "editorMode": "code",
+          "expr": "sum(increase(prometheus_operator_watch_operations_failed_total{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[15m])) or vector(0)",
+          "instant": true,
+          "legendFormat": "watch",
+          "range": false,
+          "refId": "C"
+        },
+        {
+          "editorMode": "code",
+          "expr": "sum(increase(prometheus_operator_node_syncs_failed_total{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[15m])) or vector(0)",
+          "instant": true,
+          "legendFormat": "node sync",
+          "range": false,
+          "refId": "D"
+        },
+        {
+          "editorMode": "code",
+          "expr": "sum(increase(prometheus_operator_node_address_lookup_errors_total{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[15m])) or vector(0)",
+          "instant": true,
+          "legendFormat": "node lookup",
+          "range": false,
+          "refId": "E"
+        }
+      ],
+      "title": "API Errors [15m]",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Mean Kubernetes API request and client-side rate-limiter wait duration.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 25 },
+      "id": 19,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum(rate(prometheus_operator_kubernetes_client_http_request_duration_seconds_sum{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[$__rate_interval])) / sum(rate(prometheus_operator_kubernetes_client_http_request_duration_seconds_count{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[$__rate_interval]))",
+          "legendFormat": "API request",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "editorMode": "code",
+          "expr": "sum(rate(prometheus_operator_kubernetes_client_rate_limiter_duration_seconds_sum{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[$__rate_interval])) / sum(rate(prometheus_operator_kubernetes_client_rate_limiter_duration_seconds_count{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[$__rate_interval]))",
+          "legendFormat": "rate limiter wait",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "API Client Latency",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 33 },
+      "id": 20,
+      "panels": [],
+      "title": "Workqueues",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Current queue depth and retry throughput by controller queue.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 34 },
+      "id": 21,
+      "options": {
+        "legend": {
+          "calcs": ["lastNotNull", "max"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "max by (controller, name) (prometheus_operator_workqueue_depth{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"})",
+          "legendFormat": "{{controller}} / {{name}} depth",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "editorMode": "code",
+          "expr": "sum by (controller, name) (rate(prometheus_operator_workqueue_retries_total{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[$__rate_interval]))",
+          "legendFormat": "{{controller}} / {{name}} retries/s",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Queue Depth and Retries",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "95th-percentile queue wait and work duration by controller queue.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 34 },
+      "id": 22,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum by (controller, name, le) (rate(prometheus_operator_workqueue_latency_seconds_bucket{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[$__rate_interval])))",
+          "legendFormat": "{{controller}} / {{name}} wait",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum by (controller, name, le) (rate(prometheus_operator_workqueue_work_duration_seconds_bucket{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[$__rate_interval])))",
+          "legendFormat": "{{controller}} / {{name}} work",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Queue Latency p95",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Current unfinished work and longest-running processor duration. Growth indicates stuck reconciliation.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 34 },
+      "id": 23,
+      "options": {
+        "legend": {
+          "calcs": ["lastNotNull", "max"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "max by (controller, name) (prometheus_operator_workqueue_unfinished_work_seconds{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"})",
+          "legendFormat": "{{controller}} / {{name}} unfinished",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "editorMode": "code",
+          "expr": "max by (controller, name) (prometheus_operator_workqueue_longest_running_processor_seconds{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"})",
+          "legendFormat": "{{controller}} / {{name}} longest",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Outstanding Queue Work",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 42 },
+      "id": 24,
+      "panels": [],
+      "title": "Process and Runtime",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "CPU consumed by the Prometheus Operator process and its Kubernetes container.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "cores"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 43 },
+      "id": 25,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum(rate(process_cpu_seconds_total{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}[$__rate_interval]))",
+          "legendFormat": "process",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "editorMode": "code",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-kubelet\",job=\"kubelet\",metrics_path=\"/metrics/cadvisor\",pod=~\"monitoring-kube-prometheus-operator-.*\",container=\"kube-prometheus-stack\"}[$__rate_interval]))",
+          "legendFormat": "container",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "CPU Usage",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Operator process RSS, Go live heap, and Kubernetes container working set.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 43 },
+      "id": 26,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum(process_resident_memory_bytes{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"})",
+          "legendFormat": "process RSS",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "editorMode": "code",
+          "expr": "sum(go_gc_heap_live_bytes{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"})",
+          "legendFormat": "Go live heap",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "editorMode": "code",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-kubelet\",job=\"kubelet\",metrics_path=\"/metrics/cadvisor\",pod=~\"monitoring-kube-prometheus-operator-.*\",container=\"kube-prometheus-stack\"})",
+          "legendFormat": "container working set",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Memory Usage",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Go goroutines and process file-descriptor utilization for runtime leak and exhaustion detection.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "file descriptors" },
+            "properties": [{ "id": "unit", "value": "percentunit" }]
+          }
+        ]
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 43 },
+      "id": 27,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum(go_goroutines{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"})",
+          "legendFormat": "goroutines",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "editorMode": "code",
+          "expr": "sum(process_open_fds{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"}) / sum(process_max_fds{namespace=\"monitoring\",service=\"monitoring-kube-prometheus-operator\",job=\"monitoring-kube-prometheus-operator\"})",
+          "legendFormat": "file descriptors",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Runtime Health",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 41,
+  "tags": ["prometheus", "operator", "monitoring"],
+  "templating": { "list": [] },
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Prometheus Operator Health",
+  "uid": "prometheus-operator-health",
+  "version": 1,
+  "weekStart": ""
+}

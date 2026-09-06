@@ -192,6 +192,10 @@ grafana:
       # No canonical upstream operator dashboard exists for this release.
       tailscale_operator:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/tailscale-operator.json
+      # Built from the live Prometheus Operator v0.92.1 metric inventory; the official mixin has alerts but no dashboard.
+      # https://github.com/prometheus-operator/prometheus-operator/tree/v0.92.1/jsonnet/mixin
+      prometheus_operator:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/prometheus-operator.json
   ingress:
     enabled: true
     ingressClassName: traefik
