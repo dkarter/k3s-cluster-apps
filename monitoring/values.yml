@@ -39,6 +39,10 @@ extraManifests:
         kubernetes.io/service-account.name: metrics-server-prometheus
     type: kubernetes.io/service-account-token
 
+kube-state-metrics:
+  metricLabelsAllowlist:
+    - statefulsets=[tailscale.com/managed]
+
 alertmanager:
   ingress:
     enabled: true
@@ -184,6 +188,10 @@ grafana:
       # No canonical dashboard exists in metrics-server or the Kubernetes monitoring mixin.
       metrics_server:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/metrics-server.json
+      # Built from Tailscale operator 1.98.9's live metrics and pinned controller-runtime definitions.
+      # No canonical upstream operator dashboard exists for this release.
+      tailscale_operator:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/tailscale-operator.json
   ingress:
     enabled: true
     ingressClassName: traefik
