@@ -125,6 +125,10 @@ grafana:
       # No official SMB CSI dashboard exists for chart 1.20.3.
       smb_csi:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/smb-csi.json
+      # Built from Connect 1.7.3's live /metrics output; no canonical upstream dashboard exists.
+      # ServiceMonitor provenance: https://github.com/1Password/connect-helm-charts/tree/connect-1.17.1
+      onepassword_connect:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/onepassword-connect.json
   ingress:
     enabled: true
     ingressClassName: traefik
