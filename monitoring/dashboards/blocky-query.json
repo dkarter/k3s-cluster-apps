@@ -1137,7 +1137,7 @@
     "timezone": "browser",
     "to": "now"
   },
-  "title": "Blocky query",
+  "title": "Blocky / Query Log",
   "variables": [
     {
       "kind": "QueryVariable",

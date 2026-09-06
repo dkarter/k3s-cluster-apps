@@ -1323,7 +1323,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Traefik Observability",
+  "title": "Traefik / Overview",
   "uid": "traefik-k3s-observability",
   "version": 1,
   "weekStart": ""

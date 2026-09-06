@@ -80,6 +80,8 @@ gateway:
 monitoring:
   dashboards:
     enabled: true
+    annotations:
+      grafana_folder: Observability
   rules:
     enabled: true
   alerts:

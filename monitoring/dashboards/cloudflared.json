@@ -705,7 +705,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Nextcloud Cloudflare Tunnel",
+  "title": "Cloudflare Tunnel / Overview",
   "uid": "nextcloud-cloudflared",
   "version": 1,
   "weekStart": ""

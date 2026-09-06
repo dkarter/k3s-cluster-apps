@@ -449,7 +449,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "Cert Manager / Overview",
+  "title": "cert-manager / Overview",
   "uid": "cert-manager-overview",
   "version": 1,
   "weekStart": ""

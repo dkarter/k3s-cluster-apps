@@ -785,7 +785,7 @@
   "time": { "from": "now-6h", "to": "now" },
   "timepicker": { "refresh_intervals": ["30s", "1m", "5m"] },
   "timezone": "browser",
-  "title": "Kubernetes Metrics Server",
+  "title": "Metrics Server / Overview",
   "uid": "kubernetes-metrics-server",
   "version": 1,
   "weekStart": ""

@@ -542,7 +542,7 @@
   "time": { "from": "now-6h", "to": "now" },
   "timepicker": {},
   "timezone": "browser",
-  "title": "SMB CSI Driver",
+  "title": "SMB CSI / Overview",
   "uid": "smb-csi-driver",
   "version": 1,
   "weekStart": ""

@@ -771,7 +771,7 @@
   "time": { "from": "now-6h", "to": "now" },
   "timepicker": {},
   "timezone": "browser",
-  "title": "MetalLB Observability",
+  "title": "MetalLB / Overview",
   "uid": "metallb-observability",
   "version": 1,
   "weekStart": ""

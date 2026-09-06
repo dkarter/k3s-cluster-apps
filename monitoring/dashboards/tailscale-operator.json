@@ -1279,7 +1279,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "Tailscale Kubernetes Operator",
+  "title": "Tailscale Operator / Overview",
   "uid": "tailscale-operator",
   "version": 1,
   "weekStart": ""

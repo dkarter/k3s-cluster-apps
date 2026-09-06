@@ -107,45 +107,77 @@ grafana:
       label: grafana_dashboard
       labelValue: '1'
       searchNamespace: ALL
+      folderAnnotation: grafana_folder
+      annotations:
+        grafana_folder: Kubernetes
+      provider:
+        name: sidecar
+        disableDelete: false
+        foldersFromFilesStructure: true
   dashboardProviders:
     dashboardproviders.yaml:
       apiVersion: 1
       providers:
-        - name: 'default'
+        - name: applications
           orgId: 1
-          folder: ''
+          folder: Applications
           type: file
           disableDeletion: false
-          editable: true
+          allowUiUpdates: true
           options:
-            path: /var/lib/grafana/dashboards/default
+            path: /var/lib/grafana/dashboards/applications
+        - name: infrastructure
+          orgId: 1
+          folder: Infrastructure
+          type: file
+          disableDeletion: false
+          allowUiUpdates: true
+          options:
+            path: /var/lib/grafana/dashboards/infrastructure
+        - name: kubernetes
+          orgId: 1
+          folder: Kubernetes
+          type: file
+          disableDeletion: false
+          allowUiUpdates: true
+          options:
+            path: /var/lib/grafana/dashboards/kubernetes
+        - name: media
+          orgId: 1
+          folder: Media
+          type: file
+          disableDeletion: false
+          allowUiUpdates: true
+          options:
+            path: /var/lib/grafana/dashboards/media
+        - name: platform
+          orgId: 1
+          folder: Platform
+          type: file
+          disableDeletion: false
+          allowUiUpdates: true
+          options:
+            path: /var/lib/grafana/dashboards/platform
   dashboards:
-    default:
-      # Canonical dashboard maintained by Argo CD, pinned to the deployed app version.
-      argocd:
-        url: https://raw.githubusercontent.com/argoproj/argo-cd/v3.5.2/examples/dashboard.json
+    applications:
+      atmowatch:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/atmowatch.json
       blocky:
-        url: https://raw.githubusercontent.com/0xERR0R/blocky/refs/heads/main/docs/blocky-grafana.json
-      blocky_querylog:
+        # Official Blocky dashboard pinned to the upstream source revision.
+        # https://github.com/0xERR0R/blocky/commit/45a242ffce62c3e203f9a2c8a87fbb8ba106c7ab
+        url: https://raw.githubusercontent.com/0xERR0R/blocky/45a242ffce62c3e203f9a2c8a87fbb8ba106c7ab/docs/blocky-grafana.json
+        title: Blocky / Overview
+      blocky-query-log:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/blocky-query.json
       speedtest:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/speedtest.json
-      # Adapted from Exportarr v2.3.0's canonical dashboard for this cluster's SABnzbd scrape labels.
-      # https://github.com/onedr0p/exportarr/blob/v2.3.0/examples/grafana/dashboard2.json
-      sabnzbd:
-        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/sabnzbd.json
-      atmowatch:
-        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/atmowatch.json
-      cloudflared:
+    infrastructure:
+      cloudflare-tunnel:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/cloudflared.json
       # Adapted for K3s/Traefik v2.11 from Traefik Labs' official Kubernetes dashboard revision 9.
       # https://grafana.com/grafana/dashboards/17347?tab=revisions
       traefik:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/traefik.json
-      # Adapted from the cert-manager monitoring mixin referenced by the official docs.
-      # https://github.com/imusmanmalik/cert-manager-mixin/commit/a5f74ad04be4ee8fc007a10a918b3c48154c7e55
-      cert_manager:
-        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/cert-manager.json
       longhorn:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/longhorn.json
       # Adapted for MetalLB 0.16.1 from Grafana dashboard 20162 revision 6.
@@ -155,10 +187,42 @@ grafana:
         datasource:
           - name: DS_PROMETHEUS
             value: prometheus
+      # Built from the live SMB plugin endpoint and pinned CSI sidecar metric definitions.
+      # No official SMB CSI dashboard exists for chart 1.20.3.
+      smb-csi:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/smb-csi.json
+    kubernetes:
+      # Built from Metrics Server 0.7.2's live deployment and upstream metric definitions.
+      # No canonical dashboard exists in metrics-server or the Kubernetes monitoring mixin.
+      metrics-server:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/metrics-server.json
+    media:
+      # Adapted from Exportarr's v2.3.0 Media Dashboard for the Bazarr exporter.
+      # https://github.com/onedr0p/exportarr/blob/v2.3.0/examples/grafana/dashboard2.json
+      bazarr:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/bazarr-exportarr.json
+      # Adapted from Exportarr v2.3.0's canonical dashboard for this cluster's SABnzbd scrape labels.
+      # https://github.com/onedr0p/exportarr/blob/v2.3.0/examples/grafana/dashboard2.json
+      sabnzbd:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/sabnzbd.json
+      # Adapted for Exportarr 2.3.0 from its canonical multi-application dashboard.
+      # https://github.com/onedr0p/exportarr/commit/367f6031dfefeba87b88be55f5780267cb143975
+      sonarr:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/sonarr.json
+    platform:
+      # Canonical dashboard maintained by Argo CD, pinned to the deployed app version.
+      argocd:
+        url: https://raw.githubusercontent.com/argoproj/argo-cd/v3.5.2/examples/dashboard.json
+        title: Argo CD / Overview
+      # Adapted from the cert-manager monitoring mixin referenced by the official docs.
+      # https://github.com/imusmanmalik/cert-manager-mixin/commit/a5f74ad04be4ee8fc007a10a918b3c48154c7e55
+      cert-manager:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/cert-manager.json
       # Official CloudNativePG dashboard, pinned to the upstream JSON revision.
       # https://github.com/cloudnative-pg/grafana-dashboards/commit/7dd1bc255b5202530e1bae7b858a3bb41a2028c7
-      cloudnative_pg:
+      cloudnativepg:
         url: https://raw.githubusercontent.com/cloudnative-pg/grafana-dashboards/7dd1bc255b5202530e1bae7b858a3bb41a2028c7/charts/cluster/grafana-dashboard.json
+        title: CloudNativePG / Overview
         datasource:
           - name: DS_PROMETHEUS
             value: prometheus
@@ -166,35 +230,19 @@ grafana:
             value: __expr__
       # Adapted from the dashboard bundled with External Secrets chart 2.7.0.
       # https://github.com/external-secrets/external-secrets/commit/67a603db02ef92ea0eee6b091927f2727cc54eaa
-      external_secrets:
+      external-secrets:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/external-secrets.json
-      # Adapted from Exportarr's v2.3.0 Media Dashboard for the Bazarr exporter.
-      # https://github.com/onedr0p/exportarr/blob/v2.3.0/examples/grafana/dashboard2.json
-      bazarr_exportarr:
-        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/bazarr-exportarr.json
-      # Built from the live SMB plugin endpoint and pinned CSI sidecar metric definitions.
-      # No official SMB CSI dashboard exists for chart 1.20.3.
-      smb_csi:
-        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/smb-csi.json
       # Built from Connect 1.7.3's live /metrics output; no canonical upstream dashboard exists.
       # ServiceMonitor provenance: https://github.com/1Password/connect-helm-charts/tree/connect-1.17.1
-      onepassword_connect:
+      onepassword-connect:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/onepassword-connect.json
-      # Adapted for Exportarr 2.3.0 from its canonical multi-application dashboard.
-      # https://github.com/onedr0p/exportarr/commit/367f6031dfefeba87b88be55f5780267cb143975
-      sonarr:
-        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/sonarr.json
-      # Built from Metrics Server 0.7.2's live deployment and upstream metric definitions.
-      # No canonical dashboard exists in metrics-server or the Kubernetes monitoring mixin.
-      metrics_server:
-        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/metrics-server.json
       # Built from Tailscale operator 1.98.9's live metrics and pinned controller-runtime definitions.
       # No canonical upstream operator dashboard exists for this release.
-      tailscale_operator:
+      tailscale-operator:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/tailscale-operator.json
       # Built from the live Prometheus Operator v0.92.1 metric inventory; the official mixin has alerts but no dashboard.
       # https://github.com/prometheus-operator/prometheus-operator/tree/v0.92.1/jsonnet/mixin
-      prometheus_operator:
+      prometheus-operator:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/prometheus-operator.json
   ingress:
     enabled: true

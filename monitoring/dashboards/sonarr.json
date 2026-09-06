@@ -1713,7 +1713,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Sonarr / Exportarr",
+  "title": "Sonarr / Overview",
   "uid": "sonarr-exportarr",
   "version": 1,
   "weekStart": ""

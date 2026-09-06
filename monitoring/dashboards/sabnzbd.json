@@ -1267,7 +1267,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "SABnzbd Exportarr",
+  "title": "SABnzbd / Overview",
   "uid": "sabnzbd-exportarr",
   "version": 1,
   "weekStart": ""
