@@ -17,6 +17,21 @@ spec:
         values: |
           loadBalancerClass: metallb.io/load-balancer
 
+          prometheus:
+            rbacPrometheus: true
+            serviceAccount: monitoring-kube-prometheus-prometheus
+            namespace: monitoring
+            serviceMonitor:
+              enabled: true
+
+          frr-k8s:
+            prometheus:
+              rbacPrometheus: true
+              serviceAccount: monitoring-kube-prometheus-prometheus
+              namespace: monitoring
+              serviceMonitor:
+                enabled: true
+
   project: default
 
   syncPolicy:

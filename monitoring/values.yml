@@ -101,6 +101,13 @@ grafana:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/cert-manager.json
       longhorn:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/longhorn.json
+      # Adapted for MetalLB 0.16.1 from Grafana dashboard 20162 revision 6.
+      # https://grafana.com/grafana/dashboards/20162-metallb/
+      metallb:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/metallb.json
+        datasource:
+          - name: DS_PROMETHEUS
+            value: prometheus
       # Official CloudNativePG dashboard, pinned to the upstream JSON revision.
       # https://github.com/cloudnative-pg/grafana-dashboards/commit/7dd1bc255b5202530e1bae7b858a3bb41a2028c7
       cloudnative_pg:
