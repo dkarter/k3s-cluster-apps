@@ -102,6 +102,8 @@ grafana:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/speedtest.json
       atmowatch:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/atmowatch.json
+      cloudflared:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/cloudflared.json
   ingress:
     enabled: true
     ingressClassName: traefik
