@@ -1,0 +1,13 @@
+[mcp_servers.grafana]
+command = "fnox"
+args = [
+  "exec",
+  "--replace",
+  "--",
+  "uvx",
+  "mcp-grafana==1.3.0",
+  "--enabled-tools=datasource,prometheus,loki,navigation",
+  "--disable-write",
+]
+cwd = "."
+env = { GRAFANA_URL = "https://grafana.k3s.pro" }

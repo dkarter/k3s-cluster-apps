@@ -58,6 +58,75 @@ tasks:
     cmd: dprint check
     silent: true
 
+  fnox:age-key:
+    desc: Generates the fnox age identity and registers its recipient
+    dir: '{{.ROOT_DIR}}'
+    summary: |
+      Generates the fnox age identity at ~/.config/fnox/age.txt and adds its
+      public recipient to fnox.toml.
+
+      Refuses to replace an existing identity unless invoked with:
+      task fnox:age-key -- -f
+    silent: true
+    cmd: |
+      set -eu
+
+      case "{{.CLI_ARGS}}" in
+        "") force=false ;;
+        "-f"|"--force") force=true ;;
+        *)
+          echo "Usage: task fnox:age-key -- [-f|--force]" >&2
+          exit 2
+          ;;
+      esac
+
+      key_dir="${FNOX_CONFIG_DIR:-$HOME/.config/fnox}"
+      key_file="$key_dir/age.txt"
+      config_file="$PWD/fnox.toml"
+
+      if [ -e "$key_file" ] && [ "$force" != "true" ]; then
+        echo "An age identity already exists at $key_file; pass -- -f to replace it." >&2
+        exit 1
+      fi
+
+      age_secret_count="$(yq -p toml -o json '[.secrets[]? | select(.provider == "age")] | length' "$config_file")"
+      if [ ! -e "$key_file" ] && [ "$age_secret_count" != "0" ]; then
+        echo "Encrypted age secrets already exist; an authorized computer must add and re-encrypt for this recipient." >&2
+        exit 1
+      fi
+
+      mkdir -p "$key_dir"
+      chmod 700 "$key_dir"
+
+      old_recipient=""
+      if [ -e "$key_file" ]; then
+        old_recipient="$(age-keygen -y "$key_file")"
+      fi
+
+      new_key_file="$(mktemp "$key_dir/.age.txt.XXXXXX")"
+      chmod 600 "$new_key_file"
+      age-keygen > "$new_key_file" 2>/dev/null
+      new_recipient="$(age-keygen -y "$new_key_file")"
+      original_config="$(cat "$config_file")"
+      restore_config=true
+      trap 'if [ "$restore_config" = "true" ]; then printf "%s\n" "$original_config" > "$config_file"; fi; if [ -n "$new_key_file" ] && [ -e "$new_key_file" ]; then unlink "$new_key_file"; fi' EXIT
+
+      OLD_RECIPIENT="$old_recipient" NEW_RECIPIENT="$new_recipient" \
+        yq -p toml -o toml -i \
+        '.providers.age.recipients = ([.providers.age.recipients[] | select(. != strenv(OLD_RECIPIENT))] + [strenv(NEW_RECIPIENT)] | unique)' \
+        "$config_file"
+
+      if [ -n "$old_recipient" ]; then
+        fnox --config "$config_file" --no-daemon reencrypt --force --provider age
+      fi
+
+      mv -f "$new_key_file" "$key_file"
+      new_key_file=""
+      restore_config=false
+      trap - EXIT
+
+      echo "Registered age recipient $new_recipient in $config_file"
+
   longhorn:open:
     desc: Opens ArgoCD
     cmd: open https://longhorn.k3s.pro
