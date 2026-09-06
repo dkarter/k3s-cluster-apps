@@ -95,6 +95,10 @@ grafana:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/atmowatch.json
       cloudflared:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/cloudflared.json
+      # Adapted from the cert-manager monitoring mixin referenced by the official docs.
+      # https://github.com/imusmanmalik/cert-manager-mixin/commit/a5f74ad04be4ee8fc007a10a918b3c48154c7e55
+      cert_manager:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/cert-manager.json
       longhorn:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/longhorn.json
       # Official CloudNativePG dashboard, pinned to the upstream JSON revision.

@@ -16,6 +16,11 @@ spec:
         releaseName: cert-manager
         valuesObject:
           installCRDs: true
+          prometheus:
+            servicemonitor:
+              enabled: true
+              interval: 15s
+              scrapeTimeout: 10s
 
     - path: cert-manager
       repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'
