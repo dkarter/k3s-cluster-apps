@@ -168,7 +168,7 @@ grafana:
         url: https://raw.githubusercontent.com/0xERR0R/blocky/45a242ffce62c3e203f9a2c8a87fbb8ba106c7ab/docs/blocky-grafana.json
         title: Blocky / Overview
       blocky-query-log:
-        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/blocky-query.json
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/3a04048401957b024330d5767415f7e59a782d05/monitoring/dashboards/blocky-query.json
       speedtest:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/speedtest.json
     infrastructure:
