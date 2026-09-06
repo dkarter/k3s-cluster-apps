@@ -1,18 +1,6 @@
 crds:
   enabled: false
 
-additionalServiceMonitors:
-  - name: external-secrets
-    namespace: external-secrets
-    selector:
-      matchLabels:
-        app.kubernetes.io/name: external-secrets
-    namespaceSelector:
-      matchNames:
-        - external-secrets
-    endpoints:
-      - port: prometheus
-
 alertmanager:
   ingress:
     enabled: true
@@ -117,6 +105,10 @@ grafana:
             value: prometheus
           - name: DS_EXPRESSION
             value: __expr__
+      # Adapted from the dashboard bundled with External Secrets chart 2.7.0.
+      # https://github.com/external-secrets/external-secrets/commit/67a603db02ef92ea0eee6b091927f2727cc54eaa
+      external_secrets:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/external-secrets.json
   ingress:
     enabled: true
     ingressClassName: traefik
