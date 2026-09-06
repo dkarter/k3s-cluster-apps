@@ -97,6 +97,15 @@ grafana:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/cloudflared.json
       longhorn:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/longhorn.json
+      # Official CloudNativePG dashboard, pinned to the upstream JSON revision.
+      # https://github.com/cloudnative-pg/grafana-dashboards/commit/7dd1bc255b5202530e1bae7b858a3bb41a2028c7
+      cloudnative_pg:
+        url: https://raw.githubusercontent.com/cloudnative-pg/grafana-dashboards/7dd1bc255b5202530e1bae7b858a3bb41a2028c7/charts/cluster/grafana-dashboard.json
+        datasource:
+          - name: DS_PROMETHEUS
+            value: prometheus
+          - name: DS_EXPRESSION
+            value: __expr__
   ingress:
     enabled: true
     ingressClassName: traefik

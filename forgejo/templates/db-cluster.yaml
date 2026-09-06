@@ -10,3 +10,6 @@ spec:
     # https://cloudnative-pg.io/documentation/current/storage/#block-storage-considerations-ceph-longhorn
     storageClass: longhorn-database
     size: 5Gi
+
+  monitoring:
+    enablePodMonitor: true
