@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/grafana/k8s-monitoring-helm/k8s-monitoring-4.5.0/charts/k8s-monitoring/values.schema.json
+cluster:
+  name: k3s-pro
+
+destinations:
+  loki:
+    type: loki
+    url: http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push
+    auth:
+      type: none
+    retryOnHttp429: false
+
+podLogsViaKubernetesApi:
+  enabled: true
+  collector: alloy-logs
+  destinations:
+    - loki
+  extraLogProcessingStages: |-
+    stage.drop {
+      longer_than = "64KB"
+      drop_counter_reason = "line_too_large"
+    }
+
+    stage.limit {
+      rate = 100
+      burst = 200
+      drop = true
+      by_label_name = "service_name"
+    }
+
+clusterEvents:
+  enabled: true
+  collector: alloy-logs
+  destinations:
+    - loki
+  clustering: false
+  extraLogProcessingStages: |-
+    stage.drop {
+      longer_than = "64KB"
+      drop_counter_reason = "event_too_large"
+    }
+
+    stage.limit {
+      rate = 20
+      burst = 100
+      drop = true
+    }
+
+collectors:
+  alloy-logs:
+    presets:
+      - singleton
+      - small
+    serviceMonitor:
+      enabled: true

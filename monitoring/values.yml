@@ -29,6 +29,15 @@ grafana:
   podAnnotations:
     k3s.pro/restartedAt: '2026-04-24T22:11:51Z'
   additionalDataSources:
+    - name: Loki
+      uid: loki
+      type: loki
+      access: proxy
+      url: http://loki.monitoring.svc.cluster.local:3100
+      jsonData:
+        maxLines: 1000
+      version: 1
+      editable: false
     - name: PostgreSQL
       uid: PostgreSQL
       type: postgres
