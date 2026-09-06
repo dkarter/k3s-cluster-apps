@@ -129,6 +129,10 @@ grafana:
       # ServiceMonitor provenance: https://github.com/1Password/connect-helm-charts/tree/connect-1.17.1
       onepassword_connect:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/onepassword-connect.json
+      # Adapted for Exportarr 2.3.0 from its canonical multi-application dashboard.
+      # https://github.com/onedr0p/exportarr/commit/367f6031dfefeba87b88be55f5780267cb143975
+      sonarr:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/sonarr.json
   ingress:
     enabled: true
     ingressClassName: traefik
