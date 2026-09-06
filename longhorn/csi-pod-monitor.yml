@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/monitoring.coreos.com/podmonitor_v1.json
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: longhorn-csi-sidecars
+  namespace: longhorn-system
+spec:
+  jobLabel: app
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - csi-attacher
+          - csi-provisioner
+          - csi-resizer
+          - csi-snapshotter
+  podMetricsEndpoints:
+    - portNumber: 8000
