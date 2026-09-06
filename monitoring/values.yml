@@ -79,6 +79,10 @@ grafana:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/blocky-query.json
       speedtest:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/speedtest.json
+      # Adapted from Exportarr v2.3.0's canonical dashboard for this cluster's SABnzbd scrape labels.
+      # https://github.com/onedr0p/exportarr/blob/v2.3.0/examples/grafana/dashboard2.json
+      sabnzbd:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/sabnzbd.json
       atmowatch:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/atmowatch.json
       cloudflared:
