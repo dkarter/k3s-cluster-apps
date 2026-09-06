@@ -12,6 +12,14 @@ redis-ha:
   haproxy:
     metrics:
       enabled: true
+      serviceMonitor:
+        enabled: true
+
+dex:
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
 
 controller:
   replicas: 1
@@ -22,6 +30,9 @@ controller:
       enabled: true
     serviceMonitor:
       enabled: true
+      relabelings:
+        - targetLabel: job
+          replacement: argocd-application-controller-metrics
 
 repoServer:
   replicas: 2
@@ -32,6 +43,9 @@ repoServer:
       enabled: true
     serviceMonitor:
       enabled: true
+      relabelings:
+        - targetLabel: job
+          replacement: argocd-repo-server-metrics
 
 applicationSet:
   replicas: 2
@@ -42,6 +56,9 @@ applicationSet:
       enabled: true
     serviceMonitor:
       enabled: true
+      relabelings:
+        - targetLabel: job
+          replacement: argocd-applicationset-controller-metrics
 
 ## Server
 server:
@@ -53,6 +70,9 @@ server:
       enabled: true
     serviceMonitor:
       enabled: true
+      relabelings:
+        - targetLabel: job
+          replacement: argocd-server-metrics
 
   ingress:
     enabled: true

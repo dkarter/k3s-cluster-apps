@@ -13,18 +13,6 @@ additionalServiceMonitors:
     endpoints:
       - port: prometheus
 
-  - name: argocd-metrics
-    namespace: argo-cd
-    selector:
-      matchLabels:
-        app.kubernetes.io/name: argocd-server
-        # app.kubernetes.io/name: argocd-metrics
-    namespaceSelector:
-      matchNames:
-        - argo-cd
-    endpoints:
-      - port: 8083
-
 alertmanager:
   ingress:
     enabled: true
@@ -94,6 +82,9 @@ grafana:
             path: /var/lib/grafana/dashboards/default
   dashboards:
     default:
+      # Canonical dashboard maintained by Argo CD, pinned to the deployed app version.
+      argocd:
+        url: https://raw.githubusercontent.com/argoproj/argo-cd/v3.5.2/examples/dashboard.json
       blocky:
         url: https://raw.githubusercontent.com/0xERR0R/blocky/refs/heads/main/docs/blocky-grafana.json
       blocky_querylog:
