@@ -18,6 +18,12 @@ spec:
           # Disable Windows support for Raspberry Pi cluster
           windows:
             enabled: false
+          controller:
+            extraArgs:
+              csiProvisioner:
+                - '--http-endpoint=:29645'
+              csiResizer:
+                - '--http-endpoint=:29646'
 
     - path: csi-driver-smb
       repoURL: 'https://github.com/dkarter/k3s-cluster-apps.git'

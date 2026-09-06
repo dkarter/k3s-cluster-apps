@@ -121,6 +121,10 @@ grafana:
       # https://github.com/onedr0p/exportarr/blob/v2.3.0/examples/grafana/dashboard2.json
       bazarr_exportarr:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/bazarr-exportarr.json
+      # Built from the live SMB plugin endpoint and pinned CSI sidecar metric definitions.
+      # No official SMB CSI dashboard exists for chart 1.20.3.
+      smb_csi:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/smb-csi.json
   ingress:
     enabled: true
     ingressClassName: traefik
@@ -164,6 +168,40 @@ prometheus:
         - port: metrics
           interval: 15s
           scrapeTimeout: 10s
+    - name: csi-smb-controller
+      namespaceSelector:
+        matchNames:
+          - kube-system
+      selector:
+        matchLabels:
+          app: csi-smb-controller
+      podMetricsEndpoints:
+        - port: metrics
+          interval: 15s
+          scrapeTimeout: 10s
+          relabelings:
+            - targetLabel: component
+              replacement: smb
+        - port: metrics
+          interval: 15s
+          scrapeTimeout: 10s
+          relabelings:
+            - sourceLabels:
+                - __meta_kubernetes_pod_ip
+              targetLabel: __address__
+              replacement: '$1:29645'
+            - targetLabel: component
+              replacement: provisioner
+        - port: metrics
+          interval: 15s
+          scrapeTimeout: 10s
+          relabelings:
+            - sourceLabels:
+                - __meta_kubernetes_pod_ip
+              targetLabel: __address__
+              replacement: '$1:29646'
+            - targetLabel: component
+              replacement: resizer
 
   # ref: https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
   prometheusSpec:

@@ -1,0 +1,549 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "SMB CSI controller health for chart 1.20.3. Built from the live smbplugin :29644 endpoint and the pinned external-provisioner v6.3.0 and external-resizer v2.2.0 metric definitions; no official upstream dashboard exists.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [
+    {
+      "targetBlank": true,
+      "title": "SMB CSI chart 1.20.3",
+      "type": "link",
+      "url": "https://github.com/kubernetes-csi/csi-driver-smb/tree/v1.20.3/charts/v1.20.3/csi-driver-smb"
+    },
+    {
+      "targetBlank": true,
+      "title": "SMB plugin v1.20.3 metrics source",
+      "type": "link",
+      "url": "https://github.com/kubernetes-csi/csi-driver-smb/blob/59dce96e11522a46354d6970393b00b1c2a57351/cmd/smbplugin/main.go"
+    },
+    {
+      "targetBlank": true,
+      "title": "Provisioner v6.3.0 metrics source",
+      "type": "link",
+      "url": "https://github.com/kubernetes-csi/external-provisioner/blob/34c6fc2149a354cea116724d1836262516f83225/cmd/csi-provisioner/csi-provisioner.go"
+    },
+    {
+      "targetBlank": true,
+      "title": "Resizer v2.2.0 metrics source",
+      "type": "link",
+      "url": "https://github.com/kubernetes-csi/external-resizer/blob/314a8de697f801a368042d808a0834bebbfd97d1/cmd/csi-resizer/main.go"
+    }
+  ],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "panels": [],
+      "title": "Controller Availability",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Prometheus scrape health for the SMB plugin and both CSI controller sidecars.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 12, "x": 0, "y": 1 },
+      "id": 2,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "max(up{namespace=\"kube-system\",pod=~\"csi-smb-controller-.*\",component=\"smb\"}) or vector(0)",
+          "instant": true,
+          "legendFormat": "smb",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "editorMode": "code",
+          "expr": "max(up{namespace=\"kube-system\",pod=~\"csi-smb-controller-.*\",component=\"provisioner\"}) or vector(0)",
+          "instant": true,
+          "legendFormat": "provisioner",
+          "range": false,
+          "refId": "B"
+        },
+        {
+          "editorMode": "code",
+          "expr": "max(up{namespace=\"kube-system\",pod=~\"csi-smb-controller-.*\",component=\"resizer\"}) or vector(0)",
+          "instant": true,
+          "legendFormat": "resizer",
+          "range": false,
+          "refId": "C"
+        }
+      ],
+      "title": "Metrics Targets",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 4, "x": 12, "y": 1 },
+      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "kube_deployment_status_replicas_available{namespace=\"kube-system\",deployment=\"csi-smb-controller\"} or vector(0)",
+          "instant": true,
+          "legendFormat": "available",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Available Replicas",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1 }]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 4, "x": 16, "y": 1 },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum(increase(kube_pod_container_status_restarts_total{namespace=\"kube-system\",pod=~\"csi-smb-controller-.*\"}[$__range])) or vector(0)",
+          "instant": true,
+          "legendFormat": "restarts",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Restarts In Range",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 3,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 0.001 }]
+          },
+          "unit": "ops"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 4, "x": 20, "y": 1 },
+      "id": 5,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum(rate(csi_sidecar_operations_seconds_count{namespace=\"kube-system\",driver_name=\"smb.csi.k8s.io\",grpc_status_code!=\"OK\"}[$__rate_interval])) or vector(0)",
+          "instant": true,
+          "legendFormat": "errors/s",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "SMB CSI Errors",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 6 },
+      "id": 6,
+      "panels": [],
+      "title": "CSI Operations and gRPC",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "ops" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 7 },
+      "id": 7,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (component, method_name) (rate(csi_sidecar_operations_seconds_count{namespace=\"kube-system\",driver_name=\"smb.csi.k8s.io\"}[$__rate_interval])) or on() vector(0)",
+          "legendFormat": "{{component}} {{method_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "CSI Operation Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 7 },
+      "id": 8,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum by (le, component, method_name) (rate(csi_sidecar_operations_seconds_bucket{namespace=\"kube-system\",driver_name=\"smb.csi.k8s.io\"}[$__rate_interval])))",
+          "legendFormat": "{{component}} {{method_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "CSI Operation p95 Latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "ops" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 7 },
+      "id": 9,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (component, method_name, grpc_status_code) (rate(csi_sidecar_operations_seconds_count{namespace=\"kube-system\",driver_name=\"smb.csi.k8s.io\",grpc_status_code!=\"OK\"}[$__rate_interval])) or on() vector(0)",
+          "legendFormat": "{{component}} {{method_name}} {{grpc_status_code}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "SMB Driver Errors by gRPC Status",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "ops" }, "overrides": [] },
+      "gridPos": { "h": 7, "w": 8, "x": 0, "y": 15 },
+      "id": 10,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (class) (rate(controller_persistentvolumeclaim_provision_total{namespace=\"kube-system\",pod=~\"csi-smb-controller-.*\",component=\"provisioner\"}[$__rate_interval])) or on() vector(0)",
+          "legendFormat": "provision {{class}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "editorMode": "code",
+          "expr": "sum by (class) (rate(controller_persistentvolume_delete_total{namespace=\"kube-system\",pod=~\"csi-smb-controller-.*\",component=\"provisioner\"}[$__rate_interval])) or on() vector(0)",
+          "legendFormat": "delete {{class}}",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Volume Lifecycle Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "ops" }, "overrides": [] },
+      "gridPos": { "h": 7, "w": 8, "x": 8, "y": 15 },
+      "id": 11,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (class) (rate(controller_persistentvolumeclaim_provision_failed_total{namespace=\"kube-system\",pod=~\"csi-smb-controller-.*\",component=\"provisioner\"}[$__rate_interval])) or on() vector(0)",
+          "legendFormat": "provision {{class}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "editorMode": "code",
+          "expr": "sum by (class) (rate(controller_persistentvolume_delete_failed_total{namespace=\"kube-system\",pod=~\"csi-smb-controller-.*\",component=\"provisioner\"}[$__rate_interval])) or on() vector(0)",
+          "legendFormat": "delete {{class}}",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Volume Lifecycle Errors",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "gridPos": { "h": 7, "w": 8, "x": 16, "y": 15 },
+      "id": 12,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum by (le, class) (rate(controller_persistentvolumeclaim_provision_duration_seconds_bucket{namespace=\"kube-system\",pod=~\"csi-smb-controller-.*\",component=\"provisioner\"}[$__rate_interval])))",
+          "legendFormat": "provision {{class}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum by (le, class) (rate(controller_persistentvolume_delete_duration_seconds_bucket{namespace=\"kube-system\",pod=~\"csi-smb-controller-.*\",component=\"provisioner\"}[$__rate_interval])))",
+          "legendFormat": "delete {{class}}",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Volume Lifecycle p95 Latency",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 22 },
+      "id": 13,
+      "panels": [],
+      "title": "Workqueues",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 23 },
+      "id": 14,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "max by (component, name) (workqueue_depth{namespace=\"kube-system\",pod=~\"csi-smb-controller-.*\"}) or on() vector(0)",
+          "legendFormat": "{{component}} {{name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Queue Depth",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "ops" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 23 },
+      "id": 15,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (component, name) (rate(workqueue_retries_total{namespace=\"kube-system\",pod=~\"csi-smb-controller-.*\"}[$__rate_interval])) or on() vector(0)",
+          "legendFormat": "{{component}} {{name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Workqueue Retry Rate",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 31 },
+      "id": 16,
+      "panels": [],
+      "title": "Process, Runtime, and Resources",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "percentunit" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 32 },
+      "id": 17,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (container) (rate(container_cpu_usage_seconds_total{namespace=\"kube-system\",pod=~\"csi-smb-controller-.*\",container=~\"csi-provisioner|csi-resizer|liveness-probe|smb\"}[$__rate_interval]))",
+          "legendFormat": "{{container}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Controller Container CPU",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 32 },
+      "id": 18,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (container) (container_memory_working_set_bytes{namespace=\"kube-system\",pod=~\"csi-smb-controller-.*\",container=~\"csi-provisioner|csi-resizer|liveness-probe|smb\"})",
+          "legendFormat": "{{container}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Controller Container Memory",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 32 },
+      "id": 19,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "go_goroutines{namespace=\"kube-system\",pod=~\"csi-smb-controller-.*\",component=~\"smb|provisioner|resizer\"}",
+          "legendFormat": "{{component}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Go Goroutines",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 40 },
+      "id": 20,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "process_resident_memory_bytes{namespace=\"kube-system\",pod=~\"csi-smb-controller-.*\",component=~\"smb|provisioner|resizer\"}",
+          "legendFormat": "{{component}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Process Resident Memory",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "percentunit" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 40 },
+      "id": 21,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "rate(process_cpu_seconds_total{namespace=\"kube-system\",pod=~\"csi-smb-controller-.*\",component=~\"smb|provisioner|resizer\"}[$__rate_interval])",
+          "legendFormat": "{{component}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Process CPU",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 41,
+  "tags": ["kubernetes", "csi", "smb", "storage"],
+  "templating": { "list": [] },
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "SMB CSI Driver",
+  "uid": "smb-csi-driver",
+  "version": 1,
+  "weekStart": ""
+}
