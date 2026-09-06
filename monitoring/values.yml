@@ -83,6 +83,10 @@ grafana:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/atmowatch.json
       cloudflared:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/cloudflared.json
+      # Adapted for K3s/Traefik v2.11 from Traefik Labs' official Kubernetes dashboard revision 9.
+      # https://grafana.com/grafana/dashboards/17347?tab=revisions
+      traefik:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/traefik.json
       # Adapted from the cert-manager monitoring mixin referenced by the official docs.
       # https://github.com/imusmanmalik/cert-manager-mixin/commit/a5f74ad04be4ee8fc007a10a918b3c48154c7e55
       cert_manager:
@@ -139,6 +143,20 @@ grafana:
           - 'grafana.k3s.pro'
 
 prometheus:
+  additionalPodMonitors:
+    - name: traefik
+      namespaceSelector:
+        matchNames:
+          - kube-system
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: traefik
+          app.kubernetes.io/instance: traefik-kube-system
+      podMetricsEndpoints:
+        - port: metrics
+          interval: 15s
+          scrapeTimeout: 10s
+
   # ref: https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#prometheusspec
   prometheusSpec:
     # ref: https://github.com/prometheus-operator/prometheus-operator/blob/release-0.44/pkg/prometheus/promcfg.go#L180-L183
