@@ -1,6 +1,44 @@
 crds:
   enabled: false
 
+extraManifests:
+  # The PodMonitor CRD only permits Secret-backed authorization credentials.
+  - apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: metrics-server-prometheus
+      namespace: monitoring
+    automountServiceAccountToken: false
+  - apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: metrics-server-prometheus
+    rules:
+      - nonResourceURLs:
+          - /metrics
+        verbs:
+          - get
+  - apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: metrics-server-prometheus
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: metrics-server-prometheus
+    subjects:
+      - kind: ServiceAccount
+        name: metrics-server-prometheus
+        namespace: monitoring
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: metrics-server-prometheus-token
+      namespace: monitoring
+      annotations:
+        kubernetes.io/service-account.name: metrics-server-prometheus
+    type: kubernetes.io/service-account-token
+
 alertmanager:
   ingress:
     enabled: true
@@ -142,6 +180,10 @@ grafana:
       # https://github.com/onedr0p/exportarr/commit/367f6031dfefeba87b88be55f5780267cb143975
       sonarr:
         url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/sonarr.json
+      # Built from Metrics Server 0.7.2's live deployment and upstream metric definitions.
+      # No canonical dashboard exists in metrics-server or the Kubernetes monitoring mixin.
+      metrics_server:
+        url: https://raw.githubusercontent.com/dkarter/k3s-cluster-apps/refs/heads/main/monitoring/dashboards/metrics-server.json
   ingress:
     enabled: true
     ingressClassName: traefik
@@ -173,6 +215,27 @@ grafana:
 
 prometheus:
   additionalPodMonitors:
+    - name: metrics-server
+      namespaceSelector:
+        matchNames:
+          - kube-system
+      selector:
+        matchLabels:
+          k8s-app: metrics-server
+      podMetricsEndpoints:
+        - port: https
+          scheme: https
+          path: /metrics
+          interval: 15s
+          scrapeTimeout: 10s
+          authorization:
+            type: Bearer
+            credentials:
+              name: metrics-server-prometheus-token
+              key: token
+          tlsConfig:
+            # K3s Metrics Server generates an ephemeral serving certificate without service DNS SANs.
+            insecureSkipVerify: true
     - name: traefik
       namespaceSelector:
         matchNames:
