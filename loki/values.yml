@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/grafana-community/helm-charts/loki-18.12.1/charts/loki/values.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/grafana-community/helm-charts/loki-18.12.1/charts/loki/values.schema.json?rollout-operator.grafana.com
 deploymentMode: Monolithic
 
 loki:

@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/grafana/k8s-monitoring-helm/k8s-monitoring-4.5.0/charts/k8s-monitoring/values.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/grafana/k8s%2Dmonitoring-helm/k8s-monitoring-4.5.0/charts/k8s-monitoring/values.schema.json?collectors.grafana.com&monitoring.grafana.com
 cluster:
   name: k3s-pro
 
