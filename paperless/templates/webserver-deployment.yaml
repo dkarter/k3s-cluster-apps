@@ -60,6 +60,9 @@ spec:
                   name: db-app
                   key: password
 
+            - name: PAPERLESS_DBENGINE
+              value: postgresql
+
             - name: PAPERLESS_DBHOST
               value: 'db-rw.paperless.svc.cluster.local'
 
