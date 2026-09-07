@@ -18,6 +18,7 @@ stored in Terraform state.
   app-specific additional policies.
 - Modules return ingress data. `tunnel.tf` sorts it by `route_order` and appends
   the required terminal `http_status:404` rule.
+- The zone cache-phase ruleset bypasses Cloudflare caching for Nextcloud.
 - Every default policy allows the configured administrator email addresses.
   Applications inherit the account's required independent MFA configuration;
   an IdP-based MFA selector would reject GitHub, Google, and one-time PIN users.
@@ -96,6 +97,9 @@ only:
 - Account: Access: Apps and Policies Write
 - Account: Access: Organizations, Identity Providers, and Groups Write
 - Zone `tnnl.me`: DNS Write
+- Zone `tnnl.me`: Cache Rules Write
+- Account: Account Rulesets Write
+- Account: Account Filter Lists Write
 
 Read permissions paired with those write permissions may be required by the
 token UI/provider. Do not grant account-wide zone administration.
@@ -173,12 +177,12 @@ connector token remain absent from Terraform configuration and state.
 
 ## Limits and Caveats
 
-The initial root manages about 23 Cloudflare objects: one tunnel, one tunnel
+The initial root manages about 24 Cloudflare objects: one tunnel, one tunnel
 configuration, six DNS records, six Access applications, and six reusable
-default policies plus Nextcloud's restricted policy, and two identity providers.
-It uses six of Cloudflare's
+default policies plus Nextcloud's restricted policy, two identity providers,
+and one cache ruleset. It uses six of Cloudflare's
 documented 500 Access applications, 500 reusable policies, and 1,000 tunnel
-routes, and one of 1,000 tunnels. Its 23
+routes, and one of 1,000 tunnels. Its 24
 managed resources are below HCP Terraform Free's documented 500-resource limit;
 verify current plan terms before expanding the scope.
 
