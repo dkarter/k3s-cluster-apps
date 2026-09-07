@@ -1,3 +1,6 @@
+[env]
+OPENCODE_CONFIG = "{{config_root}}/opencode.v2.jsonc"
+
 [tools]
 dprint = "latest"
 elixir = "1.19.5-otp-28"

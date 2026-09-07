@@ -6,7 +6,8 @@ Loki, and Grafana navigation tools. Write operations are disabled.
 
 The client configurations are:
 
-- `opencode.jsonc` for OpenCode
+- `opencode.v2.jsonc` for OpenCode V2, selected through `OPENCODE_CONFIG` in
+  `mise.toml`
 - `.mcp.json` for Claude Code
 - `.codex/config.toml` for Codex
 
