@@ -23,7 +23,7 @@ controllers:
           pullPolicy: IfNotPresent
 
         env:
-          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.k3s.pro nc.tnnl.me
+          NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.k3s.pro nc.tnnl.me nextcloud.tnnl.me
           POSTGRES_HOST: db-rw.nextcloud.svc.cluster.local:5432
           POSTGRES_DB: app
           REDIS_HOST: nextcloud-redis.nextcloud.svc.cluster.local
@@ -227,6 +227,7 @@ configMaps:
             'localhost',
             'nextcloud.k3s.pro',
             'nc.tnnl.me',
+            'nextcloud.tnnl.me',
           ],
           'trusted_proxies' => [
             '10.42.0.0/16',

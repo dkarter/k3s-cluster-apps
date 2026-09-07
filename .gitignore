@@ -2,6 +2,19 @@ tmp/
 
 .opencode/package-lock.json
 
+# Terraform local artifacts and uncommitted variable values
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
 # Project-scoped Codex configuration is intentionally shared.
 !.codex/
 !.codex/config.toml
