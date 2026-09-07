@@ -30,8 +30,11 @@ controllers:
             custom: true
             spec:
               httpGet:
-                path: /
+                path: /api/healthcheck
                 port: *app_port
+                httpHeaders:
+                  - name: Host
+                    value: *app_host
               initialDelaySeconds: 20
               periodSeconds: 10
               timeoutSeconds: 10
