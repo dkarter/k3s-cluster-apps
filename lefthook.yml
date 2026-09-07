@@ -9,6 +9,13 @@ commit-msg:
     - name: conventional commits
       run: committed --commit-file {1}
 
+pre-commit:
+  parallel: true
+  jobs:
+    - name: Check Terraform formatting
+      glob: 'terraform/**/*.tf'
+      run: terraform fmt -check {staged_files}
+
 pre-push:
   parallel: true
   jobs:
