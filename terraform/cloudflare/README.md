@@ -4,9 +4,9 @@ This root manages public DNS, Cloudflare Access, and the remote configuration
 for one shared Cloudflare Tunnel. Internal application addresses remain
 `<app>.k3s.pro`; only explicit first-level `tnnl.me` records are public.
 
-Terraform does not deploy the connector. The existing `cloudflared` replicas in
-the `nextcloud` namespace run the shared remotely managed tunnel using the token
-delivered by External Secrets. The token is never an input to Terraform or
+Terraform does not deploy the connector. The `cloudflared` replicas and their
+ExternalSecret run in the `cloudflare-tunnel` namespace, using the token to run
+the shared remotely managed tunnel. The token is never an input to Terraform or
 stored in Terraform state.
 
 ## Architecture
