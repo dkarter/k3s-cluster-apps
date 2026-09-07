@@ -15,7 +15,7 @@
       }
     ]
   },
-  "description": "Health and traffic for the Nextcloud Cloudflare Tunnel connectors.",
+  "description": "Health and aggregate traffic for the shared Cloudflare Tunnel connectors.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -78,7 +78,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum(cloudflared_tunnel_ha_connections{namespace=\"nextcloud\", service=\"nextcloud-cloudflared-metrics\"}) or vector(0)",
+          "expr": "sum(cloudflared_tunnel_ha_connections{namespace=\"cloudflare-tunnel\", service=\"cloudflare-tunnel\"}) or vector(0)",
           "instant": true,
           "legendFormat": "Connections",
           "range": false,
@@ -143,7 +143,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum(up{namespace=\"nextcloud\", service=\"nextcloud-cloudflared-metrics\"}) or vector(0)",
+          "expr": "sum(up{namespace=\"cloudflare-tunnel\", service=\"cloudflare-tunnel\"}) or vector(0)",
           "instant": true,
           "legendFormat": "Connectors",
           "range": false,
@@ -202,14 +202,14 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum(rate(cloudflared_tunnel_total_requests{namespace=\"nextcloud\", service=\"nextcloud-cloudflared-metrics\"}[2m]))",
+          "expr": "sum(rate(cloudflared_tunnel_total_requests{namespace=\"cloudflare-tunnel\", service=\"cloudflare-tunnel\"}[2m]))",
           "instant": false,
           "legendFormat": "Requests",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Request Rate",
+      "title": "Shared Tunnel Request Rate",
       "type": "stat"
     },
     {
@@ -265,14 +265,14 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum(rate(cloudflared_tunnel_request_errors{namespace=\"nextcloud\", service=\"nextcloud-cloudflared-metrics\"}[2m]))",
+          "expr": "sum(rate(cloudflared_tunnel_request_errors{namespace=\"cloudflare-tunnel\", service=\"cloudflare-tunnel\"}[2m]))",
           "instant": false,
           "legendFormat": "Errors",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Origin Error Rate",
+      "title": "Shared Tunnel Origin Error Rate",
       "type": "stat"
     },
     {
@@ -335,13 +335,13 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (status_code) (rate(cloudflared_tunnel_response_by_code{namespace=\"nextcloud\", service=\"nextcloud-cloudflared-metrics\"}[2m]))",
+          "expr": "sum by (status_code) (rate(cloudflared_tunnel_response_by_code{namespace=\"cloudflare-tunnel\", service=\"cloudflare-tunnel\"}[2m]))",
           "legendFormat": "HTTP {{status_code}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Responses By Status Code",
+      "title": "Shared Tunnel Responses By Status Code",
       "type": "timeseries"
     },
     {
@@ -404,20 +404,20 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum(rate(cloudflared_tunnel_total_requests{namespace=\"nextcloud\", service=\"nextcloud-cloudflared-metrics\"}[2m]))",
+          "expr": "sum(rate(cloudflared_tunnel_total_requests{namespace=\"cloudflare-tunnel\", service=\"cloudflare-tunnel\"}[2m]))",
           "legendFormat": "Requests",
           "range": true,
           "refId": "A"
         },
         {
           "editorMode": "code",
-          "expr": "sum(rate(cloudflared_tunnel_request_errors{namespace=\"nextcloud\", service=\"nextcloud-cloudflared-metrics\"}[2m]))",
+          "expr": "sum(rate(cloudflared_tunnel_request_errors{namespace=\"cloudflare-tunnel\", service=\"cloudflare-tunnel\"}[2m]))",
           "legendFormat": "Origin errors",
           "range": true,
           "refId": "B"
         }
       ],
-      "title": "Requests And Origin Errors",
+      "title": "Shared Tunnel Requests And Origin Errors",
       "type": "timeseries"
     },
     {
@@ -480,7 +480,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(cloudflared_proxy_connect_latency_bucket{namespace=\"nextcloud\", service=\"nextcloud-cloudflared-metrics\"}[2m])))",
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(cloudflared_proxy_connect_latency_bucket{namespace=\"cloudflare-tunnel\", service=\"cloudflare-tunnel\"}[2m])))",
           "legendFormat": "p95",
           "range": true,
           "refId": "A"
@@ -549,7 +549,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "max by (pod) (quic_client_smoothed_rtt{namespace=\"nextcloud\", service=\"nextcloud-cloudflared-metrics\"})",
+          "expr": "max by (pod) (quic_client_smoothed_rtt{namespace=\"cloudflare-tunnel\", service=\"cloudflare-tunnel\"})",
           "legendFormat": "{{pod}}",
           "range": true,
           "refId": "A"
@@ -618,7 +618,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "process_resident_memory_bytes{namespace=\"nextcloud\", service=\"nextcloud-cloudflared-metrics\"}",
+          "expr": "process_resident_memory_bytes{namespace=\"cloudflare-tunnel\", service=\"cloudflare-tunnel\"}",
           "legendFormat": "{{pod}}",
           "range": true,
           "refId": "A"
@@ -679,7 +679,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (edge_location) (cloudflared_tunnel_server_locations{namespace=\"nextcloud\", service=\"nextcloud-cloudflared-metrics\"}) > 0",
+          "expr": "sum by (edge_location) (cloudflared_tunnel_server_locations{namespace=\"cloudflare-tunnel\", service=\"cloudflare-tunnel\"}) > 0",
           "instant": true,
           "legendFormat": "{{edge_location}}",
           "range": false,
@@ -694,7 +694,7 @@
   "schemaVersion": 39,
   "tags": [
     "cloudflare",
-    "nextcloud"
+    "shared-tunnel"
   ],
   "templating": {
     "list": []
