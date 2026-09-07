@@ -30,9 +30,8 @@ applied, the existing dashboard-managed configuration remains authoritative:
    application whose policies allow the configured email sets. It inherits the
    account's required independent MFA configuration. This statement describes
    desired state, not proof that it was applied.
-5. Keep the dashboard-managed Cache Rule matching
-   `http.host eq "nextcloud.tnnl.me"` with cache eligibility set to
-   `Bypass cache`; it is intentionally outside this Terraform root.
+5. Terraform manages a Cache Rule matching `http.host eq
+   "nextcloud.tnnl.me"` with cache eligibility set to `Bypass cache`.
 
 `https://nextcloud.k3s.pro` remains the canonical local and Tailscale endpoint.
 It is served by Traefik and is not routed through the Cloudflare Tunnel. Use it
