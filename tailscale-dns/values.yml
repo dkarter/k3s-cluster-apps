@@ -46,6 +46,8 @@ controllers:
           capabilities:
             add:
               - NET_ADMIN
+              - SETGID
+              - SETUID
             drop:
               - ALL
 
