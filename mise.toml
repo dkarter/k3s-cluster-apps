@@ -16,6 +16,11 @@ uv = "0.12.5"
 fnox = "1.35.0"
 age = "1.3.2"
 yq = "4.53.6"
+terraform = "1.16.1"
+
+[tasks.terraform]
+description = "Runs Terraform for Cloudflare with credentials supplied by fnox"
+run = "fnox exec -- terraform -chdir=terraform/cloudflare"
 
 [hooks]
 postinstall = "lefthook install"

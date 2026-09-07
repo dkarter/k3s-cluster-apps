@@ -50,13 +50,40 @@ tasks:
   fmt:
     desc: formats files
     aliases: [format]
-    cmd: dprint fmt
+    cmds:
+      - dprint fmt
+      - terraform -chdir=terraform/cloudflare fmt -recursive
     silent: true
 
   fmt:check:
     desc: checks formatting
-    cmd: dprint check
+    cmds:
+      - dprint check
+      - terraform -chdir=terraform/cloudflare fmt -check -recursive
     silent: true
+
+  terraform:fmt:
+    desc: Formats Cloudflare Terraform files
+    dir: '{{.ROOT_DIR}}/terraform/cloudflare'
+    cmd: terraform fmt -recursive
+    silent: true
+
+  terraform:init:
+    desc: Initializes the Cloudflare HCP Terraform workspace
+    cmd: mise run terraform init
+
+  terraform:validate:
+    desc: Validates the initialized Cloudflare Terraform configuration
+    cmd: mise run terraform validate
+
+  terraform:plan:
+    desc: Plans Cloudflare changes in HCP Terraform
+    cmd: mise run terraform plan
+
+  terraform:apply:
+    desc: Applies a reviewed Cloudflare plan through HCP Terraform
+    prompt: This will change Cloudflare infrastructure. Continue?
+    cmd: mise run terraform apply
 
   fnox:age-key:
     desc: Generates the fnox age identity and registers its recipient
