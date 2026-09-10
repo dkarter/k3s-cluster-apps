@@ -67,7 +67,7 @@ controllers:
       runner:
         image:
           repository: data.forgejo.org/forgejo/runner
-          tag: 12
+          tag: 13
           pullPolicy: IfNotPresent
 
         command:
