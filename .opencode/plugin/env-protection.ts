@@ -1,4 +1,4 @@
-import type { Plugin } from '@opencode-ai/plugin';
+import { Plugin } from '@opencode/plugin';
 
 type Pattern = {
   regex: RegExp;
@@ -31,20 +31,29 @@ const forbiddenCommandPatterns: Pattern[] = [
   },
 ];
 
-export const EnvProtectionPlugin: Plugin = async () => {
-  return {
-    'tool.execute.before': async (input, output) => {
+export default Plugin.define({
+  id: 'env-protection',
+  async setup(ctx) {
+    await ctx.tool.hook('execute.before', (event) => {
+      const input = event.input as {
+        path?: string;
+        filePath?: string;
+        command?: string;
+        include?: string;
+      };
+      const command = input.command ?? '';
+
       forbiddenFilePatterns.forEach(({ regex, msg }) => {
         const readingForbiddenPathDirectly =
-          input.tool === 'read' && regex.test(output.args.filePath);
+          event.tool === 'read' && regex.test(input.path ?? input.filePath ?? '');
 
         const readingForbiddenPathViaBash =
-          input.tool === 'bash' &&
-          /(cat|bat|rg|grep)/.test(output.args.command) &&
-          regex.test(output.args.command);
+          (event.tool === 'shell' || event.tool === 'bash') &&
+          /(cat|bat|rg|grep)/.test(command) &&
+          regex.test(command);
 
         const readingForbiddenPathViaGrep =
-          input.tool === 'grep' && /(\.env)/.test(output.args.include);
+          event.tool === 'grep' && regex.test(input.include ?? '');
 
         if (
           readingForbiddenPathDirectly ||
@@ -56,10 +65,10 @@ export const EnvProtectionPlugin: Plugin = async () => {
       });
 
       forbiddenCommandPatterns.forEach(({ regex, msg }) => {
-        if (input.tool === 'bash' && regex.test(output.args.command)) {
+        if ((event.tool === 'shell' || event.tool === 'bash') && regex.test(command)) {
           throw new Error(msg);
         }
       });
-    },
-  };
-};
+    });
+  },
+});
