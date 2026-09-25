@@ -37,7 +37,7 @@ steps {
   }
   ["schema"] {
     glob = List("**/*.yaml", "**/*.yml", "**/*.json")
-    check = new Command { argv = List("sh", "-c", "for file do task validate:file -- \"$file\" || exit; done", "--", "{{files}}") }
+    check = new Command { argv = List("elixir", "validate.exs", "{{files}}") }
   }
   ["crd-schema-annotations"] {
     glob = List("apps/**/*.yaml", "apps/**/*.yml")

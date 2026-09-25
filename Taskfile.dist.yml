@@ -245,6 +245,7 @@ tasks:
     silent: true
     cmds:
       - elixir test/validator_checks_test.exs
+      - elixir test/schema_validator_test.exs
       - elixir test/helm_external_secret_validator_test.exs
 
   validate:file:

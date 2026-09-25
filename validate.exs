@@ -3,6 +3,9 @@
 defmodule SchemaValidator do
   @moduledoc """
   Parallel schema validation for YAML and JSON files.
+
+  Without file arguments, scans the repository; with paths, validates only
+  annotated files from that selection.
   """
 
   @schema_annotation_regex ~r/\$schema"?[=:]\s*"?([^"\s]+)"?/
@@ -32,6 +35,7 @@ defmodule SchemaValidator do
     args = System.argv()
     trace_mode = "--trace" in args
     clear_cache = "--clear-cache" in args
+    paths = Enum.reject(args, &(&1 in ["--trace", "--clear-cache"]))
 
     if clear_cache do
       clear_schema_cache()
@@ -42,7 +46,7 @@ defmodule SchemaValidator do
     ensure_cache_dir()
     IO.puts("🔍 Validating files with schema annotations...")
 
-    files = files_with_schemas()
+    files = files_with_schemas(paths)
 
     # Process files - either in parallel or sequentially with trace
     summary =
@@ -77,9 +81,24 @@ defmodule SchemaValidator do
     end
   end
 
-  defp files_with_schemas do
+  defp files_with_schemas([]) do
     ["**/*.yaml", "**/*.yml", "**/*.json"]
     |> Enum.flat_map(&Path.wildcard/1)
+    |> Enum.reject(&String.contains?(&1, "node_modules"))
+    |> Enum.filter(&has_schema_annotation?/1)
+  end
+
+  defp files_with_schemas(paths) do
+    missing = Enum.reject(paths, &File.regular?/1)
+
+    if missing != [] do
+      IO.puts(:stderr, "Files not found: #{Enum.join(missing, ", ")}")
+      System.halt(2)
+    end
+
+    paths
+    |> Enum.uniq()
+    |> Enum.filter(&(Path.extname(&1) in [".yaml", ".yml", ".json"]))
     |> Enum.reject(&String.contains?(&1, "node_modules"))
     |> Enum.filter(&has_schema_annotation?/1)
   end
