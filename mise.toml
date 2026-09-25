@@ -1,5 +1,5 @@
 [env]
-OPENCODE_CONFIG = "{{config_root}}/opencode.v2.jsonc"
+HK_HIDE_WHEN_DONE = "1"
 
 [tools]
 dprint = "latest"
