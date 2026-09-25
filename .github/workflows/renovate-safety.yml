@@ -5,6 +5,11 @@ on:
   schedule:
     - cron: '0 12 * * 5'
   workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Renovate PR number to review (0 reviews all eligible PRs)'
+        type: number
+        default: 0
 
 permissions:
   contents: read
@@ -22,10 +27,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ inputs.pr_number || 0 }}
         run: |
           prs=$(gh api --paginate "repos/$REPO/pulls?state=open&per_page=100" \
             --jq '.[] | select(.user.login == "renovate[bot]" and .base.ref == "main" and .head.repo.full_name == .base.repo.full_name and ([.labels[].name] | index("renovate-unsafe") | not)) | {number}' \
-            | jq -sc '.')
+            | jq -sc --argjson requested "$PR_NUMBER" '[.[] | select($requested == 0 or .number == $requested)]')
+          if [ "$PR_NUMBER" != 0 ] && [ "$prs" = '[]' ]; then
+            echo "Renovate PR #$PR_NUMBER is not eligible for review" >&2
+            exit 1
+          fi
           if [ "$(jq 'length' <<< "$prs")" -gt 256 ]; then
             echo 'Too many Renovate PRs for one matrix run' >&2
             exit 1
@@ -54,6 +64,11 @@ jobs:
     steps:
       - name: Checkout review instructions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install trusted review tools
+        uses: jdx/mise-action@v4.3.0 # Verified immutable upstream tag
+        with:
+          install: true
 
       - name: Review and repair update
         id: agent
@@ -84,6 +99,11 @@ jobs:
             inspect its entire new diff again before returning a verdict.
             Never change CI gates or merge the PR yourself. Return safe only if
             the final head you inspected is safe to deploy; otherwise unsafe.
+            Helm and Task were installed from main before your run. Use them
+            directly or through mise exec for targeted validation; do not
+            reinstall the toolchain from an older PR branch. A legacy Lefthook
+            post-checkout warning about read-only .git/hooks is not itself a
+            reason to mark an update unsafe.
             Use set_output exactly once with verdict, findings, changes and the
             exact reviewed_sha of the final PR head, matching the output schema.
             The workflow handles comments, labels, CI and merge.
