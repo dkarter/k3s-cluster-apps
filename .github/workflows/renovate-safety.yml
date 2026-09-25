@@ -1,0 +1,101 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Renovate safety review
+
+on:
+  schedule:
+    - cron: '0 12 * * 5'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      prs: ${{ steps.list.outputs.prs }}
+    steps:
+      - name: Find eligible Renovate PRs
+        id: list
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          prs=$(gh api --paginate "repos/$REPO/pulls?state=open&per_page=100" \
+            --jq '.[] | select(.user.login == "renovate[bot]" and .base.ref == "main" and .head.repo.full_name == .base.repo.full_name and ([.labels[].name] | index("renovate-unsafe") | not)) | {number, sha: .head.sha}' \
+            | jq -sc '.')
+          if [ "$(jq 'length' <<< "$prs")" -gt 256 ]; then
+            echo 'Too many Renovate PRs for one matrix run' >&2
+            exit 1
+          fi
+          echo "prs=$prs" >> "$GITHUB_OUTPUT"
+
+  review:
+    needs: discover
+    if: ${{ needs.discover.outputs.prs != '[]' }}
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        pr: ${{ fromJSON(needs.discover.outputs.prs) }}
+    concurrency:
+      group: renovate-safety-${{ matrix.pr.number }}
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+      id-token: write
+      issues: write
+      pull-requests: write
+      actions: read
+    steps:
+      - name: Checkout review instructions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Review and repair update
+        id: agent
+        uses: pullfrog/pullfrog@ce127b38d7f0c6c5e2c40ccd290adc4c5652357f # v0.1.82
+        with:
+          push: restricted
+          timeout: 45m
+          prompt: |
+            Review Renovate PR #${{ matrix.pr.number }} (initial head ${{ matrix.pr.sha }}) into main.
+            Read .github/renovate-safety-review.md and follow it exactly.
+            Use set_output exactly once with verdict, findings, changes and the
+            exact reviewed_sha of the final PR head, matching the output schema.
+            Do not merge the PR; the workflow will handle comments, labels, CI and merge.
+          output_schema: |
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["verdict", "findings", "changes", "reviewed_sha"],
+              "properties": {
+                "verdict": { "type": "string", "enum": ["safe", "unsafe"] },
+                "findings": { "type": "string", "minLength": 1 },
+                "changes": { "type": "string", "minLength": 1 },
+                "reviewed_sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
+              }
+            }
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+
+      - name: Record verdict and gate merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ matrix.pr.number }}
+          INITIAL_SHA: ${{ matrix.pr.sha }}
+          RESULT: ${{ steps.agent.outputs.result }}
+        run: bash .github/scripts/renovate-safety-finish.sh
