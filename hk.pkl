@@ -4,6 +4,7 @@ steps {
   ["format"] {
     glob = List("**/*.yaml", "**/*.yml", "**/*.json", "**/*.jsonc", "**/*.md", "**/*.toml", "**/*.ts", "**/*.js", "**/*.ex", "**/*.exs")
     check = new Command { argv = List("dprint", "check", "{{files}}") }
+    fix = new Command { argv = List("dprint", "fmt", "{{files}}") }
   }
   ["hk-config"] {
     glob = "**/*.pkl"
@@ -45,6 +46,10 @@ steps {
   ["values-schema-annotations"] {
     glob = List("apps/**/*.yaml", "apps/**/*.yml")
     check = "task validate:values-schema-annotations"
+  }
+  ["helm-external-secrets"] {
+    glob = List("**/Chart.yaml", "**/templates/**/*.yaml", "**/templates/**/*.yml", "validate-helm-external-secrets.exs")
+    check = "task validate:helm-external-secrets"
   }
 }
 

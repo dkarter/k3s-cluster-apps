@@ -191,7 +191,7 @@ tasks:
       gh pr list --state open --author 'app/renovate' | awk '{ print $1 }' | xargs -I{} gh pr merge {} --auto --squash --delete-branch
 
   validate:
-    desc: Validates YAML and JSON files against their defined schemas
+    desc: Validates schemas and Helm ExternalSecret expressions
     summary: |
       Validates YAML and JSON files against their defined schemas using Elixir
 
@@ -205,8 +205,16 @@ tasks:
       - Lists errors and exits with non-zero status on failures
       - Supports --concurrency flag to control parallel jobs (default: 25)
       - Supports --trace flag for sequential processing with verbose output (concurrency: 1)
+      - Renders local Helm charts to catch ExternalSecret expressions consumed by Helm
     silent: true
-    cmd: ./validate.exs {{.CLI_ARGS}}
+    cmds:
+      - ./validate.exs {{.CLI_ARGS}}
+      - elixir validate-helm-external-secrets.exs
+
+  validate:helm-external-secrets:
+    desc: Ensures Helm preserves ExternalSecret template expressions in local charts
+    silent: true
+    cmd: elixir validate-helm-external-secrets.exs
 
   validate:crd-schema-annotations:
     desc: Ensures chart CRD updates include yaml-language-server schema annotation updates
@@ -235,7 +243,9 @@ tasks:
   test:validators:
     desc: Tests local validation helper scripts
     silent: true
-    cmd: elixir test/validator_checks_test.exs
+    cmds:
+      - elixir test/validator_checks_test.exs
+      - elixir test/helm_external_secret_validator_test.exs
 
   validate:file:
     desc: Validates a single YAML or JSON file against its defined schema
