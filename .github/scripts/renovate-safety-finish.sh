@@ -102,8 +102,8 @@ for attempt in $(seq 1 90); do
 	sleep 20
 done
 
-# Never use --admin or --auto: this repository currently has no branch protection.
-# The expected head guards against merging a newly pushed, unreviewed update.
+# Never use --admin or --auto: a later head must be reviewed again, not merged
+# automatically. The repository ruleset enforces the required CI checks too.
 current=$(gh api "repos/$REPO/pulls/$PR_NUMBER")
 if [ "$(jq -r '.head.sha' <<<"$current")" != "$head" ] ||
 	[ "$(jq -r '.base.sha' <<<"$current")" != "$base" ] ||
@@ -112,5 +112,22 @@ if [ "$(jq -r '.head.sha' <<<"$current")" != "$head" ] ||
 	[ "$(jq -r '.state' <<<"$current")" != open ]; then
 	echo 'PR changed before merge; refusing to merge' >&2
 	exit 1
+fi
+if [ "$(jq -r '.draft' <<<"$current")" = true ]; then
+	# Renovate opens some updates as drafts. Make a safe, CI-verified update
+	# mergeable only after the review and checks above have succeeded.
+	gh pr ready "$PR_NUMBER" --repo "$REPO"
+	# ready_for_review can start another required CI run on the same head.
+	gh pr checks "$PR_NUMBER" --repo "$REPO" --required --watch --interval 20
+	current=$(gh api "repos/$REPO/pulls/$PR_NUMBER")
+	if [ "$(jq -r '.head.sha' <<<"$current")" != "$head" ] ||
+		[ "$(jq -r '.base.sha' <<<"$current")" != "$base" ] ||
+		[ "$(gh api "repos/$REPO/branches/main" --jq '.commit.sha')" != "$base" ] ||
+		[ "$(jq -r '[.labels[].name] | index("renovate-unsafe") != null' <<<"$current")" = true ] ||
+		[ "$(jq -r '.state' <<<"$current")" != open ] ||
+		[ "$(jq -r '.draft' <<<"$current")" != false ]; then
+		echo 'PR changed after becoming ready; refusing to merge' >&2
+		exit 1
+	fi
 fi
 gh pr merge "$PR_NUMBER" --repo "$REPO" --squash --match-head-commit "$head"
