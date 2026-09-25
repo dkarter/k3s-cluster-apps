@@ -19,8 +19,12 @@ if [ "$(jq -r '.state' <<<"$pr")" != open ] ||
 	exit 1
 fi
 if [ "$head" != "$reviewed_sha" ]; then
-	echo 'PR head does not match the head reviewed by the agent' >&2
-	exit 1
+	echo 'PR head changed after the review; defer until the next run'
+	exit 0
+fi
+if [ "$verdict" = unsafe ] && [ "$head" != "$INITIAL_SHA" ]; then
+	echo 'PR head changed during review; defer an unsafe verdict until a fresh review'
+	exit 0
 fi
 
 # The CI gate must not execute checks redefined by the dependency update.
@@ -35,11 +39,11 @@ This PR changes workflow or validation code. The automated CI gate cannot be tru
 fi
 if [ "$head" != "$INITIAL_SHA" ]; then
 	# A repair is acceptable only when it is based on the discovered head.
-	gh api "repos/$REPO/compare/$INITIAL_SHA...$head" \
-		--jq '.status' | grep -qx ahead || {
-		echo 'PR head is not a descendant of the initially discovered commit' >&2
-		exit 1
-	}
+	comparison=$(gh api "repos/$REPO/compare/$INITIAL_SHA...$head" --jq '.status')
+	if [ "$comparison" != ahead ]; then
+		echo 'PR was rebased since discovery; defer until the next run'
+		exit 0
+	fi
 fi
 
 body=$(mktemp)
@@ -73,8 +77,12 @@ for attempt in $(seq 1 90); do
 	current=$(gh api "repos/$REPO/pulls/$PR_NUMBER")
 	if [ "$(jq -r '.head.sha' <<<"$current")" != "$head" ] ||
 		[ "$(jq -r '.base.sha' <<<"$current")" != "$base" ]; then
-		echo 'PR head or base changed since the review; refusing to merge' >&2
-		exit 1
+		echo 'PR head or base changed since the review; defer until the next run'
+		exit 0
+	fi
+	if [ "$(gh api "repos/$REPO/branches/main" --jq '.commit.sha')" != "$base" ]; then
+		echo 'Main advanced since CI was run on this PR; defer until the next run'
+		exit 0
 	fi
 
 	runs=$(gh api "repos/$REPO/actions/workflows/ci.yml/runs?head_sha=$head&event=pull_request&per_page=100")
@@ -112,6 +120,7 @@ done
 current=$(gh api "repos/$REPO/pulls/$PR_NUMBER")
 if [ "$(jq -r '.head.sha' <<<"$current")" != "$head" ] ||
 	[ "$(jq -r '.base.sha' <<<"$current")" != "$base" ] ||
+	[ "$(gh api "repos/$REPO/branches/main" --jq '.commit.sha')" != "$base" ] ||
 	[ "$(jq -r '[.labels[].name] | index("renovate-unsafe") != null' <<<"$current")" = true ] ||
 	[ "$(jq -r '.state' <<<"$current")" != open ]; then
 	echo 'PR changed before merge; refusing to merge' >&2

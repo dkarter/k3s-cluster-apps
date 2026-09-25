@@ -55,8 +55,25 @@ jobs:
       - name: Checkout review instructions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      - name: Skip PRs updated since discovery
+        id: preflight
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ matrix.pr.number }}
+          INITIAL_SHA: ${{ matrix.pr.sha }}
+        run: |
+          current=$(gh api "repos/$REPO/pulls/$PR_NUMBER" --jq '.head.sha')
+          if [ "$current" != "$INITIAL_SHA" ]; then
+            echo "PR #$PR_NUMBER was updated since discovery; defer until the next run"
+            echo 'ready=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'ready=true' >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Review and repair update
         id: agent
+        if: ${{ steps.preflight.outputs.ready == 'true' }}
         uses: pullfrog/pullfrog@ce127b38d7f0c6c5e2c40ccd290adc4c5652357f # v0.1.82
         with:
           push: restricted
@@ -91,7 +108,17 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
 
+      # Pullfrog checks out the PR branch; execute the gate from this workflow's
+      # trusted commit, never from the dependency-update branch.
+      - name: Restore trusted finishing script
+        if: ${{ steps.preflight.outputs.ready == 'true' }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
       - name: Record verdict and gate merge
+        if: ${{ steps.preflight.outputs.ready == 'true' }}
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}

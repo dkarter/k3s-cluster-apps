@@ -22,7 +22,8 @@ changes to the cluster. Never delete or migrate PVCs or persistent volumes.
    deprecated flags, and changes to upgrade ordering. Follow AGENTS.md and
    load the `k3s-persistence-safety` skill for any persistence changes.
 4. If a compatibility fix is clearly safe and preserves data, make the smallest
-   change on the Renovate branch. Run relevant local validation and commit with
+   change on the Renovate branch. Run relevant local validation (prefer targeted
+   checks for changed files over full-repository validation) and commit with
    a conventional commit. Do not bypass Git signing: if signing is unavailable,
    return `unsafe` without pushing. Push only to this PR's existing branch.
    Never force-push, change CI/workflow security gates, or modify a different PR.
