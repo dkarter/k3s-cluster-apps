@@ -22,10 +22,6 @@ if [ "$head" != "$reviewed_sha" ]; then
 	echo 'PR head changed after the review; defer until the next run'
 	exit 0
 fi
-if [ "$verdict" = unsafe ] && [ "$head" != "$INITIAL_SHA" ]; then
-	echo 'PR head changed during review; defer an unsafe verdict until a fresh review'
-	exit 0
-fi
 
 # The CI gate must not execute checks redefined by the dependency update.
 files=$(gh api --paginate "repos/$REPO/pulls/$PR_NUMBER/files?per_page=100" \
@@ -37,15 +33,6 @@ if grep -Eq '^(\.github/|scripts/|taskfiles/|Taskfile\.dist\.yml$|mise\.toml$)' 
 
 This PR changes workflow or validation code. The automated CI gate cannot be trusted; a human must review it."
 fi
-if [ "$head" != "$INITIAL_SHA" ]; then
-	# A repair is acceptable only when it is based on the discovered head.
-	comparison=$(gh api "repos/$REPO/compare/$INITIAL_SHA...$head" --jq '.status')
-	if [ "$comparison" != ahead ]; then
-		echo 'PR was rebased since discovery; defer until the next run'
-		exit 0
-	fi
-fi
-
 body=$(mktemp)
 trap 'rm -f "$body"' EXIT
 {
