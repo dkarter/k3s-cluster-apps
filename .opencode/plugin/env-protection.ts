@@ -45,7 +45,8 @@ export default Plugin.define({
 
       forbiddenFilePatterns.forEach(({ regex, msg }) => {
         const readingForbiddenPathDirectly =
-          event.tool === 'read' && regex.test(input.path ?? input.filePath ?? '');
+          event.tool === 'read' &&
+          regex.test(input.path ?? input.filePath ?? '');
 
         const readingForbiddenPathViaBash =
           (event.tool === 'shell' || event.tool === 'bash') &&
@@ -65,7 +66,10 @@ export default Plugin.define({
       });
 
       forbiddenCommandPatterns.forEach(({ regex, msg }) => {
-        if ((event.tool === 'shell' || event.tool === 'bash') && regex.test(command)) {
+        if (
+          (event.tool === 'shell' || event.tool === 'bash') &&
+          regex.test(command)
+        ) {
           throw new Error(msg);
         }
       });
