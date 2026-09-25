@@ -1,0 +1,62 @@
+amends "package://github.com/jdx/hk/releases/download/v2.1.0/hk@2.1.0#/Config.pkl"
+
+steps {
+  ["format"] {
+    glob = List("**/*.yaml", "**/*.yml", "**/*.json", "**/*.jsonc", "**/*.md", "**/*.toml", "**/*.ts", "**/*.js", "**/*.ex", "**/*.exs")
+    check = new Command { argv = List("dprint", "check", "{{files}}") }
+  }
+  ["hk-config"] {
+    glob = "**/*.pkl"
+    check = "hk validate --quiet"
+  }
+  ["actionlint"] {
+    glob = List(".github/workflows/*.yml", ".github/workflows/*.yaml")
+    check = new Command { argv = List("actionlint", "{{files}}") }
+  }
+  ["shellcheck"] {
+    types = List("sh", "bash")
+    check = new Command { argv = List("shellcheck", "{{files}}") }
+  }
+  ["shell-format"] {
+    types = List("sh", "bash")
+    check = new Command { argv = List("shfmt", "-d", "{{files}}") }
+  }
+  ["elixir-tests"] {
+    glob = "**/*.exs"
+    check = "task test:validators"
+  }
+  ["plugin-tests"] {
+    dir = ".opencode/plugin"
+    glob = List("**/*.ts", "package.json", "bun.lock")
+    check = "output=$(bun test tests 2>&1) || { printf '%s\\n' \"$output\" >&2; exit 1; }; bunx tsc --noEmit --pretty false"
+  }
+  ["terraform-format"] {
+    glob = "terraform/**/*.tf"
+    check = new Command { argv = List("sh", "-c", "for file do terraform fmt -check \"$file\" || exit; done", "--", "{{files}}") }
+  }
+  ["schema"] {
+    glob = List("**/*.yaml", "**/*.yml", "**/*.json")
+    check = new Command { argv = List("sh", "-c", "for file do task validate:file -- \"$file\" || exit; done", "--", "{{files}}") }
+  }
+  ["crd-schema-annotations"] {
+    glob = List("apps/**/*.yaml", "apps/**/*.yml")
+    check = "task validate:crd-schema-annotations"
+  }
+  ["values-schema-annotations"] {
+    glob = List("apps/**/*.yaml", "apps/**/*.yml")
+    check = "task validate:values-schema-annotations"
+  }
+}
+
+hooks {
+  ["pre-commit"] {
+    stash = "git"
+  }
+  ["commit-msg"] {
+    steps {
+      ["conventional-commits"] {
+        check = new Command { argv = List("committed", "--commit-file", "{{commit_msg_file}}") }
+      }
+    }
+  }
+}
