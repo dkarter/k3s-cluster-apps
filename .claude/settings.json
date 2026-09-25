@@ -1,23 +1,23 @@
 {
   "enableAllProjectMcpServers": true,
-  "includeCoAuthoredBy": false,
   "hooks": {
     "PostToolUse": [
       {
-        "matcher": "Edit|MultiEdit",
         "hooks": [
           {
-            "type": "command",
-            "command": "task fmt"
+            "command": "task fmt",
+            "type": "command"
           },
           {
-            "type": "command",
-            "command": "task hooks:post:edit:validate --exit-code"
+            "command": "task hooks:post:edit:validate --exit-code",
+            "type": "command"
           }
-        ]
+        ],
+        "matcher": "Edit|MultiEdit"
       }
     ]
   },
+  "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
       "Bash(check-jsonschema:*)",

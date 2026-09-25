@@ -4,6 +4,11 @@
   "share": "disabled",
   "mcp": {
     "servers": {
+      "hk": {
+        "type": "local",
+        "command": ["hk", "mcp", "--root", "."],
+        "cwd": ".",
+      },
       "grafana": {
         "type": "local",
         "command": [
