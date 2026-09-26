@@ -15,7 +15,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/lukegus/termix
-          tag: 2.7.1
+          tag: 2.8.0
           pullPolicy: IfNotPresent
 
         resources:
