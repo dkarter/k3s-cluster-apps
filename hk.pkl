@@ -14,6 +14,14 @@ steps {
     glob = List(".github/workflows/*.yml", ".github/workflows/*.yaml")
     check = new Command { argv = List("actionlint", "{{files}}") }
   }
+  ["immutable-third-party-actions"] {
+    glob = List(".github/workflows/*.yml", ".github/workflows/*.yaml")
+    check = new Command { argv = List("bash", ".github/scripts/check-immutable-actions.sh", "{{files}}") }
+  }
+  ["immutable-actions-tests"] {
+    glob = List(".github/scripts/check-immutable-actions.sh", "test/check-immutable-actions_test.sh")
+    check = "bash test/check-immutable-actions_test.sh"
+  }
   ["shellcheck"] {
     types = List("sh", "bash")
     check = new Command { argv = List("shellcheck", "{{files}}") }
