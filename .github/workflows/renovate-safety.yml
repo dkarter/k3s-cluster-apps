@@ -207,6 +207,7 @@ jobs:
           REPAIRED_SHA: ${{ fromJSON(steps.repair.outputs.result).head_sha }}
         run: |
           test "$(gh api "repos/$REPO/pulls/$PR_NUMBER" --jq '.head.sha')" = "$REPAIRED_SHA"
+          test "$(gh api "repos/$REPO/commits/$REPAIRED_SHA" --jq '.commit.verification.verified')" = true
           gh api "repos/$REPO/compare/$REVIEWED_SHA...$REPAIRED_SHA" | jq -e '
             .status == "ahead" and .ahead_by == 1 and .behind_by == 0 and
             (.files | length > 0 and length <= 100) and all(.files[];
