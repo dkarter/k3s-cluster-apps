@@ -2,7 +2,7 @@ amends "package://github.com/jdx/hk/releases/download/v2.1.0/hk@2.1.0#/Config.pk
 
 steps {
   ["format"] {
-    glob = List("**/*.yaml", "**/*.yml", "**/*.json", "**/*.jsonc", "**/*.md", "**/*.toml", "**/*.ts", "**/*.js", "**/*.ex", "**/*.exs")
+    glob = List("**/*.yaml", "**/*.yml", "**/*.json", "**/*.jsonc", "**/*.md", "**/*.toml", "**/*.ts", "**/*.js", "**/*.ex", "**/*.exs", "**/*.sh")
     check = new Command { argv = List("dprint", "check", "{{files}}") }
     fix = new Command { argv = List("dprint", "fmt", "{{files}}") }
   }
@@ -17,10 +17,6 @@ steps {
   ["shellcheck"] {
     types = List("sh", "bash")
     check = new Command { argv = List("shellcheck", "{{files}}") }
-  }
-  ["shell-format"] {
-    types = List("sh", "bash")
-    check = new Command { argv = List("shfmt", "-d", "{{files}}") }
   }
   ["elixir-tests"] {
     glob = "**/*.exs"
