@@ -17,6 +17,18 @@ check() {
   PATH="$temp_dir:$PATH" bash .github/scripts/check-immutable-actions.sh "$temp_dir/workflow.yml"
 }
 
+expect_rejection() {
+  local output
+  if output=$(check 2>&1); then
+    echo "Expected rejection: $1" >&2
+    exit 1
+  fi
+  if [[ "$output" != *"$1"* ]]; then
+    printf 'Expected diagnostic: %s\nActual output: %s\n' "$1" "$output" >&2
+    exit 1
+  fi
+}
+
 cat >"$temp_dir/workflow.yml" <<'EOF'
 steps:
   - uses: actions/checkout@v7
@@ -30,25 +42,16 @@ cat >"$temp_dir/workflow.yml" <<'EOF'
 steps:
   - uses: owner/action@v2.0.0
 EOF
-if check; then
-  echo 'Mutable release tag was accepted' >&2
-  exit 1
-fi
+expect_rejection 'release tag is not immutable: owner/action@v2.0.0'
 
 cat >"$temp_dir/workflow.yml" <<'EOF'
 steps:
   - uses: owner/action@0123456789abcdef0123456789abcdef01234567
 EOF
-if check; then
-  echo 'SHA without a version comment was accepted' >&2
-  exit 1
-fi
+expect_rejection 'SHA-pinned action needs a version comment (# vX.Y.Z)'
 
 cat >"$temp_dir/workflow.yml" <<'EOF'
 steps:
   - uses: owner/action@v0
 EOF
-if check; then
-  echo 'Unverifiable tag was accepted' >&2
-  exit 1
-fi
+expect_rejection 'cannot verify immutable release for owner/action@v0'
