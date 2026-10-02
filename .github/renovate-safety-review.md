@@ -22,22 +22,23 @@ changes to the cluster. Never delete or migrate PVCs or persistent volumes.
    entries, generated PVC names, schema changes, irreversible migrations,
    deprecated flags, and changes to upgrade ordering. Follow AGENTS.md and
    load the `k3s-persistence-safety` skill for any persistence changes.
-4. If a compatibility fix is clearly safe and preserves data, make the smallest
-   change on the Renovate branch. Run relevant local validation (prefer targeted
-   checks for changed files over full-repository validation) and commit with
-   a conventional commit. Do not bypass Git signing: if signing is unavailable,
-   return `unsafe` without pushing. Push only to this PR's existing branch.
-   Never force-push, change CI/workflow security gates, or modify a different PR.
-   If a fix would need a storage migration, deletion, manual intervention, or
-   cannot be proved safe, return `unsafe` and do not merge.
+4. This review is read-only. Never edit, commit, or push from Review mode.
+   If the _only_ blocker is stale yaml-language-server values schema annotations
+   caused by the chart update, and the full upgrade is otherwise proved safe,
+   return `unsafe` with `repairable: true`. A separate Build-mode run may make
+   that narrowly scoped fix and a separate read-only review will inspect its
+   final head. For any other blocker, return `unsafe` with `repairable: false`.
+   Never change CI/workflow security gates or modify another PR. If a fix needs
+   a storage migration, deletion, manual intervention, or cannot be proved
+   safe, return `unsafe` and do not merge.
 5. Re-fetch the PR head immediately before returning. If Renovate rebased or
    updated it during your work, inspect the **entire diff** at the new head and
    repeat any compatibility checks affected by the update before deciding.
    Do not classify an ordinary rebase as unsafe. Report `reviewed_sha` as the
    exact final PR head commit you inspected. Return `safe` **only** if all
    updates were checked against upstream history,
-   any required fixes were pushed and validated, and the final diff is safe to
-   deploy. Otherwise return `unsafe`. In `findings`, give specific versions,
+   the final diff needs no fixes, and it is safe to deploy. Otherwise return
+   `unsafe`. In `findings`, give specific versions,
    upstream URLs, relevant risks, and reasoning. In `changes`, list any commits
    and validation performed, or say "None". Do not post a comment, add labels,
    or merge; the surrounding workflow does that.

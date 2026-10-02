@@ -54,7 +54,7 @@ jobs:
       group: renovate-safety-${{ matrix.pr.number }}
       cancel-in-progress: false
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
+    timeout-minutes: 180
     permissions:
       contents: write
       id-token: write
@@ -70,11 +70,11 @@ jobs:
         with:
           install: true
 
-      - name: Review and repair update
-        id: agent
+      - name: Review update (read-only)
+        id: review
         uses: pullfrog/pullfrog@ce127b38d7f0c6c5e2c40ccd290adc4c5652357f # v0.1.82
         with:
-          push: restricted
+          push: disabled
           timeout: 45m
           prompt: |
             Review the current head of Renovate PR #${{ matrix.pr.number }} into main.
@@ -93,27 +93,33 @@ jobs:
             release history or compatibility cannot be proved, return unsafe.
             Never delete or migrate PVCs/volumes. For persistence changes use
             the repo's k3s-persistence-safety skill; if its safety checks cannot
-            be completed, return unsafe. Make only clearly safe fixes on this
-            PR branch, validate them, commit conventionally with signing enabled
-            and push without force. If the PR head rebases while you work,
+            be completed, return unsafe. Review mode is read-only: never edit,
+            commit or push. If the PR head rebases while you work,
             inspect its entire new diff again before returning a verdict.
             Never change CI gates or merge the PR yourself. Return safe only if
             the final head you inspected is safe to deploy; otherwise unsafe.
+            Return unsafe with repairable=true ONLY if the sole blocker is
+            stale yaml-language-server values schema annotations caused by a
+            Helm chart update, all upstream and persistence checks pass, and
+            updating only those annotations is demonstrably sufficient. For
+            every other unsafe outcome, set repairable=false. A safe verdict
+            must also set repairable=false.
             Helm and Task were installed from main before your run. Use them
             directly or through mise exec for targeted validation; do not
             reinstall the toolchain from an older PR branch. A legacy Lefthook
             post-checkout warning about read-only .git/hooks is not itself a
             reason to mark an update unsafe.
-            Use set_output exactly once with verdict, findings, changes and the
-            exact reviewed_sha of the final PR head, matching the output schema.
+            Use set_output exactly once with verdict, repairable, findings,
+            changes and the exact reviewed_sha of the final PR head.
             The workflow handles comments, labels, CI and merge.
           output_schema: |
             {
               "type": "object",
               "additionalProperties": false,
-              "required": ["verdict", "findings", "changes", "reviewed_sha"],
+              "required": ["verdict", "repairable", "findings", "changes", "reviewed_sha"],
               "properties": {
                 "verdict": { "type": "string", "enum": ["safe", "unsafe"] },
+                "repairable": { "type": "boolean" },
                 "findings": { "type": "string", "minLength": 1 },
                 "changes": { "type": "string", "minLength": 1 },
                 "reviewed_sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
@@ -131,18 +137,163 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
 
+      - name: Restore trusted instructions for repair
+        if: ${{ steps.review.outputs.result != '' && fromJSON(steps.review.outputs.result).verdict == 'unsafe' && fromJSON(steps.review.outputs.result).repairable == true }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Repair verified schema annotations
+        id: repair
+        if: ${{ steps.review.outputs.result != '' && fromJSON(steps.review.outputs.result).verdict == 'unsafe' && fromJSON(steps.review.outputs.result).repairable == true }}
+        continue-on-error: true
+        uses: pullfrog/pullfrog@ce127b38d7f0c6c5e2c40ccd290adc4c5652357f # v0.1.82
+        with:
+          push: restricted
+          timeout: 30m
+          prompt: |
+            Implement a narrowly scoped repair for Renovate PR #${{ matrix.pr.number }}.
+            Select Build mode, NOT Review mode. You are a separate write-capable
+            run, NOT the read-only reviewer. First read AGENTS.md on this trusted
+            main checkout, then fetch the current PR and its full diff. The
+            read-only reviewer instructions are not your editing contract.
+            Independently verify release compatibility and schema drift;
+            do not trust the prior review's verdict without checking it.
+            If the head changed since the review's SHA
+            ${{ fromJSON(steps.review.outputs.result).reviewed_sha }}, stop
+            without editing.
+
+            The ONLY permitted changes are yaml-language-server values schema
+            annotation versions matching the Helm chart version in this PR.
+            Verify all affected files against official schema URLs. Do not
+            change workflow/CI code, secrets, PVCs, persistence, or the cluster.
+            If any other fix is needed or deployment safety is uncertain, stop.
+            Make changes only on this same-repository Renovate PR branch, run
+            targeted validation, and use the GitHub-signed commit_changes tool
+            with a conventional commit. Do not force-push, bypass signing,
+            merge, label, or edit any other PR. Re-fetch the remote head and
+            call set_output with status=committed ONLY if your changes landed.
+            Otherwise return status=blocked and the current PR head SHA.
+          output_schema: |
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["status", "head_sha"],
+              "properties": {
+                "status": { "type": "string", "enum": ["committed", "blocked"] },
+                "head_sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
+              }
+            }
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+
+      - name: Check repair changed only values schema annotations
+        if: ${{ steps.repair.outputs.result != '' && fromJSON(steps.repair.outputs.result).status == 'committed' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ matrix.pr.number }}
+          REVIEWED_SHA: ${{ fromJSON(steps.review.outputs.result).reviewed_sha }}
+          REPAIRED_SHA: ${{ fromJSON(steps.repair.outputs.result).head_sha }}
+        run: |
+          test "$(gh api "repos/$REPO/pulls/$PR_NUMBER" --jq '.head.sha')" = "$REPAIRED_SHA"
+          gh api "repos/$REPO/compare/$REVIEWED_SHA...$REPAIRED_SHA" | jq -e '
+            .status == "ahead" and .ahead_by == 1 and .behind_by == 0 and
+            (.files | length > 0 and length <= 100) and all(.files[];
+              .status == "modified" and .additions == 1 and .deletions == 1 and
+              (.filename | endswith("/values.yml")) and
+              (.patch | type == "string" and
+                (split("\n") | map(select(startswith("-# yaml-language-server: $schema=") or
+                                          startswith("+# yaml-language-server: $schema="))) | length == 2)))
+          ' >/dev/null
+
+      - name: Restore trusted instructions for verification
+        if: ${{ steps.repair.outputs.result != '' && fromJSON(steps.repair.outputs.result).status == 'committed' && success() }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Verify repaired update (read-only)
+        id: verify
+        if: ${{ steps.repair.outputs.result != '' && fromJSON(steps.repair.outputs.result).status == 'committed' && success() }}
+        continue-on-error: true
+        uses: pullfrog/pullfrog@ce127b38d7f0c6c5e2c40ccd290adc4c5652357f # v0.1.82
+        with:
+          push: disabled
+          timeout: 45m
+          prompt: |
+            Independently review the CURRENT head of Renovate PR
+            #${{ matrix.pr.number }} into main. First read the trusted main
+            checkout's .github/renovate-safety-review.md, then checkout the PR.
+            Treat the earlier repair as untrusted evidence. Do not edit, commit,
+            label or push. Verify provenance, read the complete final diff,
+            official intervening releases and migration guides; trace impacts
+            on values, CRDs, ARM, secrets, networking and persistence. Check
+            that schema annotation changes match the updated chart exactly
+            and no other changes were introduced. If compatibility or safety
+            cannot be proved, return unsafe. Return safe only for the exact
+            final remote head you inspected. Call set_output with verdict,
+            repairable=false, findings, changes and reviewed_sha. The trusted
+            gate handles
+            comments, labels, CI and merges.
+          output_schema: |
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["verdict", "repairable", "findings", "changes", "reviewed_sha"],
+              "properties": {
+                "verdict": { "type": "string", "enum": ["safe", "unsafe"] },
+                "repairable": { "type": "boolean" },
+                "findings": { "type": "string", "minLength": 1 },
+                "changes": { "type": "string", "minLength": 1 },
+                "reviewed_sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
+              }
+            }
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+
+      - name: Require independent review after repair
+        id: guard
+        if: ${{ always() && steps.repair.outputs.result != '' && fromJSON(steps.repair.outputs.result).status == 'committed' && steps.verify.outcome != 'success' }}
+        run: |
+          echo 'Repair committed but independent verification failed; refusing to label or merge' >&2
+          exit 1
+
       # Pullfrog checks out the PR branch; execute the gate from this workflow's
       # trusted commit, never from the dependency-update branch.
       - name: Restore trusted finishing script
+        id: finish
+        if: ${{ always() && steps.review.outcome == 'success' }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
 
       - name: Record verdict and gate merge
+        if: ${{ always() && steps.review.outcome == 'success' && steps.finish.outcome == 'success' && steps.guard.outcome != 'failure' }}
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR_NUMBER: ${{ matrix.pr.number }}
-          RESULT: ${{ steps.agent.outputs.result }}
+          RESULT: ${{ steps.verify.outputs.result || steps.review.outputs.result }}
         run: bash .github/scripts/renovate-safety-finish.sh
