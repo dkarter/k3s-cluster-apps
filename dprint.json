@@ -22,6 +22,10 @@
       {
         "command": "mix format --stdin-filename {{file_path}} -",
         "exts": ["ex", "exs"]
+      },
+      {
+        "command": "shfmt --filename {{file_path}} -i {{indent_width}}",
+        "exts": ["sh"]
       }
     ]
   },
