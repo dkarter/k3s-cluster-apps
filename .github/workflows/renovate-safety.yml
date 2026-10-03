@@ -72,7 +72,7 @@ jobs:
 
       - name: Review update (read-only)
         id: review
-        uses: pullfrog/pullfrog@ce127b38d7f0c6c5e2c40ccd290adc4c5652357f # v0.1.82
+        uses: pullfrog/pullfrog@ed800018463e1b84e8e3377f662173aed1da98b0 # v0.1.95
         with:
           push: disabled
           timeout: 45m
@@ -171,7 +171,7 @@ jobs:
         id: repair
         if: ${{ steps.review.outputs.result != '' && fromJSON(steps.review.outputs.result).verdict == 'unsafe' && fromJSON(steps.review.outputs.result).repairable == true }}
         continue-on-error: true
-        uses: pullfrog/pullfrog@ce127b38d7f0c6c5e2c40ccd290adc4c5652357f # v0.1.82
+        uses: pullfrog/pullfrog@ed800018463e1b84e8e3377f662173aed1da98b0 # v0.1.95
         with:
           push: restricted
           timeout: 30m
@@ -252,7 +252,7 @@ jobs:
         id: verify
         if: ${{ steps.repair.outputs.result != '' && fromJSON(steps.repair.outputs.result).status == 'committed' && success() }}
         continue-on-error: true
-        uses: pullfrog/pullfrog@ce127b38d7f0c6c5e2c40ccd290adc4c5652357f # v0.1.82
+        uses: pullfrog/pullfrog@ed800018463e1b84e8e3377f662173aed1da98b0 # v0.1.95
         with:
           push: disabled
           timeout: 45m
