@@ -49,7 +49,7 @@ jobs:
       fail-fast: false
       max-parallel: 3
       matrix:
-        pr: ${{ fromJSON(needs.discover.outputs.prs) }}
+        pr: ${{ fromJSON(needs.discover.outputs.prs || '[]') }}
     concurrency:
       group: renovate-safety-${{ matrix.pr.number }}
       cancel-in-progress: false
@@ -161,7 +161,7 @@ jobs:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
 
       - name: Restore trusted instructions for repair
-        if: ${{ steps.review.outputs.result != '' && fromJSON(steps.review.outputs.result).verdict == 'unsafe' && fromJSON(steps.review.outputs.result).repairable == true }}
+        if: ${{ steps.review.outputs.result != '' && fromJSON(steps.review.outputs.result || '{}').verdict == 'unsafe' && fromJSON(steps.review.outputs.result || '{}').repairable == true }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.sha }}
@@ -169,7 +169,7 @@ jobs:
 
       - name: Repair verified schema annotations
         id: repair
-        if: ${{ steps.review.outputs.result != '' && fromJSON(steps.review.outputs.result).verdict == 'unsafe' && fromJSON(steps.review.outputs.result).repairable == true }}
+        if: ${{ steps.review.outputs.result != '' && fromJSON(steps.review.outputs.result || '{}').verdict == 'unsafe' && fromJSON(steps.review.outputs.result || '{}').repairable == true }}
         continue-on-error: true
         uses: pullfrog/pullfrog@ed800018463e1b84e8e3377f662173aed1da98b0 # v0.1.95
         with:
@@ -184,7 +184,7 @@ jobs:
             Independently verify release compatibility and schema drift;
             do not trust the prior review's verdict without checking it.
             If the head changed since the review's SHA
-            ${{ fromJSON(steps.review.outputs.result).reviewed_sha }}, stop
+            ${{ fromJSON(steps.review.outputs.result || '{}').reviewed_sha }}, stop
             without editing.
 
             The ONLY permitted changes are yaml-language-server values schema
@@ -221,13 +221,13 @@ jobs:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
 
       - name: Check repair changed only values schema annotations
-        if: ${{ steps.repair.outputs.result != '' && fromJSON(steps.repair.outputs.result).status == 'committed' }}
+        if: ${{ steps.repair.outputs.result != '' && fromJSON(steps.repair.outputs.result || '{}').status == 'committed' }}
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR_NUMBER: ${{ matrix.pr.number }}
-          REVIEWED_SHA: ${{ fromJSON(steps.review.outputs.result).reviewed_sha }}
-          REPAIRED_SHA: ${{ fromJSON(steps.repair.outputs.result).head_sha }}
+          REVIEWED_SHA: ${{ fromJSON(steps.review.outputs.result || '{}').reviewed_sha }}
+          REPAIRED_SHA: ${{ fromJSON(steps.repair.outputs.result || '{}').head_sha }}
         run: |
           test "$(gh api "repos/$REPO/pulls/$PR_NUMBER" --jq '.head.sha')" = "$REPAIRED_SHA"
           test "$(gh api "repos/$REPO/commits/$REPAIRED_SHA" --jq '.commit.verification.verified')" = true
@@ -242,7 +242,7 @@ jobs:
           ' >/dev/null
 
       - name: Restore trusted instructions for verification
-        if: ${{ steps.repair.outputs.result != '' && fromJSON(steps.repair.outputs.result).status == 'committed' && success() }}
+        if: ${{ steps.repair.outputs.result != '' && fromJSON(steps.repair.outputs.result || '{}').status == 'committed' && success() }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.sha }}
@@ -250,7 +250,7 @@ jobs:
 
       - name: Verify repaired update (read-only)
         id: verify
-        if: ${{ steps.repair.outputs.result != '' && fromJSON(steps.repair.outputs.result).status == 'committed' && success() }}
+        if: ${{ steps.repair.outputs.result != '' && fromJSON(steps.repair.outputs.result || '{}').status == 'committed' && success() }}
         continue-on-error: true
         uses: pullfrog/pullfrog@ed800018463e1b84e8e3377f662173aed1da98b0 # v0.1.95
         with:
@@ -289,7 +289,7 @@ jobs:
 
       - name: Require independent review after repair
         id: guard
-        if: ${{ always() && steps.repair.outputs.result != '' && fromJSON(steps.repair.outputs.result).status == 'committed' && steps.verify.outcome != 'success' }}
+        if: ${{ always() && steps.repair.outputs.result != '' && fromJSON(steps.repair.outputs.result || '{}').status == 'committed' && steps.verify.outcome != 'success' }}
         run: |
           echo 'Repair committed but independent verification failed; refusing to label or merge' >&2
           exit 1

@@ -2,6 +2,7 @@ import copy
 import importlib.util
 import json
 import os
+import re
 import subprocess
 import tempfile
 import unittest
@@ -176,6 +177,14 @@ class SafetyTest(unittest.TestCase):
 
 
 class FinishTest(unittest.TestCase):
+    def test_optional_step_outputs_have_json_fallbacks(self):
+        workflow = (ROOT / ".github/workflows/renovate-safety.yml").read_text()
+        calls = re.findall(r"fromJSON\((steps\.[^)]+)\)", workflow)
+        self.assertTrue(calls)
+        for call in calls:
+            with self.subTest(expression=call):
+                self.assertRegex(call, r"outputs\.result\s*\|\|\s*'\{\}'$")
+
     def test_workflow_schema_contract(self):
         steps = json.loads(
             subprocess.check_output(
