@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   discover:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       pull-requests: read
     outputs:
@@ -53,7 +53,7 @@ jobs:
     concurrency:
       group: renovate-safety-${{ matrix.pr.number }}
       cancel-in-progress: false
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 180
     permissions:
       contents: write
