@@ -87,17 +87,26 @@ jobs:
             cluster. Verify this is an open, same-repository PR by renovate[bot]
             into main without a renovate-unsafe label. Review EVERY update in
             its full diff: identify old/new versions and read official upstream
-            changelogs, release notes and migration guides for all intervening
-            versions. Trace breaking changes through manifests, chart values,
-            CRDs, ARM support, secrets, networking and persistent storage. If
-            release history or compatibility cannot be proved, return unsafe.
-            Never delete or migrate PVCs/volumes. For persistence changes use
-            the repo's k3s-persistence-safety skill; if its safety checks cannot
-            be completed, return unsafe. Review mode is read-only: never edit,
+            release history, using versioned source/packages when notes are sparse.
+            Trace relevant changes through committed configuration, CRDs, ARM,
+            secrets references, networking, probes and storage identities.
+            This runner cannot reach the home cluster. Do not attempt live access.
+            Missing live information alone is not unsafe. Identical old/new
+            rendered storage identities/specs/mounts suffice for chart-only updates.
+            Actual persistence configuration changes still require the full
+            k3s-persistence-safety checks. Never delete or migrate PVCs/volumes.
+            Review mode is read-only: never edit,
             commit or push. If the PR head rebases while you work,
             inspect its entire new diff again before returning a verdict.
-            Never change CI gates or merge the PR yourself. Return safe only if
-            the final head you inspected is safe to deploy; otherwise unsafe.
+            Never change CI gates or merge the PR yourself. Evaluate evidence
+            first, classify risk second, assign compatibility confidence third,
+            and derive the verdict last. Return safe ONLY for low-risk with
+            confidence above 80, no hard blockers, no material uncertainties,
+            and no required fixes. Ordinary supported migrations/restarts are
+            not automatically blockers. A high score cannot override data loss,
+            changed PVC identity, required manual steps or security regressions.
+            Narrow SHA-pin updates of existing actions can qualify; review their
+            provenance and input/output/runtime/behavior compatibility.
             Return unsafe with repairable=true ONLY if the sole blocker is
             stale yaml-language-server values schema annotations caused by a
             Helm chart update, all upstream and persistence checks pass, and
@@ -109,18 +118,32 @@ jobs:
             reinstall the toolchain from an older PR branch. A legacy Lefthook
             post-checkout warning about read-only .git/hooks is not itself a
             reason to mark an update unsafe.
-            Use set_output exactly once with verdict, repairable, findings,
-            changes and the exact reviewed_sha of the final PR head.
+            Write short, plain-language bullets: what changes, why it matters,
+            and what decision is needed. Use common words, active voice, one idea
+            per bullet, and simplicity, brevity, clarity and humanity. Include
+            a concise evidence-backed rationale, not private chain-of-thought.
+            Use set_output exactly once with all schema fields and the exact
+            reviewed_sha of the final PR head. Follow the trusted instructions
+            for classification, confidence and field meanings.
             The workflow handles comments, labels, CI and merge.
-          output_schema: |
+          output_schema: &review-output-schema |
             {
               "type": "object",
               "additionalProperties": false,
-              "required": ["verdict", "repairable", "findings", "changes", "reviewed_sha"],
+              "required": ["updates", "checks", "evidence", "risks", "uncertainties", "hard_blockers", "rationale", "classification", "confidence", "verdict", "repairable", "summary", "changes", "reviewed_sha"],
               "properties": {
+                "updates": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+                "checks": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+                "evidence": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+                "risks": { "type": "array", "items": { "type": "string" } },
+                "uncertainties": { "type": "array", "items": { "type": "string" } },
+                "hard_blockers": { "type": "array", "items": { "type": "string" } },
+                "rationale": { "type": "string", "minLength": 1 },
+                "classification": { "type": "string", "enum": ["low-risk", "needs-attention", "blocked"] },
+                "confidence": { "type": "integer", "minimum": 0, "maximum": 100 },
                 "verdict": { "type": "string", "enum": ["safe", "unsafe"] },
                 "repairable": { "type": "boolean" },
-                "findings": { "type": "string", "minLength": 1 },
+                "summary": { "type": "string", "minLength": 1 },
                 "changes": { "type": "string", "minLength": 1 },
                 "reviewed_sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
               }
@@ -242,25 +265,16 @@ jobs:
             official intervening releases and migration guides; trace impacts
             on values, CRDs, ARM, secrets, networking and persistence. Check
             that schema annotation changes match the updated chart exactly
-            and no other changes were introduced. If compatibility or safety
-            cannot be proved, return unsafe. Return safe only for the exact
-            final remote head you inspected. Call set_output with verdict,
-            repairable=false, findings, changes and reviewed_sha. The trusted
-            gate handles
-            comments, labels, CI and merges.
-          output_schema: |
-            {
-              "type": "object",
-              "additionalProperties": false,
-              "required": ["verdict", "repairable", "findings", "changes", "reviewed_sha"],
-              "properties": {
-                "verdict": { "type": "string", "enum": ["safe", "unsafe"] },
-                "repairable": { "type": "boolean" },
-                "findings": { "type": "string", "minLength": 1 },
-                "changes": { "type": "string", "minLength": 1 },
-                "reviewed_sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
-              }
-            }
+            and no other changes were introduced. Do not attempt live cluster
+            access. Follow the trusted offline evidence policy: classify risk,
+            assign compatibility confidence based on evidence, then derive the
+            verdict. Return safe only for low-risk with confidence above 80,
+            no hard blockers, no material uncertainties, and no required fixes,
+            on the exact final remote head you inspected. Write plain-language
+            bullets and a concise evidence-backed rationale, not private
+            chain-of-thought. Call set_output with all schema fields and
+            repairable=false. The trusted gate handles comments, labels, CI and merges.
+          output_schema: *review-output-schema
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}

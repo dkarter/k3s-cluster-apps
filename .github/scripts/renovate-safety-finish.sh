@@ -2,9 +2,6 @@
 set -euo pipefail
 
 # The agent's output is evidence, not authority to bypass these checks.
-verdict=$(jq -er '.verdict' <<<"$RESULT")
-findings=$(jq -er '.findings' <<<"$RESULT")
-changes=$(jq -er '.changes' <<<"$RESULT")
 reviewed_sha=$(jq -er '.reviewed_sha' <<<"$RESULT")
 
 pr=$(gh api "repos/$REPO/pulls/$PR_NUMBER")
@@ -23,22 +20,19 @@ if [ "$head" != "$reviewed_sha" ]; then
   exit 0
 fi
 
-# The CI gate must not execute checks redefined by the dependency update.
+# Allow only existing SHA-pinned action reference changes in workflow files.
+# All other workflow/validation changes still require human review. Inspect
+# complete patches and line counts; a missing/truncated patch fails closed.
 files=$(gh api --paginate "repos/$REPO/pulls/$PR_NUMBER/files?per_page=100" \
-  --jq '.[].filename')
-if grep -Eq '^(\.github/|scripts/|taskfiles/|Taskfile\.dist\.yml$|mise\.toml$)' <<<"$files"; then
-  echo 'PR changes validation or workflow code; human review required' >&2
-  verdict=unsafe
-  findings="$findings
-
-This PR changes workflow or validation code. The automated CI gate cannot be trusted; a human must review it."
-fi
+  --jq '.[]' | jq -sc '.')
+RESULT=$(jq -n --argjson result "$RESULT" --argjson files "$files" \
+  --arg repo "$REPO" --arg base "$base" --arg head "$head" \
+  '{result: $result, files: $files, repo: $repo, base: $base, head: $head}' |
+  python3 .github/scripts/renovate_safety.py assess)
+verdict=$(jq -er '.verdict' <<<"$RESULT")
 body=$(mktemp)
 trap 'rm -f "$body"' EXIT
-{
-  printf '## Automated Renovate safety review\n\n**Verdict:** %s\n\n### Findings\n%s\n\n### Changes and validation\n%s\n' \
-    "$verdict" "$findings" "$changes"
-} >"$body"
+python3 .github/scripts/renovate_safety.py comment <<<"$RESULT" >"$body"
 gh pr comment "$PR_NUMBER" --repo "$REPO" --body-file "$body"
 
 if [ "$verdict" = unsafe ]; then

@@ -22,6 +22,10 @@ steps {
     glob = List(".github/scripts/check-immutable-actions.sh", "test/check-immutable-actions_test.sh")
     check = "bash test/check-immutable-actions_test.sh"
   }
+  ["renovate-safety-tests"] {
+    glob = List(".github/scripts/renovate_safety.py", ".github/scripts/renovate-safety-finish.sh", ".github/workflows/renovate-safety.yml", "test/renovate_safety_test.py")
+    check = "output=$(python3 -B -m unittest discover -s test -p renovate_safety_test.py 2>&1) || { printf '%s\\n' \"$output\" >&2; exit 1; }"
+  }
   ["shellcheck"] {
     types = List("sh", "bash")
     check = new Command { argv = List("shellcheck", "{{files}}") }

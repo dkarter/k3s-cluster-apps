@@ -82,3 +82,6 @@ jobs:
 
       - name: Test validator scripts
         run: task test:validators
+
+      - name: Test Renovate safety gates
+        run: python3 -B -m unittest discover -s test -p renovate_safety_test.py
