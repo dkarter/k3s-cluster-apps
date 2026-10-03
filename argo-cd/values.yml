@@ -31,7 +31,8 @@ controller:
     serviceMonitor:
       enabled: true
       relabelings:
-        - targetLabel: job
+        - action: replace
+          targetLabel: job
           replacement: argocd-application-controller-metrics
 
 repoServer:
@@ -44,7 +45,8 @@ repoServer:
     serviceMonitor:
       enabled: true
       relabelings:
-        - targetLabel: job
+        - action: replace
+          targetLabel: job
           replacement: argocd-repo-server-metrics
 
 applicationSet:
@@ -57,7 +59,8 @@ applicationSet:
     serviceMonitor:
       enabled: true
       relabelings:
-        - targetLabel: job
+        - action: replace
+          targetLabel: job
           replacement: argocd-applicationset-controller-metrics
 
 ## Server
@@ -71,7 +74,8 @@ server:
     serviceMonitor:
       enabled: true
       relabelings:
-        - targetLabel: job
+        - action: replace
+          targetLabel: job
           replacement: argocd-server-metrics
 
   ingress:
