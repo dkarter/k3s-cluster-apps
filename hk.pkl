@@ -10,9 +10,9 @@ steps {
     glob = "**/*.pkl"
     check = "hk validate --quiet"
   }
-  ["actionlint"] {
+  ["jactionlint"] {
     glob = List(".github/workflows/*.yml", ".github/workflows/*.yaml")
-    check = new Command { argv = List("actionlint", "{{files}}") }
+    check = new Command { argv = List("jactionlint", "--profile", "correctness", "{{files}}") }
   }
   ["immutable-third-party-actions"] {
     glob = List(".github/workflows/*.yml", ".github/workflows/*.yaml")
