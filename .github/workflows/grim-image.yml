@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Grim image
+
+# Grim publishes no container image; build one from the upstream commit pinned
+# in grim/image/Dockerfile and tag it with that commit's short SHA.
+on:
+  pull_request:
+    paths:
+      - grim/image/**
+      - .github/workflows/grim-image.yml
+  push:
+    branches:
+      - main
+    paths:
+      - grim/image/**
+      - .github/workflows/grim-image.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Resolve image tag
+        id: meta
+        run: |
+          ref=$(sed -n 's/^ARG GRIM_REF=\([0-9a-f]\{40\}\)$/\1/p' grim/image/Dockerfile)
+          if [[ -z "$ref" ]]; then
+            echo "GRIM_REF not found in grim/image/Dockerfile" >&2
+            exit 1
+          fi
+          echo "tag=ghcr.io/dkarter/grim:${ref:0:7}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: grim/image
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tag }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.description=Grim (https://github.com/anomalyco/grim) built from upstream source
