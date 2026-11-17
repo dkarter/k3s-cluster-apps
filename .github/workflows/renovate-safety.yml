@@ -68,8 +68,6 @@ jobs:
       - name: Install trusted review tools
         uses: jdx/mise-action@v4.3.0 # Verified immutable upstream tag
         with:
-          # Pinned: mise >=2026.11.6 fails `install --locked` on the linux-x64 erlang lock entry
-          version: 2026.10.17
           install: true
 
       - name: Review update (read-only)
