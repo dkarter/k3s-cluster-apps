@@ -148,6 +148,8 @@ configMaps:
                 surveys.insta360.com
                 api.meishesdk.com
                 *.aliyuncs.com
+                optimizely.com
+                *.optimizely.com
           allowlists:
             ads:
               - |
