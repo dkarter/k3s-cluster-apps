@@ -248,6 +248,13 @@ tasks:
       - elixir test/schema_validator_test.exs
       - elixir test/helm_external_secret_validator_test.exs
 
+  test:renovate:
+    desc: Tests Renovate authentication and safety gates without credentials or network calls
+    silent: true
+    cmds:
+      - bun test test/renovate_runner.test.cjs
+      - python3 -B -m unittest discover -s test -p renovate_safety_test.py
+
   validate:file:
     desc: Validates a single YAML or JSON file against its defined schema
     summary: |

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+bot_login=${RENOVATE_BOT_LOGIN:-renovate[bot]}
+
 # The agent's output is evidence, not authority to bypass these checks.
 reviewed_sha=$(jq -er '.reviewed_sha' <<<"$RESULT")
 
@@ -8,7 +10,7 @@ pr=$(gh api "repos/$REPO/pulls/$PR_NUMBER")
 head=$(jq -r '.head.sha' <<<"$pr")
 base=$(jq -r '.base.sha' <<<"$pr")
 if [ "$(jq -r '.state' <<<"$pr")" != open ] ||
-  [ "$(jq -r '.user.login' <<<"$pr")" != 'renovate[bot]' ] ||
+  [ "$(jq -r '.user.login' <<<"$pr")" != "$bot_login" ] ||
   [ "$(jq -r '.base.ref' <<<"$pr")" != main ] ||
   [ "$(jq -r '.head.repo.full_name == .base.repo.full_name' <<<"$pr")" != true ] ||
   [ "$(jq -r '[.labels[].name] | index("renovate-unsafe") != null' <<<"$pr")" = true ]; then

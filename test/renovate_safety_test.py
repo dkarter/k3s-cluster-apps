@@ -214,14 +214,22 @@ class FinishTest(unittest.TestCase):
         ):
             self.assertLess(fields.index(before), fields.index(after))
 
-    def run_finish(self, result, files, changed_head=False):
+    def run_finish(
+        self,
+        result,
+        files,
+        changed_head=False,
+        author="renovate[bot]",
+        bot_login="renovate[bot]",
+        expected_code=0,
+    ):
         # Execute the real shell gate with mocked GitHub calls; no remote writes.
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory)
             fixture = {
                 "pr": {
                     "state": "open",
-                    "user": {"login": "renovate[bot]"},
+                    "user": {"login": author},
                     "head": {
                         "sha": "c" * 40 if changed_head else RESULT["reviewed_sha"],
                         "repo": {"full_name": "example/repo"},
@@ -285,6 +293,7 @@ else:
                 REPO="example/repo",
                 PR_NUMBER="1",
                 RESULT=json.dumps(result),
+                RENOVATE_BOT_LOGIN=bot_login,
             )
             run = subprocess.run(
                 ["bash", ".github/scripts/renovate-safety-finish.sh"],
@@ -293,7 +302,7 @@ else:
                 capture_output=True,
                 text=True,
             )
-            self.assertEqual(run.returncode, 0, run.stderr)
+            self.assertEqual(run.returncode, expected_code, run.stderr)
             calls = [
                 json.loads(line) for line in (path / "calls").read_text().splitlines()
             ]
@@ -304,6 +313,31 @@ else:
         calls, text = self.run_finish(copy.deepcopy(RESULT), [change(OLD_PIN, NEW_PIN)])
         self.assertTrue(any(call[:2] == ["pr", "merge"] for call in calls))
         self.assertIn("**Verdict:** safe", text)
+
+    def test_finish_accepts_only_configured_self_hosted_bot(self):
+        calls, _ = self.run_finish(
+            copy.deepcopy(RESULT),
+            [change(OLD_PIN, NEW_PIN)],
+            author="k3s-renovate[bot]",
+            bot_login="k3s-renovate[bot]",
+        )
+        self.assertTrue(any(call[:2] == ["pr", "merge"] for call in calls))
+        for author, trusted in (
+            ("renovate[bot]", "k3s-renovate[bot]"),
+            ("k3s-renovate[bot]", "renovate[bot]"),
+            ("another-user", "k3s-renovate[bot]"),
+            ("k3s-renovate-imposter[bot]", "k3s-renovate[bot]"),
+        ):
+            with self.subTest(author=author, trusted=trusted):
+                calls, text = self.run_finish(
+                    copy.deepcopy(RESULT),
+                    [],
+                    author=author,
+                    bot_login=trusted,
+                    expected_code=1,
+                )
+                self.assertEqual(text, "")
+                self.assertFalse(any(call[0] == "pr" for call in calls))
 
     def test_finish_labels_low_confidence_and_behavior_changes(self):
         for score, file in (
