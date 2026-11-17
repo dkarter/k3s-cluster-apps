@@ -1,0 +1,105 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.1.0/charts/other/app-template/values.schema.json
+app_host: &app_host grim.k3s.pro
+app_url: &app_url 'https://grim.k3s.pro'
+app_port: &app_port 8787
+
+defaultPodOptions:
+  automountServiceAccountToken: false
+  securityContext:
+    # the image runs as the `bun` user (uid/gid 1000)
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+
+controllers:
+  main:
+    strategy: Recreate
+    replicas: 1
+
+    containers:
+      app:
+        image:
+          # Built from upstream source by .github/workflows/grim-image.yml; the
+          # tag is the short SHA of GRIM_REF in grim/image/Dockerfile.
+          repository: ghcr.io/dkarter/grim
+          tag: '4534002'
+          pullPolicy: IfNotPresent
+
+        # Sign-in stays off (the default): no accounts, everyone on the network
+        # can do everything. Only reachable on the local network.
+        # See https://github.com/anomalyco/grim/blob/main/docs/self-hosting.md
+        env:
+          TZ: America/Chicago
+          PORT: *app_port
+          PUBLIC_URL: *app_url
+          DATA_DIR: /data
+          STORAGE: local
+          SIGN_IN: 'off'
+          # Believe X-Forwarded-* headers from Traefik (k3s pod network)
+          TRUSTED_PROXIES: 10.42.0.0/16
+
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            memory: 512Mi
+
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /api/server
+                port: *app_port
+              periodSeconds: 10
+              timeoutSeconds: 2
+              failureThreshold: 5
+          readiness: *probes
+
+persistence:
+  data:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 2Gi
+    storageClass: longhorn-retained
+    retain: true
+    globalMounts:
+      - path: /data
+
+service:
+  app:
+    controller: main
+    ports:
+      http:
+        port: *app_port
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      # Homepage integration
+      gethomepage.dev/enabled: 'true'
+      gethomepage.dev/name: Grim
+      gethomepage.dev/description: Multiplayer markdown notebooks
+      gethomepage.dev/group: Apps
+      gethomepage.dev/icon: mdi-notebook-edit
+      gethomepage.dev/siteMonitor: *app_url
+
+      # cert-manager
+      kubernetes.io/ingress.class: 'traefik'
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+    className: 'traefik'
+    hosts:
+      - host: *app_host
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - *app_host
+        secretName: grim-ingress-cert

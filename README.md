@@ -55,6 +55,7 @@ Repository for managing apps on my Raspberry Pi K3s bare metal cluster using Git
 
 - **Homepage** - Customizable dashboard for accessing all services
 - **Linkding** - Bookmark manager with tagging and search
+- **Grim** - Multiplayer markdown notebooks stored as Git repos (LAN only, no sign-in)
 - **Memos** - Lightweight note-taking and memo service
 - **FreshRSS** - RSS/Atom feed aggregator and reader
 - **Livebook** - Interactive notebooks for Elixir development
